@@ -18,7 +18,7 @@ nav button:hover{background:var(--hov)}nav button.on{color:var(--bl);border-bott
 #tk{display:inline-block;padding:6px 0;animation:mq 70s linear infinite}#tkw:hover #tk{animation-play-state:paused}
 #tk span{margin:0 28px}#tk i{opacity:.75;font-style:normal;font-weight:700;margin-right:6px}#tk i.rm{background:#fff;color:#E41E3F;opacity:1;font-weight:800;border-radius:10px;padding:1px 9px}
 @keyframes mq{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion: reduce){#tk,.dot{animation:none}}
+@media (prefers-reduced-motion: reduce){#tk,.dot,.gate-glow,.rig,.wheel,.lane,.streaks{animation:none}}
 main{max-width:1060px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 @media(min-width:900px){main.two{grid-template-columns:minmax(0,1fr) 290px}}
 .card{background:var(--card);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.15);padding:12px 14px;margin-bottom:12px}
@@ -61,52 +61,66 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .offbar{background:#E41E3F;color:#fff;border-radius:8px;padding:10px 12px;font-weight:700;margin-bottom:12px}
 body:not(.in){overflow:hidden}
 body:not(.in) header,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
-#gate{position:fixed;inset:0;z-index:80;overflow:auto;background:#07111c;color:#f4f7fb}
+#gate{position:fixed;inset:0;z-index:80;overflow:hidden;background:#07111c;color:#f4f7fb}
 #gate[hidden]{display:none}
-#gate::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 62% 48% at 82% 8%,rgba(24,119,242,.42),transparent 62%),radial-gradient(ellipse 36% 28% at 96% 0%,rgba(90,170,255,.16),transparent 70%),linear-gradient(180deg,#102038 0%,#07111c 46%,#050d16 100%)}
-.gate-shell{position:relative;z-index:1;min-height:100%;display:grid;grid-template-columns:minmax(280px,520px) minmax(220px,1fr);grid-template-rows:1fr auto;align-items:start;column-gap:32px;padding:7vh clamp(20px,6vw,80px) 0}
-.gate-copy{width:min(520px,100%)}
-.gate-word{margin:0;font:800 clamp(42px,6.4vw,68px)/.9 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:-1.5px;color:#fff}
-.gate-word span{color:#3B9BFF}
-.gate-rule{width:72px;height:4px;border-radius:2px;background:#1877F2;margin:16px 0 22px}
-.gate-head{margin:0 0 8px;font-size:clamp(22px,2.4vw,30px);font-weight:700;letter-spacing:-.3px;line-height:1.2}
-.gate-sub{margin:0 0 26px;max-width:36rem;color:#9AADC4;font-size:15.5px;line-height:1.45}
-.gate-box{display:flex;flex-direction:column;align-items:stretch;width:100%;background:transparent;color:inherit;padding:0;box-shadow:none;gap:0}
-.gate-box label{display:flex;flex-direction:column;gap:6px;margin-top:14px;font-size:13.5px;font-weight:500;color:#d5e0ec}
-.gate-box input{min-height:48px;border:1px solid #3d5878;border-radius:8px;padding:10px 12px;font:16px/1.2 system-ui,sans-serif;background:rgba(5,14,24,.35);color:#fff}
+.gate-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 55% 42% at 78% 18%,rgba(24,119,242,.38),transparent 64%),linear-gradient(180deg,#102038 0%,#07111c 55%,#050d16 100%);animation:glow 7s ease-in-out infinite}
+@keyframes glow{50%{opacity:.72}}
+.gate-go{position:absolute;z-index:0;right:-1vw;top:46%;transform:translateY(-54%);margin:0;padding:0 .04em .02em;font:800 clamp(200px,46vw,620px)/.78 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:-.08em;color:#fff;background:#1877F2;pointer-events:none;user-select:none}
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.gate-top{position:absolute;z-index:3;top:28px;left:28px;max-width:min(420px,calc(100% - 48px))}
+.gate-rest{display:block;margin:0;font:800 clamp(32px,4.6vw,52px)/.95 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:-1px;color:#fff}
+.gate-rest span span{color:#3B9BFF}
+.gate-rule{width:56px;height:4px;border-radius:2px;background:#1877F2;margin:12px 0 14px}
+.gate-head{margin:0 0 6px;font-size:clamp(18px,2.2vw,26px);font-weight:700;letter-spacing:-.3px;line-height:1.2}
+.gate-sub{margin:0;max-width:28rem;color:#9AADC4;font-size:15px;line-height:1.45}
+.gate-note{margin:10px 0 0;max-width:28rem;color:#8ea3bb;font-size:13px;line-height:1.4}
+.gate-box{position:absolute;z-index:4;left:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(232px,calc(100% - 32px));display:flex;flex-direction:column;align-items:stretch;gap:0;background:#0c1a2c;color:#f4f7fb;border:1px solid #314864;border-radius:10px;padding:8px 10px 10px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.gate-box label{display:flex;flex-direction:column;gap:3px;margin-top:6px;font-size:11px;font-weight:600;color:#d5e0ec}
+.gate-box input{min-height:32px;border:1px solid #3d5878;border-radius:6px;padding:4px 8px;font:13px/1.2 system-ui,sans-serif;background:rgba(5,14,24,.55);color:#fff}
 .gate-box input::placeholder{color:#7d93ab}
 .gate-box input:focus{outline:2px solid #1877F2;border-color:#1877F2}
-.gate-box .btn,.gate-box .btn.g{width:100%;min-height:48px;border-radius:10px;text-align:center;font-size:16px}
-.gate-box .btn{margin-top:18px;background:#1877F2}
-.gate-box .btn.g{margin-top:10px;background:#122033;color:#eef3f8;border:1px solid #314864}
-.gate-note{margin:16px 0 0;max-width:440px;color:#8ea3bb;font-size:13.5px;line-height:1.45}
-#he{min-height:1.2em;margin:8px 0 0;color:#b9d4ff}
-.gate-road{grid-column:1 / -1;position:relative;height:150px;margin-top:28px;border-top:3px dashed rgba(45,136,255,.9)}
-.gate-truck{position:absolute;right:0;top:0;width:min(520px,42vw);height:auto;transform:translateY(-68.75%);filter:drop-shadow(0 0 16px rgba(24,119,242,.7)) drop-shadow(0 0 42px rgba(24,119,242,.35))}
-@media(max-width:800px){.gate-shell{grid-template-columns:1fr;padding:28px 20px 12px}.gate-road{height:108px;margin-top:36px}.gate-truck{width:min(300px,78vw)}}
+.gate-box .btn,.gate-box .btn.g{width:100%;min-height:32px;border-radius:7px;text-align:center;font-size:13px;padding:4px 8px}
+.gate-box .btn{margin-top:8px;background:#1877F2}
+.gate-box .btn.g{margin-top:6px;background:#122033;color:#eef3f8;border:1px solid #314864}
+#he{min-height:1em;margin:6px 0 0;color:#b9d4ff;font-size:12px}
+.gate-run{position:absolute;z-index:1;left:0;right:0;bottom:10%;height:130px;overflow:hidden;pointer-events:none}
+.lane{position:absolute;left:250px;right:-20%;bottom:28px;border-top:3px dashed rgba(45,136,255,.9);animation:lane .55s linear infinite}
+@keyframes lane{to{transform:translateX(-64px)}}
+.rig{position:absolute;right:7%;bottom:0;display:flex;align-items:flex-end;width:230px;animation:nudge 2.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(-36px)}}
+.streaks{width:64px;height:46px;margin:0 0 34px;background:repeating-linear-gradient(90deg,transparent 0 8px,#7eb6ff 8px 22px,transparent 22px 34px);opacity:.8;animation:streak .45s linear infinite}
+@keyframes streak{to{transform:translateX(-18px);opacity:.35}}
+.gate-truck{width:168px;height:auto;display:block;filter:drop-shadow(0 0 10px rgba(24,119,242,.75))}
+.wheel{transform-box:fill-box;transform-origin:center;animation:spin .45s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.gate-go{font-size:38vw;left:12px;right:auto;top:34%}.gate-top{top:16px;left:16px;right:16px}.gate-run{top:430px;bottom:auto;height:100px}.lane{left:0}.rig{right:2%;width:170px}.gate-truck{width:112px}.streaks{width:36px;height:26px;margin-bottom:20px}}
 </style></head><body>
 <section id="gate" aria-label="GoRoadHub home">
-<div class="gate-shell">
-<div class="gate-copy">
-<h1 class="gate-word">GOROAD<span>HUB</span></h1>
+<div class="gate-glow"></div>
+<p class="gate-go" aria-hidden="true">GO</p>
+<div class="gate-top">
+<h1 class="gate-rest"><span class="vh">GoRoadHub</span><span aria-hidden="true">ROAD<span>HUB</span></span></h1>
 <div class="gate-rule"></div>
 <p class="gate-head">One place for the road.</p>
 <p class="gate-sub">Australian truck drivers: groups, road news, and the podcast.</p>
+<p class="gate-note">The hub stays open without a password. The username and password are only for oversight.</p>
+</div>
 <form class="gate-box" onsubmit="gateLogin(event)">
-<label for="hu">GoRoadHub username<input id="hu" name="username" autocomplete="username" maxlength="40" placeholder="Your name on the hub"></label>
-<label for="hp">Password<input id="hp" name="password" type="password" autocomplete="current-password" placeholder="Admin password"></label>
+<label for="hu">Username<input id="hu" name="username" autocomplete="username" maxlength="40" placeholder="Name"></label>
+<label for="hp">Password<input id="hp" name="password" type="password" autocomplete="current-password" placeholder="Password"></label>
 <button class="btn" type="submit">Log in</button>
 <button class="btn g" type="button" onclick="enterHub(false)">Enter without logging in</button>
 <p id="he" role="status"></p>
 </form>
-<p class="gate-note">The hub stays open without a password. The username and password are only for oversight.</p>
-</div>
-<div class="gate-road">
-<svg class="gate-truck" viewBox="0 0 520 320" role="img" aria-label="Truck">
-<rect x="8" y="6" width="286" height="206" rx="22" fill="#1877F2"/>
-<path d="M294 86h96c40 0 78 28 96 64l18 36c4 8 6 14 6 22v18H294V86z" fill="#1877F2"/>
-<circle cx="108" cy="220" r="76" fill="#07111c" stroke="#1877F2" stroke-width="26"/>
-<circle cx="404" cy="220" r="76" fill="#07111c" stroke="#1877F2" stroke-width="26"/>
+<div class="gate-run" aria-hidden="true">
+<div class="lane"></div>
+<div class="rig">
+<span class="streaks"></span>
+<svg class="gate-truck" viewBox="0 0 250 150" role="img">
+<rect x="4" y="18" width="132" height="78" rx="10" fill="#1877F2"/>
+<path d="M136 40h46c18 0 34 12 44 28l10 16c2 4 4 6 4 10v8H136V40z" fill="#1877F2"/>
+<g class="wheel"><circle cx="48" cy="108" r="22" fill="#07111c" stroke="#1877F2" stroke-width="9"/></g>
+<g class="wheel"><circle cx="188" cy="108" r="22" fill="#07111c" stroke="#1877F2" stroke-width="9"/></g>
 </svg>
 </div>
 </div>
