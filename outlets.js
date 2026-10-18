@@ -33,6 +33,7 @@ const OUTLETS = [
   { id: 'canberra', name: 'The Canberra Times', home: 'https://www.canberratimes.com.au/', logo: favicon('canberratimes.com.au'), feed: 'https://www.canberratimes.com.au/rss.xml', src: 'news', topic: 'Industry News', kind: 'news', filter: true },
   { id: 'perthnow', name: 'PerthNow', home: 'https://www.perthnow.com.au/', logo: favicon('perthnow.com.au'), feed: 'https://www.perthnow.com.au/news/rss', src: 'news', topic: 'Industry News', kind: 'news', filter: true },
   { id: 'afr', name: 'Australian Financial Review', home: 'https://www.afr.com/', logo: 'https://www.afr.com/favicon.ico', feed: 'https://www.afr.com/rss/feed.xml', src: 'news', topic: 'Industry News', kind: 'news', filter: true },
+  { id: 'rnz', name: 'RNZ', home: 'https://www.rnz.co.nz/', logo: favicon('rnz.co.nz'), feed: 'https://www.rnz.co.nz/rss/national', src: 'news', topic: 'Industry News', kind: 'news', filter: true },
   {
     id: 'livetraffic-nsw',
     name: 'Live Traffic NSW',

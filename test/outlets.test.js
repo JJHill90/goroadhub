@@ -74,9 +74,9 @@ test('bad incident payloads become an empty report', () => {
   assert.deepEqual(parseIncidents({}), []);
 });
 
-test('eleven public news outlets plus Live Traffic NSW', () => {
-  assert.equal(OUTLETS.length, 12);
-  assert.equal(OUTLETS.filter(o => o.kind === 'news').length, 11);
+test('public news outlets plus Live Traffic NSW', () => {
+  assert.equal(OUTLETS.length, 13);
+  assert.equal(OUTLETS.filter(o => o.kind === 'news').length, 12);
   assert.equal(OUTLETS.filter(o => o.kind === 'traffic').length, 1);
   assert.equal(new Set(OUTLETS.map(o => o.id)).size, OUTLETS.length);
   for (const o of OUTLETS) {

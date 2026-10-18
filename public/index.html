@@ -60,12 +60,13 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .cab-btn{width:100%;min-height:64px;font-size:18px;margin-top:10px}
 .story-hit{display:block;width:100%;text-align:left;background:transparent;color:var(--tx);border:0;border-top:1px solid var(--bd);padding:16px 14px;cursor:pointer;min-height:76px;font:inherit}
 .story-hit b{display:block;font-size:18px;line-height:1.35;margin-top:4px}
-.adv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:12px}
-.adv{display:flex;flex-direction:column;gap:4px;min-height:148px;padding:12px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);color:inherit}
-.adv b{font-size:16px;line-height:1.25}
-.adv p{margin:0;color:var(--mut);font-size:14px;line-height:1.35}
-.adv-go{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:auto;padding-top:8px}
-.adv-go a.btn{color:#fff;text-decoration:none}
+.area-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+.area-row h3{margin:0}
+.area-pick{display:flex;flex-direction:column;gap:4px;min-width:min(100%,280px);font-size:13px;font-weight:700;color:var(--mut)}
+.area-pick select{min-height:44px;width:100%}
+.page-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.page-link{display:flex;align-items:center;min-height:48px;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA;font-weight:700;font-size:14px;line-height:1.25;text-decoration:none}
+@media(max-width:600px){.page-cols{gap:6px}.page-link{min-height:44px;padding:8px;font-size:13px}}
 .src-row{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 4px}
 .src-logo{width:32px;height:32px;border-radius:8px;background:#fff;border:1px solid var(--bd);display:grid;place-items:center;overflow:hidden}
 .src-logo img{width:22px;height:22px;object-fit:contain}
@@ -142,4 +143,4 @@ body:not(.in) header,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
 <div id="pl"></div>
-<script src="/quarter.js"></script><script src="/app.js"></script></body></html>
+<script src="/areas.js"></script><script src="/quarter.js"></script><script src="/app.js"></script></body></html>
