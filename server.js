@@ -94,6 +94,10 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
+app.get('/manifest.webmanifest', (req, res) => {
+  res.type('application/manifest+json');
+  res.sendFile(path.join(__dirname, 'public', 'manifest.webmanifest'));
+});
 app.use(express.static(path.join(__dirname, 'public')));
 if (require.main === module) {
   pool.query('create table if not exists docs(coll text not null, id text not null, data jsonb not null, primary key(coll, id))')
