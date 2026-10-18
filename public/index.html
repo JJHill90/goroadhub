@@ -8,13 +8,18 @@
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navy);border-bottom:3px solid var(--bl);display:flex;align-items:center;gap:10px;padding:6px 12px;flex-wrap:wrap}
 .logo{width:40px;height:40px;border-radius:10px;display:block;background:var(--navy)}
+.brand-lockup{display:flex;flex-direction:column;gap:1px}
+.brand-top{display:flex;align-items:center;gap:10px}
 .brand{font-weight:800;color:#fff;font-size:16px;letter-spacing:.01em;line-height:1.1}
 .brand b{color:#fff;font-weight:800;box-shadow:inset 0 -3px 0 #C80813}
+.brand-blurb{margin:0;color:#F7F8FA;font-size:12px;font-style:italic;font-weight:500;line-height:1.2;text-decoration:underline;text-underline-offset:2px}
 header input{flex:1;min-width:120px;max-width:300px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:20px;padding:9px 14px;font-size:15px}
 header input::placeholder{color:#8EA0B5}
 nav{display:flex;gap:4px;margin-left:auto}
 nav button{border:0;background:none;color:var(--mut);padding:10px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
+.site-link{background:var(--navy);text-align:center;padding:8px 12px;border-top:2px solid #fff}
+.site-link a{color:#fff;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
 #tkw{background:var(--navy);color:#fff;overflow:hidden;white-space:nowrap;font-size:13px;display:flex;border-top:2px solid #fff}
 #tkw b{background:var(--bl);padding:6px 12px;z-index:2;flex:none}
 #tk{display:inline-block;padding:6px 0;animation:mq 140s linear infinite}#tkw:hover #tk{animation-play-state:paused}
@@ -66,7 +71,6 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .area-pick select{min-height:44px;width:100%}
 .page-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;margin-top:10px}
 .page-link{display:flex;align-items:center;min-height:44px;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA;font-weight:700;font-size:14px;line-height:1.25;text-decoration:none}
-.page-cols .page-link:first-child{grid-column:1 / -1}
 .fb-mark{width:18px;height:18px;flex:none;margin-right:8px;background:#fff;border-radius:4px}
 @media(max-width:600px){.page-cols{grid-template-columns:1fr 1fr;gap:6px}.page-link{min-height:44px;padding:8px;font-size:13px}}
 .src-row{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 4px}
@@ -78,7 +82,7 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .traffic-row a{color:var(--link);font-weight:700;text-decoration:none}
 .offbar{background:#E41E3F;color:#fff;border-radius:8px;padding:10px 12px;font-weight:700;margin-bottom:12px}
 body:not(.in){overflow:hidden}
-body:not(.in) header,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
+body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
 #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:flex-start;padding-left:clamp(48px,5vw,72px);overflow:hidden;background:#001D3D;color:#fff;isolation:isolate;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 #gate[hidden]{display:none}
 .gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/trucking-news.png") right center / cover no-repeat}
@@ -141,7 +145,8 @@ body:not(.in) header,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:
 </form>
 </div>
 </section>
-<header><img class="logo" src="/icon.svg" alt=""><span class="brand">The Driver's <b>Advocate</b></span><input id="q" placeholder="Search news…" oninput="V.q=this.value;if(V.view=='mag')drawMag()"><nav id="nav"></nav></header>
+<header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Driver's <b>Advocate</b></span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><input id="q" placeholder="Search news…" oninput="V.q=this.value;if(V.view=='mag')drawMag()"><nav id="nav"></nav></header>
+<div class="site-link"><a href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">The Driver's Advocate website</a></div>
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
 <div id="pl"></div>
