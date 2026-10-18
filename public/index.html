@@ -18,7 +18,7 @@ nav button:hover{background:var(--hov)}nav button.on{color:var(--bl);border-bott
 #tk{display:inline-block;padding:6px 0;animation:mq 70s linear infinite}#tkw:hover #tk{animation-play-state:paused}
 #tk span{margin:0 28px}#tk i{opacity:.75;font-style:normal;font-weight:700;margin-right:6px}#tk i.rm{background:#fff;color:#E41E3F;opacity:1;font-weight:800;border-radius:10px;padding:1px 9px}
 @keyframes mq{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion: reduce){#tk,.dot,.gate-title,.truck,.wheel,.lane,.cloud,.puff{animation:none}.truck{left:12%}}
+@media (prefers-reduced-motion: reduce){#tk,.dot{animation:none}}
 main{max-width:1060px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 @media(min-width:900px){main.two{grid-template-columns:minmax(0,1fr) 290px}}
 .card{background:var(--card);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.15);padding:12px 14px;margin-bottom:12px}
@@ -61,63 +61,55 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .offbar{background:#E41E3F;color:#fff;border-radius:8px;padding:10px 12px;font-weight:700;margin-bottom:12px}
 body:not(.in){overflow:hidden}
 body:not(.in) header,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
-#gate{position:fixed;inset:0;z-index:80;overflow:hidden;background:linear-gradient(#b9e2ff 0%,#6eb6f5 42%,#1877F2 78%);color:#fff}
+#gate{position:fixed;inset:0;z-index:80;overflow:auto;background:#07111c;color:#f4f7fb}
 #gate[hidden]{display:none}
-.cloud{position:absolute;background:#fff;border-radius:40px;opacity:.9;animation:drift 36s linear infinite}
-.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
-.cloud:before{width:46%;height:140%;left:12%;top:-70%}
-.cloud:after{width:38%;height:120%;right:14%;top:-50%}
-.c1{width:140px;height:42px;top:18%;left:-20%;animation-duration:42s}
-.c2{width:90px;height:28px;top:8%;left:-10%;animation-duration:28s;animation-delay:-8s}
-.c3{width:180px;height:48px;top:30%;left:-30%;animation-duration:54s;animation-delay:-20s}
-@keyframes drift{to{transform:translateX(140vw)}}
-.gate-title{position:absolute;top:28px;left:28px;margin:0;z-index:3;font:800 clamp(52px,9vw,96px)/.95 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:-1px;text-shadow:0 10px 0 rgba(11,79,179,.35),0 18px 28px rgba(0,0,0,.2);animation:floaty 4.6s ease-in-out infinite}
-.gate-desc{position:absolute;top:calc(36px + clamp(56px,9vw,100px));left:32px;z-index:3;max-width:34rem;margin:0;font-size:clamp(16px,2.2vw,20px);font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.25)}
-@keyframes floaty{50%{transform:translateY(-12px)}}
-.road{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(#5c6168,#3a3d42 18%)}
-.verge{position:absolute;left:0;right:0;top:0;height:14px;background:#6b8f4e}
-.lane{position:absolute;left:-50%;right:-50%;top:46%;height:8px;background:repeating-linear-gradient(90deg,#F7B928 0 48px,transparent 48px 96px);animation:lane .8s linear infinite}
-@keyframes lane{to{transform:translateX(-96px)}}
-.truck{position:absolute;bottom:18px;width:min(420px,78vw);height:auto;animation:drive 13s linear infinite;filter:drop-shadow(0 10px 0 rgba(0,0,0,.18))}
-@keyframes drive{from{left:-45%}to{left:110%}}
-.wheel{transform-box:fill-box;transform-origin:center;animation:spin .45s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.puff{transform-box:fill-box;transform-origin:center;animation:puff 1.1s ease-out infinite}
-@keyframes puff{to{transform:translate(-16px,-18px) scale(1.6);opacity:0}}
-.gate-box{position:absolute;left:20px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:4;width:min(280px,calc(100% - 40px));background:#fff;color:var(--tx);border-radius:12px;padding:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:8px}
-.gate-box label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:#050505}
-.gate-box input{min-height:44px;border:1px solid #CED0D4;border-radius:8px;padding:8px 10px;font:16px/1.2 system-ui,sans-serif;background:#F0F2F5;color:#050505}
-.gate-box .btn,.gate-box .btn.g{min-height:44px;text-align:center}
-.gate-box .btn.g{background:#E4E6EB;color:#050505}
-#he{min-height:1.2em;margin:0}
-@media(max-width:640px){.gate-title{left:16px;top:16px;font-size:clamp(40px,12vw,64px)}.gate-desc{left:16px;right:16px;top:calc(20px + clamp(44px,12vw,72px));font-size:16px}}
+#gate::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 62% 48% at 82% 8%,rgba(24,119,242,.42),transparent 62%),radial-gradient(ellipse 36% 28% at 96% 0%,rgba(90,170,255,.16),transparent 70%),linear-gradient(180deg,#102038 0%,#07111c 46%,#050d16 100%)}
+.gate-shell{position:relative;z-index:1;min-height:100%;display:grid;grid-template-columns:minmax(280px,520px) minmax(220px,1fr);grid-template-rows:1fr auto;align-items:start;column-gap:32px;padding:7vh clamp(20px,6vw,80px) 0}
+.gate-copy{width:min(520px,100%)}
+.gate-word{margin:0;font:800 clamp(42px,6.4vw,68px)/.9 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:-1.5px;color:#fff}
+.gate-word span{color:#3B9BFF}
+.gate-rule{width:72px;height:4px;border-radius:2px;background:#1877F2;margin:16px 0 22px}
+.gate-head{margin:0 0 8px;font-size:clamp(22px,2.4vw,30px);font-weight:700;letter-spacing:-.3px;line-height:1.2}
+.gate-sub{margin:0 0 26px;max-width:36rem;color:#9AADC4;font-size:15.5px;line-height:1.45}
+.gate-box{display:flex;flex-direction:column;align-items:stretch;width:100%;background:transparent;color:inherit;padding:0;box-shadow:none;gap:0}
+.gate-box label{display:flex;flex-direction:column;gap:6px;margin-top:14px;font-size:13.5px;font-weight:500;color:#d5e0ec}
+.gate-box input{min-height:48px;border:1px solid #3d5878;border-radius:8px;padding:10px 12px;font:16px/1.2 system-ui,sans-serif;background:rgba(5,14,24,.35);color:#fff}
+.gate-box input::placeholder{color:#7d93ab}
+.gate-box input:focus{outline:2px solid #1877F2;border-color:#1877F2}
+.gate-box .btn,.gate-box .btn.g{width:100%;min-height:48px;border-radius:10px;text-align:center;font-size:16px}
+.gate-box .btn{margin-top:18px;background:#1877F2}
+.gate-box .btn.g{margin-top:10px;background:#122033;color:#eef3f8;border:1px solid #314864}
+.gate-note{margin:16px 0 0;max-width:440px;color:#8ea3bb;font-size:13.5px;line-height:1.45}
+#he{min-height:1.2em;margin:8px 0 0;color:#b9d4ff}
+.gate-road{grid-column:1 / -1;position:relative;height:150px;margin-top:28px;border-top:3px dashed rgba(45,136,255,.9)}
+.gate-truck{position:absolute;right:0;top:0;width:min(520px,42vw);height:auto;transform:translateY(-68.75%);filter:drop-shadow(0 0 16px rgba(24,119,242,.7)) drop-shadow(0 0 42px rgba(24,119,242,.35))}
+@media(max-width:800px){.gate-shell{grid-template-columns:1fr;padding:28px 20px 12px}.gate-road{height:108px;margin-top:36px}.gate-truck{width:min(300px,78vw)}}
 </style></head><body>
 <section id="gate" aria-label="GoRoadHub home">
-<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
-<h1 class="gate-title">GoRoadHub</h1>
-<p class="gate-desc">One place for Australian truck drivers: groups, road news, and the podcast.</p>
-<div class="road"><div class="verge"></div><div class="lane"></div>
-<svg class="truck" viewBox="0 0 360 150" role="img" aria-label="Cartoon truck driving past">
-<ellipse class="puff" cx="18" cy="78" rx="8" ry="6" fill="#fff" opacity=".7"/>
-<rect x="36" y="36" width="168" height="72" rx="10" fill="#fff"/>
-<rect x="48" y="48" width="144" height="34" rx="6" fill="#1877F2"/>
-<text x="120" y="72" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="24" font-weight="700">G</text>
-<path d="M204 58h62l46 28v22H204z" fill="#0b4fb3"/>
-<path d="M214 64h42l28 18H214z" fill="#E7F3FF"/>
-<rect x="312" y="96" width="22" height="10" rx="2" fill="#222"/>
-<circle cx="328" cy="92" r="5" fill="#F7B928"/>
-<g class="wheel"><circle cx="78" cy="114" r="20" fill="#222"/><circle cx="78" cy="114" r="8" fill="#d8dbe0"/><path d="M78 98v32M62 114h32" stroke="#222" stroke-width="2"/></g>
-<g class="wheel"><circle cx="168" cy="114" r="20" fill="#222"/><circle cx="168" cy="114" r="8" fill="#d8dbe0"/><path d="M168 98v32M152 114h32" stroke="#222" stroke-width="2"/></g>
-<g class="wheel"><circle cx="268" cy="114" r="20" fill="#222"/><circle cx="268" cy="114" r="8" fill="#d8dbe0"/><path d="M268 98v32M252 114h32" stroke="#222" stroke-width="2"/></g>
-</svg>
-</div>
+<div class="gate-shell">
+<div class="gate-copy">
+<h1 class="gate-word">GOROAD<span>HUB</span></h1>
+<div class="gate-rule"></div>
+<p class="gate-head">One place for the road.</p>
+<p class="gate-sub">Australian truck drivers: groups, road news, and the podcast.</p>
 <form class="gate-box" onsubmit="gateLogin(event)">
-<label for="hu">Username<input id="hu" name="username" autocomplete="username" maxlength="40"></label>
-<label for="hp">Password<input id="hp" name="password" type="password" autocomplete="current-password"></label>
+<label for="hu">GoRoadHub username<input id="hu" name="username" autocomplete="username" maxlength="40" placeholder="Your name on the hub"></label>
+<label for="hp">Password<input id="hp" name="password" type="password" autocomplete="current-password" placeholder="Admin password"></label>
 <button class="btn" type="submit">Log in</button>
 <button class="btn g" type="button" onclick="enterHub(false)">Enter without logging in</button>
-<p id="he" class="mut" role="status"></p>
+<p id="he" role="status"></p>
 </form>
+<p class="gate-note">The hub stays open without a password. The username and password are only for oversight.</p>
+</div>
+<div class="gate-road">
+<svg class="gate-truck" viewBox="0 0 520 320" role="img" aria-label="Truck">
+<rect x="8" y="6" width="286" height="206" rx="22" fill="#1877F2"/>
+<path d="M294 86h96c40 0 78 28 96 64l18 36c4 8 6 14 6 22v18H294V86z" fill="#1877F2"/>
+<circle cx="108" cy="220" r="76" fill="#07111c" stroke="#1877F2" stroke-width="26"/>
+<circle cx="404" cy="220" r="76" fill="#07111c" stroke="#1877F2" stroke-width="26"/>
+</svg>
+</div>
+</div>
 </section>
 <header><div class="logo">G</div><span class="brand">GoRoadHub</span><input id="q" placeholder="Search posts, people, topics…" oninput="V.q=this.value;drawList()"><nav id="nav"></nav></header>
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>

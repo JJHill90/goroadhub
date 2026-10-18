@@ -1,8 +1,8 @@
 const express = require('express'), { Pool } = require('pg'), crypto = require('crypto'), path = require('path');
-const { sessionSecret, adminPassword, createAuth, mountAuth } = require('./auth');
+const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth } = require('./auth');
 const { driverPost, driverReply, makeLimiter } = require('./community');
 const app = express(), PORT = process.env.PORT || 3000;
-const auth = createAuth(sessionSecret(), adminPassword());
+const auth = createAuth(sessionSecret(), adminPassword(), Date.now, adminUser());
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : false });
 pool.on('error', err => console.error('Idle database client error:', err.message));
 app.set('trust proxy', 1);
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   ].join('; '));
   next();
 });
-app.use(express.json({ limit: '100kb' }));
+app.use(express.json({ limit: '2mb' }));
 app.use('/api', (req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'GET' || req.method === 'HEAD') return next();
@@ -55,7 +55,48 @@ app.post('/api/community/replies', wrap(async (q, r) => {
   await pool.query("update docs set data = jsonb_set(data, '{c}', to_jsonb(coalesce((data->>'c')::int, 0) + 1)) where coll = 'posts' and id = $1", [data.postId]);
   r.json({ id });
 }));
-app.use('/api/:c', (q, r, n) => ['posts', 'ticker', 'feeds', 'episodes', 'comments'].includes(q.params.c) ? n() : r.status(404).json({ error: 'Unknown collection' }));
+const COLLECTIONS = ['posts', 'ticker', 'feeds', 'episodes', 'comments'];
+const rowData = row => {
+  const data = {};
+  for (const [k, v] of Object.entries(row)) {
+    if (k === 'id' || k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+    data[k] = v;
+  }
+  return data;
+};
+app.get('/api/admin/backup', need, wrap(async (q, r) => {
+  const collections = {};
+  for (const coll of COLLECTIONS) {
+    const x = await pool.query('select id, data from docs where coll = $1 order by id', [coll]);
+    collections[coll] = x.rows.map(o => ({ ...o.data, id: o.id }));
+  }
+  r.json({ exportedAt: Date.now(), collections });
+}));
+app.post('/api/admin/restore', need, wrap(async (q, r) => {
+  const collections = q.body && q.body.collections;
+  if (!collections || typeof collections !== 'object' || Array.isArray(collections)) return r.status(400).json({ error: 'Missing collections' });
+  const restored = {};
+  for (const coll of COLLECTIONS) {
+    if (collections[coll] === undefined) continue;
+    const rows = collections[coll];
+    if (!Array.isArray(rows)) return r.status(400).json({ error: 'Bad collection' });
+    if (rows.length > 5000) return r.status(400).json({ error: 'Too many rows' });
+    let n = 0;
+    for (const row of rows) {
+      if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
+      const id = String(row.id || '').trim();
+      if (!id || id.length > 80 || /[\u0000/\\]/.test(id)) continue;
+      await pool.query(
+        'insert into docs(coll, id, data) values($1, $2, $3::jsonb) on conflict (coll, id) do update set data = excluded.data',
+        [coll, id, JSON.stringify(rowData(row))]
+      );
+      n++;
+    }
+    restored[coll] = n;
+  }
+  r.json({ ok: true, restored });
+}));
+app.use('/api/:c', (q, r, n) => COLLECTIONS.includes(q.params.c) ? n() : r.status(404).json({ error: 'Unknown collection' }));
 const body = q => {
   const src = q.body && typeof q.body === 'object' && !Array.isArray(q.body) ? q.body : {};
   const d = { ...src }; delete d.id; return d;
@@ -84,7 +125,13 @@ app.patch('/api/:c/:id', need, wrap(async (q, r) => {
   r.json({ ok: true });
 }));
 app.delete('/api/:c/:id', need, wrap(async (q, r) => {
+  let postId = '';
+  if (q.params.c === 'comments') {
+    const cur = await pool.query('select data from docs where coll = $1 and id = $2', ['comments', q.params.id]);
+    postId = cur.rows[0] && cur.rows[0].data && cur.rows[0].data.postId || '';
+  }
   await pool.query('delete from docs where coll = $1 and id = $2', [q.params.c, q.params.id]);
+  if (postId) await pool.query("update docs set data = jsonb_set(data, '{c}', to_jsonb(greatest(coalesce((data->>'c')::int, 0) - 1, 0))) where coll = 'posts' and id = $1", [postId]);
   r.json({ ok: true });
 }));
 

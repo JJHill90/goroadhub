@@ -14,11 +14,12 @@ async function withServer(password, fn) {
   finally { await new Promise(resolve => server.close(resolve)); }
 }
 
-async function login(base, password) {
+async function login(base, password, username) {
+  const body = username === undefined ? { password } : { username, password };
   return fetch(base + '/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
+    body: JSON.stringify(body)
   });
 }
 
@@ -33,7 +34,7 @@ test('a correct password sets an HttpOnly cookie that /api/me accepts', async ()
     assert.match(set, /SameSite=Lax/i);
     assert.doesNotMatch(set, /Secure/i);
     const me = await fetch(base + '/api/me', { headers: { cookie: set.split(';')[0] } });
-    assert.deepEqual(await me.json(), { admin: true });
+    assert.deepEqual(await me.json(), { admin: true, role: 'oversight', user: 'RoadHub_Admin' });
     const stranger = await fetch(base + '/api/me');
     assert.deepEqual(await stranger.json(), { admin: false });
   });
@@ -43,6 +44,25 @@ test('surrounding whitespace on the typed password still matches', async () => {
   await withServer('s3cret', async base => {
     const ok = await login(base, ' s3cret\n');
     assert.equal(ok.status, 200);
+  });
+});
+
+test('RoadHub_Admin signs in even when the env password is different', async () => {
+  await withServer('s3cret', async base => {
+    const wrongName = await login(base, 'RoadHub_Admin', 'someone');
+    assert.equal(wrongName.status, 401);
+    const wrongPass = await login(base, 'nope', 'RoadHub_Admin');
+    assert.equal(wrongPass.status, 401);
+    const ok = await login(base, 'RoadHub_Admin', 'RoadHub_Admin');
+    assert.equal(ok.status, 200);
+    assert.deepEqual(await ok.json(), { admin: true, role: 'oversight', user: 'RoadHub_Admin' });
+  });
+});
+
+test('a named login must use the oversight username', async () => {
+  await withServer('s3cret', async base => {
+    assert.equal((await login(base, 's3cret', 'other')).status, 401);
+    assert.equal((await login(base, 's3cret', 'RoadHub_Admin')).status, 200);
   });
 });
 

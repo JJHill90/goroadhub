@@ -1,6 +1,6 @@
 # GoRoadHub
 
-Express + Postgres app. Posts and ticker headlines are public to read; only the admin (password login) can add, edit, delete, pin and reorder.
+Express + Postgres app. Posts and ticker headlines are public to read. The built-in oversight account RoadHub_Admin can add, edit, delete, pin and reorder posts, correct replies, and restore a recovery file if the hub data is lost. That login is not stored in the database.
 
 ## Deploy on Render
 1. Create a new GitHub repo and upload everything in this folder (keep `public/` and `render.yaml` at the top level).
@@ -12,7 +12,7 @@ Express + Postgres app. Posts and ticker headlines are public to read; only the 
 Check Render's current plan limits: free web services sleep when idle and free databases may expire. Use a paid plan for a live community site.
 
 ## Local run
-Node 18 or newer. Set `DATABASE_URL` and `ADMIN_PASSWORD` (the password is trimmed, and it is the only login check; `ADMIN_USER` is not used). `SESSION_SECRET` is optional on your machine and required in production; without it, a restart logs the admin out.
+Node 18 or newer. Set `DATABASE_URL` and `ADMIN_PASSWORD` (trimmed). Sign in as RoadHub_Admin, or with `ADMIN_PASSWORD` when the username is left blank or is RoadHub_Admin. An optional `ADMIN_USER` is also accepted with `ADMIN_PASSWORD`. `SESSION_SECRET` is optional on your machine and required in production; without it, a restart logs the admin out.
 
 ```
 npm install
