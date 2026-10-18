@@ -45,7 +45,7 @@ function alertPlan(now, state) {
     plan.push({
       at: at.getTime(),
       tag: 'goroadhub-q-' + ymd(day),
-      title: 'GoRoadHub reminder',
+      title: "The Driver's Advocate reminder",
       body: quarterBody(days, state, quarter)
     });
   }
@@ -57,7 +57,7 @@ function reminderNow(now, state) {
   const [year, quarter] = quarterOf(now);
   const left = daysUntil(now, quarterEnd(year, quarter));
   if (left > 3 || left < 0) return null;
-  return { tag: 'goroadhub-q-' + ymd(now), title: 'GoRoadHub reminder', body: quarterBody(left, state, quarter) };
+  return { tag: 'goroadhub-q-' + ymd(now), title: "The Driver's Advocate reminder", body: quarterBody(left, state, quarter) };
 }
 
 root.alertPlan = alertPlan;

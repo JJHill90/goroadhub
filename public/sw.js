@@ -1,6 +1,6 @@
 importScripts('/quarter.js');
 
-const CACHE = 'goroadhub-shell-1';
+const CACHE = 'goroadhub-shell-2';
 const SHELL = ['/index.html', '/app.js', '/quarter.js', '/manifest.webmanifest', '/icon.svg'];
 
 self.addEventListener('install', event => {

@@ -1,6 +1,7 @@
 // Automation: every 30 min, pull the RSS/Atom feeds an admin has added and store new items.
 const crypto = require('crypto'), dns = require('dns').promises, net = require('net');
 const { XMLParser } = require('fast-xml-parser');
+const { OUTLETS, transportRelated, parseIncidents, cleanHeadline } = require('./outlets');
 const px = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' });
 const MAX_BYTES = 2 * 1024 * 1024, MAX_REDIRECTS = 3;
 const arr = x => x == null ? [] : [].concat(x);
@@ -133,8 +134,24 @@ function parseFeed(xml) {
 
 async function pull(f) { return parseFeed(await fetchFeed(f.url)); }
 
-const POST_KEYS = ['h', 'x', 'url', 'img', 'at', 'a', 'srcName'];
+const POST_KEYS = ['h', 'x', 'url', 'img', 'at', 'a', 'srcName', 'logo'];
 const EPISODE_KEYS = ['h', 'x', 'audio', 'img', 'at', 'dur', 'url', 'show'];
+const TRAFFIC_KEYS = ['h', 'x', 'url', 'at', 'a', 'srcName', 'logo'];
+const WEEK = 7 * 24 * 60 * 60 * 1000;
+
+async function ensureOutlets(pool) {
+  for (const o of OUTLETS) {
+    const data = {
+      url: o.feed, name: o.name, src: o.src, topic: o.topic, g: -1,
+      logo: o.logo, home: o.home, builtin: true, kind: o.kind, filter: o.filter === true
+    };
+    await pool.query(
+      `insert into docs(coll, id, data) values('feeds', $1, $2)
+       on conflict (coll, id) do update set data = docs.data || excluded.data`,
+      ['outlet-' + o.id, data]
+    );
+  }
+}
 
 function changedPatch(old, data, keys) {
   const patch = {};
@@ -164,23 +181,42 @@ function install(app, pool, need) {
     busy = true;
     const out = { added: 0, updated: 0, errors: [] };
     try {
+      await ensureOutlets(pool);
       const fs = await pool.query("select data from docs where coll = 'feeds'");
       for (const { data: f } of fs.rows) {
         try {
           if (!http(f.url)) continue;
           const pod = f.src === 'podcast';
-          for (const it of await pull(f)) {
+          const traffic = f.kind === 'traffic';
+          let items;
+          if (traffic) items = parseIncidents(await fetchFeed(f.url));
+          else {
+            items = await pull(f);
+            if (f.filter) items = items.filter(it => transportRelated(it.h + ' ' + it.x)).slice(0, 8);
+          }
+          const kept = [];
+          for (const it of items) {
             if (pod && !it.audio) continue;
             const id = crypto.createHash('sha1').update(f.url + '|' + it.guid).digest('hex').slice(0, 20);
+            kept.push(id);
             const data = pod
               ? { h: it.h, x: it.x, audio: it.audio, img: it.img || it.chImg, at: it.at, dur: it.dur, url: it.link, show: f.name }
-              : { g: f.g == null ? -1 : +f.g, a: f.name, t: f.topic || 'Industry News', h: it.h, x: it.x, url: it.link, img: it.img, src: f.src || 'news', srcName: f.name, l: 0, c: 0, pin: false, at: it.at, ord: it.at, auto: true };
-            const status = await storeItem(pool, pod ? 'episodes' : 'posts', id, data, pod ? EPISODE_KEYS : POST_KEYS);
+              : traffic
+                ? { a: f.name, h: it.h, x: it.x, url: it.link, src: 'traffic', srcName: f.name, logo: f.logo || '', at: it.at, auto: true }
+                : { g: f.g == null ? -1 : +f.g, a: f.name, t: f.topic || 'Industry News', h: cleanHeadline(it.h), x: it.x, url: it.link, img: it.img, src: f.src || 'news', srcName: f.name, logo: f.logo || '', l: 0, c: 0, pin: false, at: it.at, ord: it.at, auto: true };
+            const status = await storeItem(pool, pod ? 'episodes' : traffic ? 'traffic' : 'posts', id, data, pod ? EPISODE_KEYS : traffic ? TRAFFIC_KEYS : POST_KEYS);
             if (status === 'added') out.added++;
             else if (status === 'updated') out.updated++;
           }
+          if (traffic) {
+            await pool.query("delete from docs where coll = 'traffic' and not (id = any($1::text[]))", [kept.length ? kept : ['']]);
+          }
         } catch (e) { out.errors.push((f.name || f.url) + ': ' + e.message); }
       }
+      await pool.query(
+        "delete from docs where coll = 'posts' and data->>'auto' = 'true' and data->>'src' = 'news' and coalesce((data->>'at')::double precision, 0) < $1",
+        [Date.now() - WEEK]
+      );
     } finally { busy = false; }
     return out;
   }

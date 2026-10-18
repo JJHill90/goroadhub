@@ -1,6 +1,7 @@
 const express = require('express'), { Pool } = require('pg'), crypto = require('crypto'), path = require('path');
 const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, secureCookie, cleanAccountName, hashPassword, verifyPassword } = require('./auth');
 const { driverPost, driverReply, makeLimiter } = require('./community');
+const { advocatePages } = require('./advocate');
 const app = express(), PORT = process.env.PORT || 3000;
 const auth = createAuth(sessionSecret(), adminPassword(), Date.now, adminUser());
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : false });
@@ -63,6 +64,7 @@ app.post('/api/register', wrap(async (q, r) => {
   r.setHeader('Set-Cookie', [auth.cookie('', 0, secureCookie(q)), auth.userCookie(username, 604800, secureCookie(q))]);
   r.json({ admin: false, role: 'driver', user: username });
 }));
+app.get('/api/advocate', wrap(async (q, r) => { r.json({ pages: await advocatePages() }); }));
 require('./feeds')(app, pool, need);
 app.post('/api/community/posts', wrap(async (q, r) => {
   if (!allowPost(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many posts' });
@@ -81,7 +83,7 @@ app.post('/api/community/replies', wrap(async (q, r) => {
   await pool.query("update docs set data = jsonb_set(data, '{c}', to_jsonb(coalesce((data->>'c')::int, 0) + 1)) where coll = 'posts' and id = $1", [data.postId]);
   r.json({ id });
 }));
-const COLLECTIONS = ['posts', 'ticker', 'feeds', 'episodes', 'comments'];
+const COLLECTIONS = ['posts', 'ticker', 'feeds', 'episodes', 'comments', 'traffic'];
 const BACKUP = [...COLLECTIONS, 'accounts'];
 const rowData = row => {
   const data = {};
@@ -134,11 +136,23 @@ app.get('/api/:c', wrap(async (q, r) => {
   const fallback = isAdmin(q) ? cap : (q.params.c === 'posts' ? 80 : q.params.c === 'comments' ? 200 : 60);
   const asked = Number(q.query.limit);
   const lim = Math.min(cap, Number.isFinite(asked) && asked > 0 ? Math.floor(asked) : fallback);
-  const x = await pool.query(
-    "select id, data from docs where coll = $1 order by coalesce((data->>'pin')::boolean, false) desc, (data->>'at')::double precision desc nulls last limit $2",
-    [q.params.c, lim]
-  );
-  let rows = x.rows.map(o => ({ ...o.data, id: o.id }));
+  let rows;
+  if (q.params.c === 'posts' && !isAdmin(q)) {
+    const news = await pool.query(
+      "select id, data from docs where coll = 'posts' and data->>'auto' = 'true' order by (data->>'at')::double precision desc nulls last limit 24"
+    );
+    const rest = await pool.query(
+      "select id, data from docs where coll = 'posts' and coalesce(data->>'auto', '') <> 'true' order by coalesce((data->>'pin')::boolean, false) desc, (data->>'at')::double precision desc nulls last limit $1",
+      [lim]
+    );
+    rows = [...news.rows, ...rest.rows].map(o => ({ ...o.data, id: o.id }));
+  } else {
+    const x = await pool.query(
+      "select id, data from docs where coll = $1 order by coalesce((data->>'pin')::boolean, false) desc, (data->>'at')::double precision desc nulls last limit $2",
+      [q.params.c, lim]
+    );
+    rows = x.rows.map(o => ({ ...o.data, id: o.id }));
+  }
   if (q.params.c === 'feeds' && !isAdmin(q)) rows = rows.map(({ url, ...rest }) => rest);
   r.json(rows);
 }));

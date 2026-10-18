@@ -1,10 +1,11 @@
 {
-  "name": "GoRoadHub",
-  "short_name": "GoRoadHub",
+  "name": "The Driver's Advocate",
+  "short_name": "Advocate",
+  "description": "Daily driving news, and a place that promotes truck driving in Australia and New Zealand.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1877F2",
-  "theme_color": "#1877F2",
+  "background_color": "#001D3D",
+  "theme_color": "#001D3D",
   "icons": [
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]

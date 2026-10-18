@@ -1,0 +1,14 @@
+[
+  {"id":"newscomau","name":"news.com.au","home":"https://www.news.com.au/","logo":"https://www.news.com.au/favicon.ico","kind":"news"},
+  {"id":"abc","name":"ABC News","home":"https://www.abc.net.au/news/","logo":"https://www.abc.net.au/favicon.ico","kind":"news"},
+  {"id":"guardian","name":"Guardian Australia","home":"https://www.theguardian.com/au","logo":"https://www.theguardian.com/favicon.ico","kind":"news"},
+  {"id":"seven","name":"7NEWS","home":"https://www.7news.com.au/","logo":"https://www.7news.com.au/favicon.ico","kind":"news"},
+  {"id":"smh","name":"The Sydney Morning Herald","home":"https://www.smh.com.au/","logo":"https://www.smh.com.au/favicon.ico","kind":"news"},
+  {"id":"age","name":"The Age","home":"https://www.theage.com.au/","logo":"https://www.theage.com.au/favicon.ico","kind":"news"},
+  {"id":"bt","name":"Brisbane Times","home":"https://www.brisbanetimes.com.au/","logo":"https://www.brisbanetimes.com.au/favicon.ico","kind":"news"},
+  {"id":"watoday","name":"WAtoday","home":"https://www.watoday.com.au/","logo":"https://www.watoday.com.au/favicon.ico","kind":"news"},
+  {"id":"canberra","name":"The Canberra Times","home":"https://www.canberratimes.com.au/","logo":"https://www.google.com/s2/favicons?domain=canberratimes.com.au&sz=64","kind":"news"},
+  {"id":"perthnow","name":"PerthNow","home":"https://www.perthnow.com.au/","logo":"https://www.google.com/s2/favicons?domain=perthnow.com.au&sz=64","kind":"news"},
+  {"id":"afr","name":"Australian Financial Review","home":"https://www.afr.com/","logo":"https://www.afr.com/favicon.ico","kind":"news"},
+  {"id":"livetraffic-nsw","name":"Live Traffic NSW","home":"https://www.livetraffic.com/","logo":"https://www.google.com/s2/favicons?domain=livetraffic.com&sz=64","kind":"traffic"}
+]
