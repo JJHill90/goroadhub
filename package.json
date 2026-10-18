@@ -2,7 +2,7 @@
   "name": "goroadhub",
   "version": "1.0.0",
   "private": true,
-  "scripts": { "start": "node server.js" },
+  "scripts": { "start": "node server.js", "test": "node --test --test-concurrency=1" },
   "engines": { "node": ">=18" },
-  "dependencies": { "express": "^4.19.2", "pg": "^8.11.5" }
+  "dependencies": { "express": "^4.19.2", "fast-xml-parser": "^4.4.1", "pg": "^8.11.5" }
 }
