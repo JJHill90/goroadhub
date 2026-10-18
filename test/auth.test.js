@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
-const { createAuth, mountAuth, sessionSecret, adminPassword } = require('../auth');
+const { createAuth, mountAuth, sessionSecret, adminPassword, hashPassword, verifyPassword, cleanAccountName } = require('../auth');
 
 async function withServer(password, fn) {
   const app = express();
@@ -102,4 +102,37 @@ test('production refuses to start without SESSION_SECRET or ADMIN_PASSWORD', () 
     if (prevSecret === undefined) delete process.env.SESSION_SECRET; else process.env.SESSION_SECRET = prevSecret;
     if (prevPw === undefined) delete process.env.ADMIN_PASSWORD; else process.env.ADMIN_PASSWORD = prevPw;
   }
+});
+
+test('a driver account signs in without oversight access', async () => {
+  const app = express();
+  app.use(express.json());
+  const auth = createAuth('test-secret', 's3cret');
+  mountAuth(app, auth, async (user, pass) => user === 'sam.jones' && pass === 'longpass1' ? { user: 'sam.jones' } : null);
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  try {
+    const ok = await login(base, 'longpass1', 'sam.jones');
+    assert.equal(ok.status, 200);
+    assert.deepEqual(await ok.json(), { admin: false, role: 'driver', user: 'sam.jones' });
+    const cookies = typeof ok.headers.getSetCookie === 'function' ? ok.headers.getSetCookie() : [ok.headers.get('set-cookie') || ''];
+    const user = cookies.find(c => String(c).startsWith('rh_user='));
+    assert.ok(user);
+    const me = await fetch(base + '/api/me', { headers: { cookie: user.split(';')[0] } });
+    assert.deepEqual(await me.json(), { admin: false, role: 'driver', user: 'sam.jones' });
+    assert.equal(auth.isAdmin({ headers: { cookie: user.split(';')[0] } }), false);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+});
+
+test('account passwords are hashed and the oversight name cannot be registered', () => {
+  const stored = hashPassword('longpass1');
+  assert.equal(stored.includes('longpass1'), false);
+  assert.equal(verifyPassword('longpass1', stored), true);
+  assert.equal(verifyPassword('wrongpass', stored), false);
+  assert.equal(cleanAccountName('RoadHub_Admin'), '');
+  assert.equal(cleanAccountName('ab'), 'ab');
+  assert.equal(cleanAccountName('a'), '');
 });

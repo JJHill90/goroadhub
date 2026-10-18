@@ -1,5 +1,5 @@
 const express = require('express'), { Pool } = require('pg'), crypto = require('crypto'), path = require('path');
-const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth } = require('./auth');
+const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, secureCookie, cleanAccountName, hashPassword, verifyPassword } = require('./auth');
 const { driverPost, driverReply, makeLimiter } = require('./community');
 const app = express(), PORT = process.env.PORT || 3000;
 const auth = createAuth(sessionSecret(), adminPassword(), Date.now, adminUser());
@@ -28,8 +28,16 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
-const isAdmin = mountAuth(app, auth);
-const allowPost = makeLimiter(6, 10 * 60 * 1000), allowReply = makeLimiter(30, 10 * 60 * 1000);
+async function lookupAccount(username, password) {
+  const name = cleanAccountName(username);
+  if (!name || typeof password !== 'string' || !password) return null;
+  const x = await pool.query("select data from docs where coll = 'accounts' and id = $1", [name.toLowerCase()]);
+  const row = x.rows[0] && x.rows[0].data;
+  if (!row || !verifyPassword(password, row.pass)) return null;
+  return { user: row.user || name };
+}
+const isAdmin = mountAuth(app, auth, lookupAccount);
+const allowPost = makeLimiter(6, 10 * 60 * 1000), allowReply = makeLimiter(30, 10 * 60 * 1000), allowJoin = makeLimiter(5, 15 * 60 * 1000);
 app.get('/healthz', (req, res) => res.send('ok'));
 
 const wrap = f => (q, r, n) => f(q, r, n).catch(e => {
@@ -37,6 +45,24 @@ const wrap = f => (q, r, n) => f(q, r, n).catch(e => {
   console.error(e); r.status(500).json({ error: 'Server error' });
 });
 const need = (q, r, n) => isAdmin(q) ? n() : r.status(401).json({ error: 'Admin only' });
+app.post('/api/register', wrap(async (q, r) => {
+  if (!allowJoin(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many attempts' });
+  const username = cleanAccountName(q.body && q.body.username);
+  const password = q.body && typeof q.body.password === 'string' ? q.body.password : '';
+  if (!username) return r.status(400).json({ error: 'Use 2–40 letters or numbers, starting with a letter or number' });
+  if (password.length < 8 || password.length > 72) return r.status(400).json({ error: 'Use a password of at least 8 characters' });
+  const id = username.toLowerCase();
+  const existing = await pool.query("select 1 from docs where coll = 'accounts' and id = $1", [id]);
+  if (existing.rowCount) return r.status(409).json({ error: 'That username is taken' });
+  try {
+    await pool.query('insert into docs(coll, id, data) values($1,$2,$3)', ['accounts', id, { user: username, pass: hashPassword(password), at: Date.now() }]);
+  } catch (e) {
+    if (e && e.code === '23505') return r.status(409).json({ error: 'That username is taken' });
+    throw e;
+  }
+  r.setHeader('Set-Cookie', [auth.cookie('', 0, secureCookie(q)), auth.userCookie(username, 604800, secureCookie(q))]);
+  r.json({ admin: false, role: 'driver', user: username });
+}));
 require('./feeds')(app, pool, need);
 app.post('/api/community/posts', wrap(async (q, r) => {
   if (!allowPost(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many posts' });
@@ -56,6 +82,7 @@ app.post('/api/community/replies', wrap(async (q, r) => {
   r.json({ id });
 }));
 const COLLECTIONS = ['posts', 'ticker', 'feeds', 'episodes', 'comments'];
+const BACKUP = [...COLLECTIONS, 'accounts'];
 const rowData = row => {
   const data = {};
   for (const [k, v] of Object.entries(row)) {
@@ -66,7 +93,7 @@ const rowData = row => {
 };
 app.get('/api/admin/backup', need, wrap(async (q, r) => {
   const collections = {};
-  for (const coll of COLLECTIONS) {
+  for (const coll of BACKUP) {
     const x = await pool.query('select id, data from docs where coll = $1 order by id', [coll]);
     collections[coll] = x.rows.map(o => ({ ...o.data, id: o.id }));
   }
@@ -76,7 +103,7 @@ app.post('/api/admin/restore', need, wrap(async (q, r) => {
   const collections = q.body && q.body.collections;
   if (!collections || typeof collections !== 'object' || Array.isArray(collections)) return r.status(400).json({ error: 'Missing collections' });
   const restored = {};
-  for (const coll of COLLECTIONS) {
+  for (const coll of BACKUP) {
     if (collections[coll] === undefined) continue;
     const rows = collections[coll];
     if (!Array.isArray(rows)) return r.status(400).json({ error: 'Bad collection' });
