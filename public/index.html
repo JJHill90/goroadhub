@@ -20,7 +20,7 @@ nav button{border:0;background:none;color:var(--mut);padding:10px 14px;border-ra
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .site-link{background:var(--navy);text-align:center;padding:8px 12px;border-top:2px solid #fff}
 .site-link a{color:#fff;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
-#tkw{background:var(--navy);color:#fff;overflow:hidden;white-space:nowrap;font-size:13px;display:flex;border-top:2px solid #fff}
+#tkw{display:none}
 #tkw b{background:var(--bl);padding:6px 12px;z-index:2;flex:none}
 #tk{display:inline-block;padding:6px 0;animation:mq 140s linear infinite}#tkw:hover #tk{animation-play-state:paused}
 #tk span{margin:0 28px}#tk i{opacity:.75;font-style:normal;font-weight:700;margin-right:6px}#tk i.rm{background:#fff;color:#E41E3F;opacity:1;font-weight:800;border-radius:10px;padding:1px 9px}
@@ -69,9 +69,12 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .area-row h3{margin:0}
 .area-pick{display:flex;flex-direction:column;gap:4px;min-width:min(100%,280px);font-size:13px;font-weight:700;color:var(--mut)}
 .area-pick select{min-height:44px;width:100%}
-.page-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;margin-top:10px}
+.fb-home{max-width:840px;margin:0 auto 16px}
+.fb-home h3{text-align:center}
+.page-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px auto 0}
 .page-link{display:flex;align-items:center;min-height:44px;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA;font-weight:700;font-size:14px;line-height:1.25;text-decoration:none}
 .fb-mark{width:18px;height:18px;flex:none;margin-right:8px;background:#fff;border-radius:4px}
+@media(max-width:900px){.page-cols{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.page-cols{grid-template-columns:1fr 1fr;gap:6px}.page-link{min-height:44px;padding:8px;font-size:13px}}
 .src-row{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px 4px}
 .src-logo{width:32px;height:32px;border-radius:8px;background:#fff;border:1px solid var(--bd);display:grid;place-items:center;overflow:hidden}
