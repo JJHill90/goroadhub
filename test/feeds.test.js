@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseFeed, fetchFeed, assertPublicUrl, changedPatch, POST_KEYS } = require('../feeds');
+const { parseFeed, fetchFeed, assertPublicUrl, changedPatch, POST_KEYS, podcastEpisodes } = require('../feeds');
 
 const RSS = `<?xml version="1.0"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
@@ -56,6 +56,15 @@ test('RSS 2.0 keeps CDATA text, guid, image and date', () => {
   assert.equal(story.chImg, 'https://cdn.example/show.jpg');
   assert.match(story.x, /Full story/);
   assert.equal(story.at, Date.parse('Mon, 01 Jan 2024 00:00:00 GMT'));
+});
+
+test('podcast episodes keep the playable stream and show name', () => {
+  const eps = podcastEpisodes(parseFeed(RSS), 'On the Road Podcast');
+  assert.equal(eps.length, 1);
+  assert.equal(eps[0].h, 'Episode one');
+  assert.equal(eps[0].audio, 'https://cdn.example/ep.mp3');
+  assert.equal(eps[0].dur, '1:02:03');
+  assert.equal(eps[0].show, 'On the Road Podcast');
 });
 
 test('podcast enclosure and itunes duration are kept', () => {

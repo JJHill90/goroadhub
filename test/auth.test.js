@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
-const { createAuth, mountAuth, sessionSecret, adminPassword, hashPassword, verifyPassword, cleanAccountName } = require('../auth');
+const { createAuth, mountAuth, mountAdminEntry, sessionSecret, adminPassword, hashPassword, verifyPassword, cleanAccountName } = require('../auth');
 
 async function withServer(password, fn) {
   const app = express();
@@ -122,6 +122,33 @@ test('a driver account signs in without oversight access', async () => {
     const me = await fetch(base + '/api/me', { headers: { cookie: user.split(';')[0] } });
     assert.deepEqual(await me.json(), { admin: false, role: 'driver', user: 'sam.jones' });
     assert.equal(auth.isAdmin({ headers: { cookie: user.split(';')[0] } }), false);
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+  }
+});
+
+test('the secret address sets the admin cookie and a wrong address stays hidden', async () => {
+  const app = express();
+  const auth = createAuth('test-secret', 's3cret');
+  mountAuth(app, auth);
+  mountAdminEntry(app, auth, 'correct-entry-token');
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  try {
+    const missing = await fetch(base + '/oversight/nope', { redirect: 'manual' });
+    assert.equal(missing.status, 404);
+    const ok = await fetch(base + '/oversight/correct-entry-token', { redirect: 'manual' });
+    assert.equal(ok.status, 302);
+    assert.equal(ok.headers.get('location'), '/?open=adm');
+    const set = ok.headers.get('set-cookie') || '';
+    assert.match(set, /rh_admin=/);
+    assert.match(set, /HttpOnly/i);
+    const me = await fetch(base + '/api/me', { headers: { cookie: set.split(';')[0] } });
+    assert.equal((await me.json()).admin, true);
+    for (let i = 0; i < 8; i++) assert.equal((await fetch(base + '/oversight/wrong-token', { redirect: 'manual' })).status, 404);
+    const locked = await fetch(base + '/oversight/correct-entry-token', { redirect: 'manual' });
+    assert.equal(locked.status, 404);
   } finally {
     await new Promise(resolve => server.close(resolve));
   }

@@ -134,6 +134,27 @@ function parseFeed(xml) {
 
 async function pull(f) { return parseFeed(await fetchFeed(f.url)); }
 
+const PODCAST = {
+  id: 'otr-podcast',
+  name: 'On the Road Podcast',
+  url: 'https://feeds.soundcloud.com/users/soundcloud:users:877172068/sounds.rss',
+  home: 'https://soundcloud.com/user-915018744-314651726'
+};
+let podcastCache = { at: 0, show: PODCAST.name, home: PODCAST.home, episodes: [] };
+
+function podcastEpisodes(items, name = PODCAST.name) {
+  return items.filter(it => it.audio).map(it => ({
+    h: it.h, x: it.x, audio: it.audio, img: it.img || it.chImg, at: it.at, dur: it.dur, url: it.link, show: name
+  }));
+}
+
+async function podcastNow(now = Date.now) {
+  if (podcastCache.episodes.length && now - podcastCache.at < 10 * 60 * 1000) return podcastCache;
+  const episodes = podcastEpisodes(await pull({ url: PODCAST.url }));
+  podcastCache = { at: now, show: PODCAST.name, home: PODCAST.home, episodes };
+  return podcastCache;
+}
+
 const POST_KEYS = ['h', 'x', 'url', 'img', 'at', 'a', 'srcName', 'logo'];
 const EPISODE_KEYS = ['h', 'x', 'audio', 'img', 'at', 'dur', 'url', 'show'];
 const TRAFFIC_KEYS = ['h', 'x', 'url', 'at', 'a', 'srcName', 'logo'];
@@ -151,6 +172,14 @@ async function ensureOutlets(pool) {
       ['outlet-' + o.id, data]
     );
   }
+  await pool.query(
+    `insert into docs(coll, id, data) values('feeds', $1, $2)
+     on conflict (coll, id) do update set data = docs.data || excluded.data`,
+    ['outlet-' + PODCAST.id, {
+      url: PODCAST.url, name: PODCAST.name, src: 'podcast', topic: 'Industry News', g: -1,
+      home: PODCAST.home, builtin: true, kind: 'podcast', filter: false
+    }]
+  );
 }
 
 function changedPatch(old, data, keys) {
@@ -220,11 +249,14 @@ function install(app, pool, need) {
     } finally { busy = false; }
     return out;
   }
+  app.get('/api/podcast', (q, r) => podcastNow().then(x => r.json(x)).catch(e => r.status(502).json({ error: e.message })));
   app.post('/api/refresh', need, (q, r) => refresh().then(x => r.json(x)).catch(e => r.status(500).json({ error: e.message })));
   setTimeout(() => refresh().catch(console.error), 15000);
   setInterval(() => refresh().catch(console.error), 30 * 60 * 1000);
 }
 
+install.podcastEpisodes = podcastEpisodes;
+install.PODCAST = PODCAST;
 install.parseFeed = parseFeed;
 install.changedPatch = changedPatch;
 install.POST_KEYS = POST_KEYS;

@@ -1,5 +1,5 @@
 const express = require('express'), { Pool } = require('pg'), crypto = require('crypto'), path = require('path');
-const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, secureCookie, cleanAccountName, hashPassword, verifyPassword } = require('./auth');
+const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, mountAdminEntry, secureCookie, cleanAccountName, hashPassword, verifyPassword } = require('./auth');
 const { driverPost, driverReply, makeLimiter } = require('./community');
 const { advocatePages } = require('./advocate');
 const app = express(), PORT = process.env.PORT || 3000;
@@ -38,6 +38,7 @@ async function lookupAccount(username, password) {
   return { user: row.user || name };
 }
 const isAdmin = mountAuth(app, auth, lookupAccount);
+mountAdminEntry(app, auth, process.env.ADMIN_ENTRY);
 const allowPost = makeLimiter(6, 10 * 60 * 1000), allowReply = makeLimiter(30, 10 * 60 * 1000), allowJoin = makeLimiter(5, 15 * 60 * 1000);
 app.get('/healthz', (req, res) => res.send('ok'));
 

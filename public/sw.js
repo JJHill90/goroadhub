@@ -1,6 +1,6 @@
 importScripts('/quarter.js');
 
-const CACHE = 'goroadhub-shell-4';
+const CACHE = 'goroadhub-shell-6';
 const SHELL = ['/index.html', '/app.js', '/areas.js', '/quarter.js', '/manifest.webmanifest', '/icon.svg', '/brand/trucking-news.png'];
 
 self.addEventListener('install', event => {
@@ -13,7 +13,7 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin || event.request.method !== 'GET' || url.pathname.startsWith('/api/')) return;
+  if (url.origin !== self.location.origin || event.request.method !== 'GET' || url.pathname.startsWith('/api/') || url.pathname.startsWith('/oversight/')) return;
   if (event.request.mode === 'navigate') {
     event.respondWith((async () => {
       try {

@@ -154,4 +154,26 @@ function verifyPassword(password, stored) {
   return got.length === exp.length && crypto.timingSafeEqual(got, exp);
 }
 
-module.exports = { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, secureCookie, OVERSIGHT_USER, cleanAccountName, hashPassword, verifyPassword };
+function sameSecret(given, expected) {
+  const a = crypto.createHash('sha256').update(String(given ?? ''), 'utf8').digest();
+  const b = crypto.createHash('sha256').update(String(expected ?? ''), 'utf8').digest();
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+function mountAdminEntry(app, auth, entry) {
+  app.get('/oversight/:token', (req, res) => {
+    const ip = req.ip || 'unknown';
+    const expected = String(entry || '').trim();
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Cache-Control', 'no-store');
+    if (expected.length < 16 || auth.rateLimited(ip) || !sameSecret(req.params.token, expected)) {
+      if (expected.length >= 16 && !auth.rateLimited(ip)) auth.markFail(ip);
+      return res.status(404).type('text/plain').send('Not found');
+    }
+    auth.clearFail(ip);
+    res.setHeader('Set-Cookie', auth.cookie(auth.token(), 604800, secureCookie(req)));
+    res.redirect(302, '/?open=adm');
+  });
+}
+
+module.exports = { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, mountAdminEntry, secureCookie, OVERSIGHT_USER, cleanAccountName, hashPassword, verifyPassword };
