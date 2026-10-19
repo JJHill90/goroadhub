@@ -20,7 +20,7 @@ nav button{border:0;background:none;color:var(--mut);padding:10px 14px;border-ra
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .site-link{background:var(--navy);text-align:center;padding:8px 12px;border-top:2px solid #fff}
 .site-link a{color:#fff;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
-#tkw{display:none}
+#tkw{background:var(--navy);color:#fff;overflow:hidden;white-space:nowrap;font-size:13px;display:flex;border-top:2px solid #fff}
 #tkw b{background:var(--bl);padding:6px 12px;z-index:2;flex:none}
 #tk{display:inline-block;padding:6px 0;animation:mq 140s linear infinite}#tkw:hover #tk{animation-play-state:paused}
 #tk span{margin:0 28px}#tk i{opacity:.75;font-style:normal;font-weight:700;margin-right:6px}#tk i.rm{background:#fff;color:#E41E3F;opacity:1;font-weight:800;border-radius:10px;padding:1px 9px}
@@ -148,7 +148,7 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #
 </form>
 </div>
 </section>
-<header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Driver's <b>Advocate</b></span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><input id="q" placeholder="Search news…" oninput="V.q=this.value;if(V.view=='mag')drawMag()"><nav id="nav"></nav></header>
+<header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Driver's <b>Advocate</b></span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><input id="q" placeholder="Search news…" oninput="V.q=this.value;if(V.view=='mag'){drawMag();drawTk()}"><nav id="nav"></nav></header>
 <div class="site-link"><a href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">The Driver's Advocate website</a></div>
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
