@@ -33,7 +33,7 @@ function driverPost(body) {
   const now = Date.now();
   return {
     g, a: cleanName(body.a), t: topic, x: cleanText(body.x, 2000),
-    url: '', src: 'hub', srcName: "The Driver's Advocate", l: 0, c: 0, pin: false,
+    url: '', src: 'hub', srcName: "The Drivers Advocate App", l: 0, c: 0, pin: false,
     at: now, ord: now, driver: true
   };
 }

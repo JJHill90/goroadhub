@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>The Driver's Advocate</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>The Drivers Advocate App</title>
 <link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#001D3D">
 <style>
 @font-face{font-family:"Figtree";font-style:normal;font-weight:400 700;font-display:swap;src:url("/fonts/figtree-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -6,7 +6,7 @@
 :root{--bg:#001428;--card:#001D3D;--tx:#F7F8FA;--mut:#B7C4D4;--bl:#C80813;--link:#FFD6D3;--bl2:#3A1218;--bd:#1E3A5C;--hov:#0A2C52;--navy:#001D3D;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{min-height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:#001428}
 body{margin:0;min-height:100vh;background:transparent;color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;position:relative;z-index:0}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:#001428 url("/brand/trucking-news.png") center / cover no-repeat}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:#001428 url("/brand/trucking-news.jpg") center / cover no-repeat}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(0,29,61,.9);border-bottom:3px solid var(--bl);display:flex;align-items:center;gap:10px;padding:6px 12px;flex-wrap:wrap}
 .logo{width:40px;height:40px;border-radius:10px;display:block;background:var(--navy)}
 .brand-lockup{display:flex;flex-direction:column;gap:1px}
@@ -89,7 +89,7 @@ body:not(.in){overflow:hidden}
 body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
 #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:flex-start;padding-left:clamp(48px,5vw,72px);overflow:hidden;background:#001D3D;color:#fff;isolation:isolate;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 #gate[hidden]{display:none}
-.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/trucking-news.png") right center / cover no-repeat}
+.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/trucking-news.jpg") right center / cover no-repeat}
 .gate-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#001D3D 0%,#001D3D 36%,rgba(0,29,61,.92) 48%,rgba(0,29,61,.45) 68%,rgba(0,29,61,.2) 100%)}
 .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .gate-stack{position:relative;z-index:3;width:min(440px,calc(100vw - 48px));animation:gate-in .7s ease both}
@@ -116,8 +116,8 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #
 #he,#je{min-height:1.1em;margin:0;color:#FFD6D3;font-size:13px}
 @media(max-width:720px){#gate{overflow:auto;align-items:flex-start;justify-content:flex-start;padding:28px 20px 40px}.gate-stack{width:100%}.gate-scrim{background:linear-gradient(180deg,rgba(0,29,61,.45) 0%,#001D3D 42%,#001D3D 100%)}}
 </style></head><body class="in">
-<header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Driver's <b>Advocate</b></span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><input id="q" placeholder="Search news…" oninput="V.q=this.value;if(V.view=='mag'){drawMag();drawTk()}"><nav id="nav"></nav></header>
-<div class="site-link"><a href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">The Driver's Advocate website</a></div>
+<header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Drivers <b>Advocate</b> App</span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><nav id="nav"></nav></header>
+<div class="site-link"><a href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">The Drivers Advocate App website</a></div>
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
 <div id="pl"></div>

@@ -1,6 +1,6 @@
 {
-  "name": "The Driver's Advocate",
-  "short_name": "Advocate",
+  "name": "The Drivers Advocate App",
+  "short_name": "Advocate App",
   "description": "Daily driving news, and a place that promotes truck driving in Australia and New Zealand.",
   "start_url": "/",
   "display": "standalone",
