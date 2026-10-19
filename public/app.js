@@ -45,7 +45,8 @@ async function pub(){const gs=chosen().slice(0,3),x=$('#px').value.trim(),t=$('#
 try{for(const g of gs)await api('POST','/api/community/posts',{a,x,t,g});$('#px').value='';await load();go('feed')}catch(e){$('#pr').innerHTML='<div class="note">'+(e.code==429?'Slow down a moment and try again.':esc(e.error||'Could not post. Check your connection.'))+'</div>'}}
 async function sendReply(id){const el=document.getElementById('ry-'+id),x=el?el.value.trim():'',a=(S.me||'').trim();if(a.length<2||!x)return;try{await api('POST','/api/community/replies',{postId:id,a,x});await load();if(V.view=='feed')drawList();if(document.getElementById('rd')){document.getElementById('rd').remove();rd(id)}}catch(e){if(el)el.placeholder=e.code==429?'Slow down a moment':'Could not reply'}}
 // ticker
-function drawTk(){const news=curatedNews().rows;const rows=news.map(p=>{const si=sinfo(p);return['NEWS',hl(p),si.s,si.n,si.logo]});const custom=TK&&TK.length?TK.map(t=>[t.kind||'NEWS',t.text,t.src||'news',t.srcName||'',t.logo||logoFor(t.srcName)]):[];const L=custom.concat(rows);$('#tk').innerHTML=[...L,...L].map(n=>`<span>${ico(n[2]||'news',n[3],n[4])}<i>${esc(n[0])}</i>${esc(n[1])}</span>`).join('');if(V.view=='adm')drawAdmin()}
+function drawTk(){const el=$('#tk');if(!el){if(V.view=='adm')drawAdmin();return}const news=curatedNews().rows;const rows=news.map(p=>{const si=sinfo(p);return['NEWS',hl(p),si.s,si.n,si.logo]});const custom=TK&&TK.length?TK.map(t=>[t.kind||'NEWS',t.text,t.src||'news',t.srcName||'',t.logo||logoFor(t.srcName)]):[];const L=custom.concat(rows);el.innerHTML=[...L,...L].map(n=>`<span>${ico(n[2]||'news',n[3],n[4])}<i>${esc(n[0])}</i>${esc(n[1])}</span>`).join('');if(V.view=='adm')drawAdmin()}
+function startBackdrop(){const slides=[...document.querySelectorAll('.bg span')];if(slides.length<2||startBackdrop.started)return;startBackdrop.started=true;let i=slides.findIndex(el=>el.classList.contains('on'));if(i<0)i=0;const show=()=>{slides.forEach((el,n)=>el.classList.toggle('on',n===i))};show();if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;setInterval(()=>{i=(i+1)%slides.length;show()},7000)}
 // roaming widget
 let wi=0,wo=true,wl=[];
 function wgTick(){if(!wo)return;wl=storyPool().sort((a,b)=>a.m-b.m).slice(0,10);if(!wl.length)return;const p=wl[wi++%wl.length],b=$('#wgb');b.style.opacity=0;setTimeout(()=>{const si=sinfo(p);b.dataset.g=(p.g>=0&&si.s!='news'&&si.s!='web'&&si.s!='traffic')?p.g:'news';b.innerHTML=`${ico(si.s,si.n,si.logo)}<b>${esc(si.n)}</b><br><span class="mut">${esc(p.a)} · ${ago(p.m)}</span><br>${esc(p.x)}`;b.style.opacity=1},250)}
@@ -200,7 +201,7 @@ async function loadOutlets(){try{const r=await fetch('/outlets.json');if(!r.ok)r
 (async()=>{try{const me=await api('GET','/api/me');ADMIN=!!me.admin;if(me.user&&!me.admin){S.me=me.user;sv()}}catch(e){}document.body.classList.add('in');const params=new URLSearchParams(location.search);const openAdm=params.get('open')==='adm';if(openAdm){try{history.replaceState(null,'','/')}catch(e){}}nav();loadAdvocate();loadOutlets();if(ADMIN&&openAdm)go('adm');else if(V.view==='login')go('mag');await load();setInterval(load,30000)})();
 document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const o=$('#rd')||$('#rp');if(o)o.remove()});
 restoreSnap();
-render();drawTk();
+render();drawTk();startBackdrop();
 if(!document.body.classList.contains('in')&&$('#hu'))$('#hu').focus();
 window.addEventListener('online',()=>load());
 window.addEventListener('offline',()=>{OFFLINE=true;refresh();drawTk()});

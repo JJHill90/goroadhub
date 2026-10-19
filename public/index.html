@@ -6,7 +6,18 @@
 :root{--bg:#001428;--card:#001D3D;--tx:#F7F8FA;--mut:#B7C4D4;--bl:#C80813;--link:#FFD6D3;--bl2:#3A1218;--bd:#1E3A5C;--hov:#0A2C52;--navy:#001D3D;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html{min-height:100%;scroll-padding-top:env(safe-area-inset-top,0px);background:#001428}
 body{margin:0;min-height:100vh;background:transparent;color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;position:relative;z-index:0}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:#001428 url("/brand/trucking-news.jpg") center / cover no-repeat}
+.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:#001428;overflow:hidden}
+.bg span{position:absolute;inset:0;background:#001428 center/cover no-repeat;opacity:0;transform:scale(1);transition:opacity 1.6s ease}
+.bg span.on{opacity:1;animation:bgdrift 8.6s ease-out forwards}
+.bg span:nth-child(1){background-image:url("/brand/work/highway.jpg")}
+.bg span:nth-child(2){background-image:url("/brand/work/outback.jpg")}
+.bg span:nth-child(3){background-image:url("/brand/work/construction.jpg")}
+.bg span:nth-child(4){background-image:url("/brand/work/port.jpg")}
+.bg span:nth-child(5){background-image:url("/brand/work/farm.jpg")}
+.bg span:nth-child(6){background-image:url("/brand/work/forest.jpg")}
+.bg span:nth-child(7){background-image:url("/brand/work/night.jpg")}
+.bg span:nth-child(8){background-image:url("/brand/work/depot.jpg")}
+@keyframes bgdrift{from{transform:scale(1)}to{transform:scale(1.06)}}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(0,29,61,.9);border-bottom:3px solid var(--bl);display:flex;align-items:center;gap:10px;padding:6px 12px;flex-wrap:wrap}
 .logo{width:40px;height:40px;border-radius:10px;display:block;background:var(--navy)}
 .brand-lockup{display:flex;flex-direction:column;gap:1px}
@@ -21,12 +32,7 @@ nav button{border:0;background:none;color:var(--mut);padding:10px 14px;border-ra
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .site-link{background:rgba(0,29,61,.9);text-align:center;padding:8px 12px;border-top:2px solid #fff}
 .site-link a{color:#fff;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
-#tkw{background:rgba(0,29,61,.9);color:#fff;overflow:hidden;white-space:nowrap;font-size:13px;display:flex;border-top:2px solid #fff}
-#tkw b{background:var(--bl);padding:6px 12px;z-index:2;flex:none}
-#tk{display:inline-block;padding:6px 0;animation:mq 140s linear infinite}#tkw:hover #tk{animation-play-state:paused}
-#tk span{margin:0 28px}#tk i{opacity:.75;font-style:normal;font-weight:700;margin-right:6px}#tk i.rm{background:#fff;color:#E41E3F;opacity:1;font-weight:800;border-radius:10px;padding:1px 9px}
-@keyframes mq{to{transform:translateX(-50%)}}
-@media (prefers-reduced-motion: reduce){#tk,.dot,.gate-stack{animation:none}}
+@media (prefers-reduced-motion: reduce){.dot,.gate-stack,.bg span{animation:none;transition:none}.bg span.on{transform:none}}
 main{max-width:1060px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 @media(min-width:900px){main.two{grid-template-columns:minmax(0,1fr) 290px}}
 .card{background:rgba(0,29,61,.86);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.15);padding:12px 14px;margin-bottom:12px}
@@ -54,7 +60,7 @@ select,textarea,input.f{background:var(--bg);color:var(--tx);border:1px solid va
 #wg h4{margin:0;background:var(--bl);color:#fff;padding:7px 12px;font-size:13px;display:flex;justify-content:space-between;cursor:pointer}
 #wgb{padding:10px 12px;cursor:pointer;font-size:13px;transition:opacity .3s}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#C80813;margin-right:6px;animation:pl 1.4s infinite}@keyframes pl{50%{opacity:.3}}
-.ico{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font:700 9px/1 system-ui,sans-serif;vertical-align:middle;margin-right:5px;flex:none;position:relative}.ico.fb{font:700 14px/1 Georgia,serif}.ico.main{font-size:8px}#tk .ico{border:1.5px solid #fff;margin-right:6px}.ico.logo{background:#fff;color:#111;overflow:hidden}.ico.logo img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain}
+.ico{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font:700 9px/1 system-ui,sans-serif;vertical-align:middle;margin-right:5px;flex:none;position:relative}.ico.fb{font:700 14px/1 Georgia,serif}.ico.main{font-size:8px}.ico.logo{background:#fff;color:#111;overflow:hidden}.ico.logo img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain}
 .mag{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));grid-auto-flow:dense;gap:12px}.tile{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.2);display:flex;flex-direction:column;text-align:left;border:0;font:inherit;color:inherit;padding:0;width:100%}.tile.big{grid-column:span 2;grid-row:span 2}.tile .ph{position:relative;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden}.tile.big .ph{aspect-ratio:auto;flex:1;min-height:220px}.tile .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.pi{color:#fff;font:800 34px system-ui;opacity:.85}.tb{padding:10px 12px 12px}.ht{font-weight:700;font-size:16px;line-height:1.25;margin-top:4px}.tile.big .ht{font-size:22px}@media(max-width:560px){.tile.big{grid-column:span 1;grid-row:span 1}}
 #pl{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;gap:6px;align-items:center;background:var(--card);border-top:1px solid var(--bd);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))}#pl .pt{flex:1;min-width:0}#pl .pt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#pl input{width:100%}#pl button{border:0;background:var(--bg);color:var(--tx);border-radius:10px;min-width:54px;height:54px;font-size:15px;font-weight:700;cursor:pointer}#pl button.pp{background:var(--bl);color:#fff;min-width:64px;font-size:22px}nav{overflow-x:auto;max-width:100%}
 .note{background:var(--bl2);border-left:4px solid var(--bl);padding:10px 12px;border-radius:4px;font-size:13.5px;margin:8px 0}
@@ -86,10 +92,10 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .traffic-row a{color:var(--link);font-weight:700;text-decoration:none}
 .offbar{background:#E41E3F;color:#fff;border-radius:8px;padding:10px 12px;font-weight:700;margin-bottom:12px}
 body:not(.in){overflow:hidden}
-body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
+body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
 #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:flex-start;padding-left:clamp(48px,5vw,72px);overflow:hidden;background:#001D3D;color:#fff;isolation:isolate;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 #gate[hidden]{display:none}
-.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/trucking-news.jpg") right center / cover no-repeat}
+.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/work/highway.jpg") center / cover no-repeat}
 .gate-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#001D3D 0%,#001D3D 36%,rgba(0,29,61,.92) 48%,rgba(0,29,61,.45) 68%,rgba(0,29,61,.2) 100%)}
 .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .gate-stack{position:relative;z-index:3;width:min(440px,calc(100vw - 48px));animation:gate-in .7s ease both}
@@ -116,9 +122,9 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #tkw,body:not(.in) #
 #he,#je{min-height:1.1em;margin:0;color:#FFD6D3;font-size:13px}
 @media(max-width:720px){#gate{overflow:auto;align-items:flex-start;justify-content:flex-start;padding:28px 20px 40px}.gate-stack{width:100%}.gate-scrim{background:linear-gradient(180deg,rgba(0,29,61,.45) 0%,#001D3D 42%,#001D3D 100%)}}
 </style></head><body class="in">
+<div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><div class="brand-top"><img class="logo" src="/icon.svg" alt=""><span class="brand">The Drivers <b>Advocate</b> App</span></div><p class="brand-blurb">Created for Driver's by Driver's</p></div><nav id="nav"></nav></header>
 <div class="site-link"><a href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">The Drivers Advocate App website</a></div>
-<div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
 <div id="pl"></div>
 <script src="/areas.js"></script><script src="/quarter.js"></script><script src="/app.js"></script></body></html>
