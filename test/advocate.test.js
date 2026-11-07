@@ -25,40 +25,58 @@ test('the Advocate homepage cards become home widgets', () => {
   assert.equal(pages[1].site, 'https://tdaau.com/groups/trucking-news/');
 });
 
-test('newsletter groups follow 28-day views, with the partner group second', () => {
+test('newsletter groups follow the set Facebook list, with the partner group second', () => {
   const pages = require('../public/advocate.json');
-  assert.deepEqual(pages.map(page => page.name), [
-    'The Drivers Advocate',
-    'Truck Drivers Food and Showers',
-    'Trucking News',
-    'Promoting Australian Transport',
-    'Health & Welfare',
-    'Loading & Load Restraint',
-    'Legal Matters',
-    'Share The Road Bro',
-    'Employment',
-    'Truck Shows & Events',
-    'Compliance & Induction',
-    'Taxation, Income & Expenditure',
-    'Not Well or Passed On',
-    'On The Road Dash Cam',
-    'Winners, Losers & The Good Ones',
-    'Employ A Worker',
-    'Work Diaries & EWD'
+  assert.deepEqual(pages.map(page => [page.name, page.facebook]), [
+    ['The Drivers Advocate', 'https://www.facebook.com/groups/thedriversadvocate'],
+    ['Truck Drivers Food and Showers Australia', 'https://www.facebook.com/groups/217669642677604/'],
+    ['Compliance & Induction', 'https://www.facebook.com/groups/1792433288617560'],
+    ['Work Diaries and EWDs', 'https://www.facebook.com/groups/977148505415763'],
+    ['Taxation, Income & Expenditure', 'https://www.facebook.com/groups/tdataxationincomeandexpenditure/'],
+    ['Legal Matters', 'https://www.facebook.com/groups/thedriversadvocatelegalmatters/'],
+    ['Promoting Australian Transport', 'https://www.facebook.com/groups/thedriversadvocatepromotingaustraliantransport/'],
+    ['Employment', 'https://www.facebook.com/groups/thedriversadvocateemployment/'],
+    ['Dash Cam', 'https://www.facebook.com/groups/ontheroaddashcam/'],
+    ['Truck Shows, Events and Reunions', 'https://www.facebook.com/groups/thedriversadvocatetruckshows/'],
+    ['Health and Welfare', 'https://www.facebook.com/groups/healthandwelfare/'],
+    ['Trucking News', 'https://www.facebook.com/groups/thedriversadvocatetruckingnews/'],
+    ['Winners, Losers and The Good Ones', 'https://www.facebook.com/groups/winnerslosersandgoodones/'],
+    ['Loading and Load Restraint', 'https://www.facebook.com/groups/loadingandloadrestraints/'],
+    ['Models And RC Kit', 'https://www.facebook.com/groups/thedriversadvocatemodelsandrckit/'],
+    ['Ava Laugh Mate', 'https://www.facebook.com/groups/avalaughmate/'],
+    ['Knowledge Bank', 'https://www.facebook.com/groups/thedriversadvocateknowledgebank/'],
+    ['Repairs and Maintenance', 'https://www.facebook.com/groups/1568023681742778/'],
+    ['Share The Road Bro', 'https://www.facebook.com/groups/broletssharetheroad/'],
+    ['Technology Hub', 'https://www.facebook.com/groups/2346522435751912/'],
+    ['Employ A Worker', 'https://www.facebook.com/groups/thedriversadvocateemployadriver/'],
+    ['Trip Planner', 'https://www.facebook.com/groups/thedriversadvocatetripplanner/'],
+    ['Not Well or Passed On', 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/']
   ]);
-  assert.equal(pages[1].facebook, 'https://www.facebook.com/groups/217669642677604/');
-  assert.equal(pages[1].name.includes('Australia'), false);
   const ordered = orderAdvocatePages(parseAdvocateHome(htmlSample()));
   assert.equal(ordered[0].name, 'The Drivers Advocate');
-  assert.equal(ordered[1].name, 'Truck Drivers Food and Showers');
-  assert.equal(ordered[ordered.length - 1].name, 'Work Diaries & EWD');
+  assert.equal(ordered[0].facebook, 'https://www.facebook.com/groups/thedriversadvocate');
+  assert.equal(ordered[1].name, 'Truck Drivers Food and Showers Australia');
+  assert.equal(ordered[1].facebook, 'https://www.facebook.com/groups/217669642677604/');
+  assert.equal(ordered[ordered.length - 1].name, 'Not Well or Passed On');
+  assert.equal(ordered[ordered.length - 1].facebook, 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/');
   assert.equal(ordered.length, pages.length);
   assert.deepEqual(ordered.map(page => facebookKey(page.facebook)), pages.map(page => facebookKey(page.facebook)));
   const news = ordered.find(page => page.name === 'Trucking News');
-  assert.equal(news.facebook, 'https://www.facebook.com/groups/thedriversadvocateturckingnews/');
+  assert.equal(news.facebook, 'https://www.facebook.com/groups/thedriversadvocatetruckingnews/');
   assert.equal(news.site, 'https://tdaau.com/groups/trucking-news/');
   assert.equal(ordered.filter(page => page.name === 'Share The Road Bro').length, 1);
   assert.equal(ordered.find(page => page.name === 'Share The Road Bro').facebook, 'https://www.facebook.com/groups/broletssharetheroad/');
+  const fromOld = orderAdvocatePages(parseAdvocateHome(`
+    <a class="cell cell--group" href="https://www.facebook.com/groups/969273342879706">
+      <span class="cell__kicker">Our people</span>
+      <h3 class="cell__name">Not Well or Passed On</h3>
+      <p class="cell__blurb">Drivers doing it tough.</p>
+    </a>`));
+  assert.equal(fromOld.length, pages.length);
+  assert.equal(fromOld.filter(page => page.name === 'Not Well or Passed On').length, 1);
+  const passed = fromOld.find(page => page.name === 'Not Well or Passed On');
+  assert.equal(passed.facebook, 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/');
+  assert.equal(passed.site, 'https://tdaau.com/groups/not-well-or-passed/');
 });
 
 test('the newsletter sort uses the same group order as advocate.json', () => {
@@ -68,8 +86,10 @@ test('the newsletter sort uses the same group order as advocate.json', () => {
   assert.ok(block);
   const keys = [...block[1].matchAll(/'([^']+)'/g)].map(match => match[1]);
   assert.deepEqual(keys, pages.map(page => facebookKey(page.facebook)));
-  assert.match(app, /Truck Drivers Food and Showers/);
-  assert.doesNotMatch(app, /Truck Drivers Food and Showers Australia/);
+  assert.match(app, /Truck Drivers Food and Showers Australia/);
+  assert.doesNotMatch(app, /name:"Truck Drivers Food and Showers"/);
+  assert.match(app, /https:\/\/www\.facebook\.com\/groups\/thedriversadvocate'/);
+  assert.match(app, /https:\/\/www\.facebook\.com\/groups\/thedriversadvocatenotwellpassed\//);
 });
 
 function htmlSample() {

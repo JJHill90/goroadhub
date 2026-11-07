@@ -1,15 +1,20 @@
 const { fetchFeed } = require('./feeds');
 const fallback = require('./public/advocate.json');
 
-// Older numeric group ids on tdaau.com, kept so a live homepage card still maps to one Facebook link.
+// Older group ids on tdaau.com, kept so a live homepage card still maps to one Facebook link.
 const ALIASES = {
-  '1063426956322044': 'thedriversadvocateturckingnews',
+  '1063426956322044': 'thedriversadvocatetruckingnews',
+  'thedriversadvocateturckingnews': 'thedriversadvocatetruckingnews',
   '1793368841975193': 'thedriversadvocatepromotingaustraliantransport',
   '1599997731918811': 'healthandwelfare',
   '1036518402724413': 'thedriversadvocatelegalmatters',
   '1064792576427449': 'thedriversadvocatetruckshows',
   '2173765266827526': 'thedriversadvocateemployment',
-  '1615671469942614': 'tdataxationincomeandexpenditure'
+  '1615671469942614': 'tdataxationincomeandexpenditure',
+  '1109200424783750': 'loadingandloadrestraints',
+  '28261322453539247': 'winnerslosersandgoodones',
+  '1625137029323808': 'thedriversadvocateemployadriver',
+  '969273342879706': 'thedriversadvocatenotwellpassed'
 };
 
 function canonicalKey(url) {
@@ -65,8 +70,8 @@ function parseAdvocateHome(html) {
 
 let cache = { at: 0, pages: null };
 
-// public/advocate.json order is the Newsletter order: 28-day views, then members.
-// Truck Drivers Food and Showers stays second. Work Diaries & EWD stays last.
+// public/advocate.json order is the Newsletter order.
+// The Drivers Advocate stays first. Truck Drivers Food and Showers Australia stays second.
 function withPreferredLink(page) {
   const key = canonicalKey(page && page.facebook);
   const preferred = PREFERRED.get(key);
