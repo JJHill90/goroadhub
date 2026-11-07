@@ -71,7 +71,7 @@ test('photo credits name the author, licence, and source for each Commons truck 
   assert.match(index, /The Drivers <b>Advocate<\/b> App/);
   assert.match(index, /Created for Driver's by Driver's/);
   assert.match(index, /src="\/icon\.svg"/);
-  assert.match(index, /\/brand\/work\/dock\.jpg\?v=2/);
+  assert.equal(index.includes('/brand/work/dock.jpg'), false);
   assert.match(index, /\/brand\/work\/quarry\.jpg\?v=2/);
   const mainEnd = index.indexOf('</main>');
   const foot = index.slice(mainEnd);

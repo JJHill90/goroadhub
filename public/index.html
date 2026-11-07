@@ -18,7 +18,7 @@ body{margin:0;min-height:100vh;background:transparent;color:var(--tx);font:15px/
 .bg span:nth-child(2){background-image:url("/brand/work/show.jpg?v=3")}
 .bg span:nth-child(3){background-image:url("/brand/work/yard.jpg?v=3")}
 .bg span:nth-child(4){background-image:url("/brand/work/highway.jpg?v=3")}
-.bg span:nth-child(5){background-image:url("/brand/work/dock.jpg?v=2")}
+.bg span:nth-child(5){background-image:url("/brand/work/yard.jpg?v=3")}
 .bg span:nth-child(6){background-image:url("/brand/work/outback.jpg?v=3")}
 .bg span:nth-child(7){background-image:url("/brand/work/quarry.jpg?v=2")}
 .bg span:nth-child(8){background-image:url("/brand/work/night.jpg?v=3")}
@@ -95,6 +95,8 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .page-card{display:flex;flex-direction:column;height:100%;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA}
 .page-name{display:flex;align-items:flex-start;gap:8px;min-width:0;font-weight:700;font-size:14px;line-height:1.25}
 .fb-open{margin-top:auto;box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:100%;height:44px;min-height:44px;padding:0 8px;border-radius:8px;background:var(--bl);color:#fff;font-size:13px;font-weight:700;line-height:1.2;text-align:center;text-decoration:none}
+.page-card .fb-open{background:#1877F2;color:#fff}
+.page-card .fb-open:hover{background:#166FE5;color:#fff}
 .adv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;align-items:stretch;margin-top:12px}
 .adv{display:flex;flex-direction:column;height:100%;min-width:0;padding:10px;border:1px solid var(--bd);border-radius:10px;background:#001428}
 .adv p{margin:6px 0 0}
@@ -152,6 +154,9 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl
 .photo-foot{margin-top:20px;padding:14px 16px 18px;border-top:1px solid var(--bd);background:rgba(0,20,40,.72);color:var(--mut);font-size:11px;font-weight:400;line-height:1.5}
 .photo-foot p{max-width:1060px;margin:0 auto 6px}
 .photo-foot a{color:var(--mut);font-weight:400;text-decoration:underline;text-underline-offset:2px}
+#photo-credits > p{display:none}
+#photo-credits.photo-foot{margin-top:8px;padding:0 0 10px;border-top:0;background:transparent}
+#photo-credits .site-foot{margin:0;border-top:0}
 .site-foot{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;max-width:none;margin:12px 0 0;padding:10px 12px 2px;border-top:1px solid var(--bd);text-align:center;font-size:12px;font-weight:600;line-height:1.4}
 .site-foot a{color:#D5DEE8;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .site-foot .site-sep{padding:0 10px;color:#D5DEE8}
