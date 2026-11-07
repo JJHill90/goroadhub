@@ -10,10 +10,11 @@ const credits = fs.readFileSync(path.join(root, 'public/photo-credits.html'), 'u
 const photos = [
   {
     file: 'coast.jpg',
-    author: 'Bahnfrend',
-    licence: 'CC BY-SA 4.0',
-    licenceUrl: 'https://creativecommons.org/licenses/by-sa/4.0',
-    source: 'https://commons.wikimedia.org/wiki/File:Western_Star_6900_FXC,_Border_Village,_2017_(01).jpg'
+    author: 'Lobster1',
+    licence: 'CC BY-SA 3.0',
+    licenceUrl: 'https://creativecommons.org/licenses/by-sa/3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Road_Train_Stuart_Highway_-_panoramio.jpg',
+    version: '4'
   },
   {
     file: 'show.jpg',
@@ -76,7 +77,7 @@ test('photo credits name the author, licence, and source for each Commons truck 
   assert.match(index, /\/brand\/work\/quarry\.jpg\?v=2/);
   for (const photo of photos) {
     assert.ok(fs.existsSync(path.join(root, 'public/brand/work', photo.file)), photo.file);
-    assert.ok(index.includes('/brand/work/' + photo.file + '?v=3'), photo.file);
+    assert.ok(index.includes('/brand/work/' + photo.file + '?v=' + (photo.version || '3')), photo.file);
     assert.ok(credits.includes(photo.file), photo.file);
     assert.ok(credits.includes(photo.author), photo.author);
     assert.ok(credits.includes(photo.licence), photo.licence);

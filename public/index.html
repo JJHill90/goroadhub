@@ -9,7 +9,7 @@ body{margin:0;min-height:100vh;background:transparent;color:var(--tx);font:15px/
 .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:#001428;overflow:hidden}
 .bg span{position:absolute;inset:0;background:#001428 center/cover no-repeat;opacity:0;transform:scale(1);transition:opacity 1.6s ease}
 .bg span.on{opacity:1;animation:bgdrift 8.6s ease-out forwards}
-.bg span:nth-child(1){background-image:url("/brand/work/coast.jpg?v=3")}
+.bg span:nth-child(1){background-image:url("/brand/work/coast.jpg?v=4")}
 .bg span:nth-child(2){background-image:url("/brand/work/show.jpg?v=3")}
 .bg span:nth-child(3){background-image:url("/brand/work/yard.jpg?v=3")}
 .bg span:nth-child(4){background-image:url("/brand/work/highway.jpg?v=3")}
@@ -99,7 +99,7 @@ body:not(.in){overflow:hidden}
 body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{display:none}
 #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:flex-start;padding-left:clamp(48px,5vw,72px);overflow:hidden;background:#001D3D;color:#fff;isolation:isolate;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
 #gate[hidden]{display:none}
-.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/work/coast.jpg?v=3") center / cover no-repeat}
+.gate-hero{position:absolute;inset:0;z-index:0;background:#001D3D url("/brand/work/coast.jpg?v=4") center / cover no-repeat}
 .gate-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#001D3D 0%,#001D3D 36%,rgba(0,29,61,.92) 48%,rgba(0,29,61,.45) 68%,rgba(0,29,61,.2) 100%)}
 .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .gate-stack{position:relative;z-index:3;width:min(440px,calc(100vw - 48px));animation:gate-in .7s ease both}
