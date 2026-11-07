@@ -218,6 +218,25 @@ test('the month calendar marks event days and the list is a compact grid', () =>
   assert.match(app, /data-cal-day/);
   assert.match(app, /data-cal-all/);
   assert.match(app, /selectEventDay/);
+  const personal = calendarHtml(null, {
+    now, year: 2026, month: 11,
+    mineItems: [
+      { date: '2026-11-20', kind: 'reminder', id: 'lic1', label: 'Driver licence' },
+      { date: '2026-11-22', kind: 'site', id: 'gate1', label: 'North gate' }
+    ]
+  });
+  assert.match(personal, /data-cal-day="2026-11-20"[^>]*data-mine="reminder:lic1"/);
+  assert.match(personal, /data-mine="site:gate1"/);
+  assert.match(personal, /ev-cal-mine-day/);
+  assert.match(personal, /Your dates/);
+  assert.match(personal, /Public dates/);
+  const phone = fs.readFileSync(path.join(root, 'public/phone-ui.js'), 'utf8');
+  assert.equal(phone.includes('mineDays: []'), false);
+  assert.match(phone, /kind: 'reminder'/);
+  assert.match(phone, /kind: 'site'/);
+  assert.match(app, /function openMineFromCalendar/);
+  assert.match(app, /go\('sit'\)/);
+  assert.match(index, /\.ev-cal-mine\{[^}]*background:#F5A524/);
 });
 
 test('the events tab is in the public nav and the page polls on open', () => {
