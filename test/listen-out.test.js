@@ -100,7 +100,7 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.match(app, /podcastOpenPlan\(/);
   assert.match(app, /newsletterOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\]/);
+  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\]/);
 });
 
 test('Contact us is a small site-bar link to the website contact page', () => {
