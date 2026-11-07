@@ -33,7 +33,8 @@ if(V.view=='traffic'){trafficView()}
 else if(V.view=='pod'){pView()}
 else if(V.view=='evt'){eventsView()}
 else if(V.view=='adm'&&ADMIN){admView()}
-else{V.view='mag';nav();magView()}}
+else{V.view='mag';nav();magView()}
+const contact=document.querySelector('.site-link');if(contact)contact.hidden=V.view==='evt'}
 function tp(t){V.topics=V.topics.includes(t)?V.topics.filter(x=>x!=t):[...V.topics,t];render()}
 function fv(i){S.fav=S.fav.includes(i)?S.fav.filter(x=>x!=i):[...S.fav,i];sv();render()}
 function fol(a){S.fol=S.fol.includes(a)?S.fol.filter(x=>x!=a):[...S.fol,a];sv();render()}

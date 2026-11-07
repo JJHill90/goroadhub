@@ -206,6 +206,12 @@ test('the events tab is in the public nav and the page polls on open', () => {
   assert.match(app, /data-dismiss/);
   assert.match(app, /reminderSession\(/);
   assert.match(app, /evSession\.dismiss/);
+  assert.match(app, /querySelector\('\.site-link'\)/);
+  assert.match(app, /contact\.hidden=V\.view==='evt'/);
+  assert.match(index, /\.ev-cat\{[^}]*background:#1877F2/);
+  assert.match(index, /\.events-card \.btn\{[^}]*background:#1877F2/);
+  assert.match(index, /\.ev-dismiss:hover\{[^}]*background:#166FE5/);
+  assert.equal(/\.ev-banner\{[^}]*#C80813/.test(index), false);
   assert.match(server, /connect-src 'self' https:\/\/tdaau\.com/);
   assert.equal(EVENTS_CACHE_KEY, 'rh-events');
 });
