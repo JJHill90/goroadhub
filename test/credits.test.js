@@ -71,17 +71,27 @@ test('photo credits name the author, licence, and source for each Commons truck 
   assert.match(index, /The Drivers <b>Advocate<\/b> App/);
   assert.match(index, /Created for Driver's by Driver's/);
   assert.match(index, /src="\/icon\.svg"/);
-  assert.match(index, /href="\/photo-credits\.html"/);
-  assert.match(index, />Photo credits</);
   assert.match(index, /\/brand\/work\/dock\.jpg\?v=2/);
   assert.match(index, /\/brand\/work\/quarry\.jpg\?v=2/);
+  const mainEnd = index.indexOf('</main>');
+  const foot = index.slice(mainEnd);
+  assert.ok(mainEnd > 0);
+  assert.match(foot, /<footer id="photo-credits" class="photo-foot">/);
+  assert.match(index, /\.photo-foot\{[^}]*color:var\(--mut\)[^}]*font-size:11px/);
+  assert.equal(index.slice(0, mainEnd).includes('Lobster1'), false);
+  assert.equal(index.slice(0, mainEnd).includes('class="photo-credits"'), false);
   for (const photo of photos) {
     assert.ok(fs.existsSync(path.join(root, 'public/brand/work', photo.file)), photo.file);
     assert.ok(index.includes('/brand/work/' + photo.file + '?v=' + (photo.version || '3')), photo.file);
-    assert.ok(credits.includes(photo.file), photo.file);
-    assert.ok(credits.includes(photo.author), photo.author);
-    assert.ok(credits.includes(photo.licence), photo.licence);
-    assert.ok(credits.includes(photo.licenceUrl), photo.licenceUrl);
-    assert.ok(credits.includes(photo.source), photo.source);
+    for (const page of [foot, credits]) {
+      assert.ok(page.includes(photo.file), photo.file);
+      assert.ok(page.includes(photo.author), photo.author);
+      assert.ok(page.includes(photo.licence), photo.licence);
+      assert.ok(page.includes(photo.licenceUrl), photo.licenceUrl);
+      assert.ok(page.includes(photo.source), photo.source);
+    }
   }
+  assert.match(credits, /<footer class="photo-foot">/);
+  assert.equal(credits.includes('<main'), false);
+  assert.match(credits, /\.photo-foot\{[^}]*color:var\(--mut\)[^}]*font-size:11px/);
 });
