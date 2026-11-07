@@ -132,10 +132,15 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(view.includes('out-primary'), false);
   assert.match(app, /<article class="ep/);
   assert.match(app, /class="btn ep-play"/);
-  assert.match(index, /#eps\{[^}]*display:grid[^}]*grid-template-columns:1fr 1fr/);
-  assert.match(index, /\.ep \.ep-play\{[^}]*background:#1877F2/);
+  assert.match(index, /#eps\{[^}]*display:grid[^}]*grid-template-columns:1fr;/);
+  assert.match(index, /@media\(min-width:720px\)\{#eps\{grid-template-columns:1fr 1fr\}/);
+  assert.match(index, /\.ep-snip\{/);
+  assert.match(index, /\.ep \.ep-play\{[^}]*width:100%[^}]*background:#1877F2/);
   assert.match(index, /\.ep \.ep-play:hover\{[^}]*background:#166FE5/);
-  assert.match(index, /@media\(max-width:339px\)\{\.ev-list\{grid-template-columns:1fr\}#eps\{grid-template-columns:1fr\}/);
+  assert.match(app, /function epDate\(/);
+  assert.match(app, /function epSnip\(/);
+  assert.match(app, /class="ep-meta"/);
+  assert.match(app, /class="ep-snip"/);
 });
 
 test('Contact us is a small site-bar link to the website contact page', () => {

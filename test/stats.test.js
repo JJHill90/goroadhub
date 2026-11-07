@@ -121,7 +121,8 @@ test('the Stats tab shows podcast facts from the feed and no group numbers', () 
   const save = app.slice(app.indexOf('function saveFirstName'), app.indexOf('function statsView'));
   assert.equal(save.includes('fetch('), false);
   assert.equal(save.includes('api('), false);
-  assert.match(index, /\.stats-page \.stat-grid\{[^}]*grid-template-columns:1fr 1fr/);
+  assert.match(index, /\.stats-page \.stat-grid\{[^}]*grid-template-columns:1fr;/);
+  assert.match(index, /@media\(min-width:720px\)\{#eps\{grid-template-columns:1fr 1fr\}\.stats-page \.stat-grid\{grid-template-columns:1fr 1fr\}/);
   assert.match(index, /\.stat-link\{[^}]*background:#1877F2/);
 });
 
