@@ -5,7 +5,7 @@ const path = require('path');
 const { PODCAST } = require('../feeds');
 const {
   PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL,
-  podcastScheme, podcastApps, podcastOpenPlan, newsletterOpenPlan, applePlatform
+  podcastScheme, podcastApps, podcastOpenPlan, applePlatform
 } = require('../public/listen-out');
 
 const root = path.join(__dirname, '..');
@@ -69,14 +69,19 @@ test('stopping automatic opening clears the redirect, including the Apple defaul
   assert.equal(unknown.apps.some(item => /spotify/i.test(item.href)), false);
 });
 
-test('the newsletter site opens once per session only after it is chosen', () => {
+test('newsletters stay on the page until the reader opens them', () => {
   assert.equal(NEWSLETTER_SITE, 'https://tdaau.com/newsletter/');
-  const open = newsletterOpenPlan({ choice: 'web', sessionTried: false, stopped: false });
-  assert.equal(open.open, true);
-  assert.equal(open.href, 'https://tdaau.com/newsletter/');
-  assert.equal(newsletterOpenPlan({ choice: '', sessionTried: false, stopped: false }).open, false);
-  assert.equal(newsletterOpenPlan({ choice: 'web', sessionTried: true, stopped: false }).open, false);
-  assert.equal(newsletterOpenPlan({ choice: 'web', sessionTried: false, stopped: true }).open, false);
+  const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
+  assert.ok(mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.match(mag, /<h3>Newsletters<\/h3>/);
+  assert.match(mag, /<p class="sub">Every issue in one place on our website\.<\/p>/);
+  assert.match(mag, /<a class="btn" href="\$\{esc\(href\)\}" target="_blank" rel="noopener noreferrer">Read the newsletters<\/a>/);
+  assert.equal(mag.includes('newsAuto('), false);
+  assert.equal(mag.includes('newsletterOpenPlan('), false);
+  assert.equal(mag.includes('Stop opening automatically'), false);
+  assert.equal(mag.includes('Read the newsletters on tdaau.com'), false);
+  assert.equal(mag.includes('Or stay in the app'), false);
+  assert.equal(typeof newsletterOpenPlan, 'undefined');
 });
 
 test('Apple devices are told from Android and desktop Linux', () => {
@@ -94,11 +99,13 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.match(app, /Or listen here/);
   assert.match(app, /Copy RSS feed/);
   assert.match(app, /Stop opening my app automatically/);
-  assert.match(app, /Read the newsletters on tdaau.com/);
-  assert.match(app, /Or stay in the app/);
-  assert.match(app, /Stop opening automatically/);
+  assert.match(app, /<h3>Newsletters<\/h3>/);
+  assert.match(app, /Every issue in one place on our website\./);
+  assert.match(app, />Read the newsletters</);
+  assert.equal(app.includes('Read the newsletters on tdaau.com'), false);
+  assert.equal(app.includes('Stop opening automatically'), false);
+  assert.equal(app.includes('newsletterOpenPlan('), false);
   assert.match(app, /podcastOpenPlan\(/);
-  assert.match(app, /newsletterOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
   assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\]/);
 });

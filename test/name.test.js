@@ -22,25 +22,35 @@ test('the page title, header, and share tags use the app name', () => {
   assert.equal(meta(index, 'property', 'og:title'), NAME);
   assert.equal(meta(index, 'property', 'og:site_name'), NAME);
   assert.equal(meta(index, 'name', 'twitter:title'), NAME);
-  assert.match(index, /<div class="brand-copy"><span class="brand">The Drivers <b>Advocate<\/b> App<\/span><p class="brand-blurb">Created for Driver's by Driver's<\/p><\/div>/);
+  assert.match(index, /<div class="brand-copy"><span class="brand">The Drivers <b>Advocate<\/b> App<\/span><p class="brand-blurb">Created for Driver's by Driver's<\/p><nav id="nav"><\/nav><\/div>/);
   assert.match(index, /\.brand-copy\{[^}]*flex-direction:column[^}]*align-items:flex-start[^}]*gap:4px/);
   assert.match(index, /\.brand\{[^}]*font-weight:800[^}]*font-size:16px/);
   assert.match(index, /\.brand-blurb\{[^}]*color:var\(--mut\)[^}]*font-size:12px[^}]*font-weight:400/);
   assert.equal(/\.brand-blurb\{[^}]*text-decoration/.test(index), false);
-  assert.match(index, /@media\(max-width:600px\)\{nav button\{padding:8px 8px;font-size:12px\}\.brand\{font-size:13px\}\.brand-blurb\{font-size:11px\}\}/);
+  assert.match(index, /@media\(max-width:600px\)\{nav button\{padding:8px 0;font-size:12px\}\.brand\{font-size:13px\}\.brand-blurb\{font-size:11px\}\}/);
+  assert.match(index, /nav\{display:flex;justify-content:flex-start/);
+  assert.equal(/nav\{[^}]*margin-left:auto/.test(index), false);
+  assert.match(index, /main\.two\{grid-template-columns:290px minmax\(0,1fr\)\}/);
   assert.equal(index.includes('Go Road Hub'), false);
   assert.equal(index.includes('GoRoadHub'), false);
 });
 
-test('the homepage link is a short website button with no raw address', () => {
-  const link = index.match(/<a class="visit-site"[^>]*>Visit our website<\/a>/);
-  assert.ok(link, 'visit link');
-  assert.match(link[0], /href="https:\/\/tdaau\.com\/"/);
-  assert.match(link[0], /target="_blank"/);
-  assert.match(link[0], /rel="noopener noreferrer"/);
+const FOOT_ROW = '<nav class="site-foot" aria-label="Footer"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><span class="site-sep" aria-hidden="true">·</span><a href="/photo-credits.html">Photo credits</a></nav>';
+
+test('the bottom row is a small centred pair of links', () => {
+  assert.equal(index.includes(FOOT_ROW), true);
+  assert.equal(credits.includes(FOOT_ROW), true);
+  assert.match(index, /\.site-foot\{[^}]*justify-content:center[^}]*text-align:center[^}]*font-size:12px/);
+  assert.match(index, /\.site-foot a\{[^}]*color:#D5DEE8[^}]*font-size:12px/);
+  assert.match(credits, /\.site-foot\{[^}]*justify-content:center[^}]*font-size:12px/);
+  const row = index.slice(index.indexOf('<nav class="site-foot"'), index.indexOf('</nav>', index.indexOf('<nav class="site-foot"')) + 6);
+  const visible = row.replace(/<[^>]+>/g, '');
+  assert.equal(visible, 'Visit our website·Photo credits');
+  assert.equal(visible.includes('http'), false);
   assert.equal(index.includes('The Drivers Advocate App website'), false);
   assert.equal(index.includes('(https://tdaau.com/)'), false);
-  assert.equal(/>https:\/\/tdaau\.com\/</.test(index), false);
+  assert.ok(index.indexOf('</main>') < index.indexOf(FOOT_ROW));
+  assert.ok(index.lastIndexOf(FOOT_ROW) > index.lastIndexOf('share.jpg'));
 });
 
 test('Open on Facebook buttons share one size and sit on the card base', () => {

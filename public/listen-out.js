@@ -40,14 +40,6 @@ function podcastOpenPlan(opts) {
   return stay;
 }
 
-function newsletterOpenPlan(opts) {
-  const o = opts || {};
-  const href = o.href || NEWSLETTER_SITE;
-  const stay = { href, open: false, id: '' };
-  if (o.sessionTried || o.stopped || o.choice !== 'web' || !href) return stay;
-  return { href, open: true, id: 'web' };
-}
-
 function applePlatform(ua, platform) {
   const u = String(ua || '');
   const p = String(platform || '');
@@ -65,12 +57,11 @@ root.podcastScheme = podcastScheme;
 root.podcastApps = podcastApps;
 root.orderApps = orderApps;
 root.podcastOpenPlan = podcastOpenPlan;
-root.newsletterOpenPlan = newsletterOpenPlan;
 root.applePlatform = applePlatform;
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL,
-    podcastScheme, podcastApps, orderApps, podcastOpenPlan, newsletterOpenPlan, applePlatform
+    podcastScheme, podcastApps, orderApps, podcastOpenPlan, applePlatform
   };
 }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

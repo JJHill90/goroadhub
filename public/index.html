@@ -34,17 +34,16 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rg
 .brand-blurb{margin:0;color:var(--mut);font-size:12px;font-style:italic;font-weight:400;line-height:1.25}
 header input{flex:1;min-width:120px;max-width:300px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:20px;padding:9px 14px;font-size:15px}
 header input::placeholder{color:#8EA0B5}
-nav{display:flex;gap:4px;margin-left:auto}
-nav button{border:0;background:none;color:var(--mut);padding:10px 14px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
+nav{display:flex;justify-content:flex-start;align-items:center;gap:16px;margin:2px 0 0;padding:0}
+nav button{border:0;background:none;color:var(--mut);padding:8px 0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .site-link{background:rgba(0,29,61,.9);text-align:center;padding:8px 12px;border-top:2px solid #fff}
 .site-link a{color:#fff;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
-.site-link .visit-site{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-right:16px;padding:8px 16px;border-radius:8px;background:var(--bl);color:#fff;font-size:14px;font-weight:700;text-decoration:none}
-.site-link .contact-us{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-left:16px;padding:0 8px;font-size:12px;font-weight:600;color:#D5DEE8}
-@media(max-width:600px){.site-link .visit-site{display:flex;width:fit-content;margin:0 auto 6px}.site-link .contact-us{display:flex;margin:4px auto 0}}
+.site-link .contact-us{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-left:0;padding:0 8px;font-size:12px;font-weight:600;color:#D5DEE8}
+@media(max-width:600px){.site-link .contact-us{display:flex;margin:4px auto 0}}
 @media (prefers-reduced-motion: reduce){.dot,.gate-stack,.bg span{animation:none;transition:none}.bg span.on{transform:none}}
 main{max-width:1060px;margin:0 auto;padding:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
-@media(min-width:900px){main.two{grid-template-columns:minmax(0,1fr) 290px}}
+@media(min-width:900px){main.two{grid-template-columns:290px minmax(0,1fr)}}
 .card{background:rgba(0,29,61,.86);border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.15);padding:12px 14px;margin-bottom:12px}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px}
 .tab{flex:none;border:0;background:var(--card);color:var(--tx);padding:8px 14px;border-radius:20px;cursor:pointer;font-size:14px;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.15)}
@@ -76,7 +75,7 @@ select,textarea,input.f{background:var(--bg);color:var(--tx);border:1px solid va
 .note{background:var(--bl2);border-left:4px solid var(--bl);padding:10px 12px;border-radius:4px;font-size:13.5px;margin:8px 0}
 h3{margin:0 0 8px}.mut{color:var(--mut)}
 .opt{border:2px solid var(--bd);border-radius:8px;padding:12px;margin:8px 0;cursor:pointer}.opt.on{border-color:var(--bl);background:var(--bl2)}
-@media(max-width:600px){nav button{padding:8px 8px;font-size:12px}.brand{font-size:13px}.brand-blurb{font-size:11px}}
+@media(max-width:600px){nav button{padding:8px 0;font-size:12px}.brand{font-size:13px}.brand-blurb{font-size:11px}}
 .btn,.acts button,nav button,.chip{min-height:44px}
 .replies{margin-top:8px}
 .cab-btn{width:100%;min-height:64px;font-size:18px;margin-top:10px}
@@ -88,6 +87,10 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .area-pick select{min-height:44px;width:100%}
 .fb-home{max-width:840px;margin:0 auto 16px}
 .fb-home h3{text-align:center}
+.news-card{max-width:840px;margin:0 auto 16px}
+.news-card h3{margin:0 0 6px;text-align:center}
+.news-card .sub{margin:0 0 12px;text-align:center}
+.news-card .btn{display:flex;width:100%;min-height:44px;align-items:center;justify-content:center;text-align:center}
 .page-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px auto 0;align-items:stretch}
 .page-card{display:flex;flex-direction:column;height:100%;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA}
 .page-name{display:flex;align-items:flex-start;gap:8px;min-width:0;font-weight:700;font-size:14px;line-height:1.25}
@@ -146,13 +149,16 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl
 .gate-note{position:relative;z-index:1;margin:0 0 14px;max-width:40ch;color:#D5DEE8;font-size:.86rem;line-height:1.4}
 #he,#je{min-height:1.1em;margin:0;color:#FFD6D3;font-size:13px}
 @media(max-width:720px){#gate{overflow:auto;align-items:flex-start;justify-content:flex-start;padding:28px 20px 40px}.gate-stack{width:100%}.gate-scrim{background:linear-gradient(180deg,rgba(0,29,61,.45) 0%,#001D3D 42%,#001D3D 100%)}}
-.photo-foot{margin-top:20px;padding:14px 16px 32px;border-top:1px solid var(--bd);background:rgba(0,20,40,.72);color:var(--mut);font-size:11px;font-weight:400;line-height:1.5}
+.photo-foot{margin-top:20px;padding:14px 16px 18px;border-top:1px solid var(--bd);background:rgba(0,20,40,.72);color:var(--mut);font-size:11px;font-weight:400;line-height:1.5}
 .photo-foot p{max-width:1060px;margin:0 auto 6px}
 .photo-foot a{color:var(--mut);font-weight:400;text-decoration:underline;text-underline-offset:2px}
+.site-foot{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;max-width:none;margin:12px 0 0;padding:10px 12px 2px;border-top:1px solid var(--bd);text-align:center;font-size:12px;font-weight:600;line-height:1.4}
+.site-foot a{color:#D5DEE8;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.site-foot .site-sep{padding:0 10px;color:#D5DEE8}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p></div></div><nav id="nav"></nav></header>
-<div class="site-link"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></div>
+<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div></header>
+<div class="site-link"><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></div>
 <main id="m"></main>
 <footer id="photo-credits" class="photo-foot">
 <p>Photo credits. These photographs rotate behind the Newsletter and Podcast. They are from Wikimedia Commons and were cropped and resized to 1920×1080. The adapted copies stay under the same licence as the original.</p>
@@ -164,6 +170,7 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl
 <p>night.jpg — backdrop. Author: Phillip Capper from Wellington, New Zealand. Licence: <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a>. Source: <a href="https://commons.wikimedia.org/wiki/File:Gone_Driveabout_22,_Road_trains,_Mount_Magnet,_Western_Australia,_25_Oct._2010_-_Flickr_-_PhillipC.jpg">Road trains, Mount Magnet, Western Australia</a>. Change: cropped and resized.</p>
 <p>port.jpg — backdrop. Author: BlackCab. Licence: <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>. Source: <a href="https://commons.wikimedia.org/wiki/File:Trucks_on_Francis_Street,_Yarraville.jpg">Trucks on Francis Street, Yarraville</a>. Change: cropped and resized.</p>
 <p>share.jpg — backdrop. Author: Kgbo. Licence: <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>. Source: <a href="https://commons.wikimedia.org/wiki/File:B-Triple_road_trains_in_Queensland,_Australia,_2024,_01.jpg">B-Triple road trains in Queensland, Australia, 2024</a>. Change: cropped and resized.</p>
+<nav class="site-foot" aria-label="Footer"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><span class="site-sep" aria-hidden="true">·</span><a href="/photo-credits.html">Photo credits</a></nav>
 </footer>
 <div id="pl"></div>
 <script src="/areas.js"></script><script src="/quarter.js"></script><script src="/listen-out.js"></script><script src="/app.js"></script></body></html>
