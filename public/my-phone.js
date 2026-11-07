@@ -546,7 +546,7 @@ function callLinks(draft, ua) {
   const w3w = words
     ? '<a class="wiz-next" href="' + esc(words) + '" target="_blank" rel="noopener noreferrer">Open what3words</a>'
     : '<button type="button" class="wiz-quiet" disabled>Open what3words when the pin is ready</button>';
-  return '<p class="wiz-row"><a class="tap-call" href="tel:000">Call 000</a>' + store + w3w + '</p><p class="wiz-note">' + esc(EMERGENCY_NOTE) + '</p><p class="wiz-note">These links are optional.</p>';
+  return '<p class="wiz-row"><a class="tap-call wiz-000" href="tel:000">Call 000</a>' + store + w3w + '</p><p class="wiz-note">' + esc(EMERGENCY_NOTE) + '</p><p class="wiz-note">These links are optional.</p>';
 }
 function locationFields(draft) {
   const lat = draft.lat == null ? '' : draft.lat;
@@ -607,22 +607,24 @@ function afterSceneHtml(state) {
   return '<section class="after-scene"><h3>' + esc(AFTER_SCENE.title) + '</h3><p>' + esc(AFTER_SCENE.text) + '</p>' + calls + '<p>' + orgs + '</p><p class="wiz-note">' + sourceLinks(AFTER_SCENE.sources) + '</p></section>';
 }
 
+function wizFrame(inner, state, row, ua) {
+  return '<div class="wiz" role="dialog" aria-modal="true"><header class="wiz-head"><p class="wiz-brand">SMASH GLASS</p><p class="wiz-sub">In the event of an emergency</p><div class="wiz-stripe" aria-hidden="true"></div></header>' + inner + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
+}
 function smashHtml(draft, ua, state) {
   const row = draft || blankDraft();
   const ids = flowIds(row);
   const step = ids[row.step] || ids[0] || 'entry';
   const head = '<p class="wiz-note">' + esc(PHONE_NOTE) + ' This checklist works offline.</p>';
   if (!row.path) {
-    return '<div class="wiz" role="dialog" aria-modal="true"><h2>SMASH GLASS</h2>' + head +
+    return wizFrame(head +
       '<button type="button" class="wiz-next" data-wiz="involved">I was in one</button>' +
-      '<button type="button" class="wiz-next" data-wiz="witness">Came across a crash</button>' +
-      healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
+      '<button type="button" class="wiz-path wiz-witness" data-wiz="witness">Came across a crash</button>', state, row, ua);
   }
   if (step === 'choose') {
-    return '<div class="wiz" role="dialog" aria-modal="true"><h2>What happened?</h2>' + head +
-      '<button type="button" class="wiz-next" data-wiz="minor">Minor bump (no injuries)</button>' +
-      '<button type="button" class="wiz-next" data-wiz="serious">Serious / injuries</button>' +
-      '<p class="wiz-note">Every step can be skipped.</p>' + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
+    return wizFrame('<h2>What happened?</h2>' + head +
+      '<button type="button" class="wiz-path wiz-minor" data-wiz="minor">Minor bump (no injuries)</button>' +
+      '<button type="button" class="wiz-path wiz-serious" data-wiz="serious">Serious / injuries</button>' +
+      '<p class="wiz-note">Every step can be skipped.</p>', state, row, ua);
   }
   let body = '';
   if (step === 'serious' || step === 'call') {
@@ -654,7 +656,7 @@ function smashHtml(draft, ua, state) {
       '<button type="button" class="wiz-next" data-wiz="send">Send to depot</button><p class="wiz-note">Send opens your mail app and, where the phone allows, the share sheet. Nothing is uploaded to the Drivers Advocate server.</p>';
   }
   const index = Math.max(0, ids.indexOf(step));
-  return '<div class="wiz" role="dialog" aria-modal="true">' + head + '<p>Step ' + (index + 1) + ' of ' + ids.length + '. Optional.</p>' + body + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
+  return wizFrame(head + '<p>Step ' + (index + 1) + ' of ' + ids.length + '. Optional.</p>' + body, state, row, ua);
 }
 
 function countdownHtml(entries) {
