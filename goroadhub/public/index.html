@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>GoRoadHub – Driver Groups in One Place</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>The Drivers Advocate App</title>
 <style>
 :root{--bg:#F0F2F5;--card:#fff;--tx:#050505;--mut:#65676B;--bl:#1877F2;--bl2:#E7F3FF;--bd:#CED0D4;--hov:#F2F2F2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#18191A;--card:#242526;--tx:#E4E6EB;--mut:#B0B3B8;--bl:#2D88FF;--bl2:#263951;--bd:#3E4042;--hov:#3A3B3C}}
@@ -50,7 +50,7 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .opt{border:2px solid var(--bd);border-radius:8px;padding:12px;margin:8px 0;cursor:pointer}.opt.on{border-color:var(--bl);background:var(--bl2)}
 @media(max-width:600px){nav button{padding:8px 8px;font-size:12px}.brand{display:none}}
 </style></head><body>
-<header><div class="logo">G</div><span class="brand">GoRoadHub</span><input id="q" placeholder="Search posts, people, topics…" oninput="V.q=this.value;drawList()"><nav id="nav"></nav></header>
+<header><div class="logo">G</div><span class="brand">The Drivers Advocate App</span><input id="q" placeholder="Search posts, people, topics…" oninput="V.q=this.value;drawList()"><nav id="nav"></nav></header>
 <div id="tkw"><b>● LIVE</b><div id="tk"></div></div>
 <main id="m"></main>
 <div id="wg"><h4 onclick="wgT()"><span><i class="dot"></i>Live across groups</span><span id="wgx">–</span></h4><div id="wgb" onclick="wgGo()"></div></div>
@@ -94,7 +94,7 @@ ${V.tab!='all'&&V.tab!='fav'&&V.tab!='news'?`<div class="bar" style="margin-top:
 <div class="card"><h3>Source key</h3>${Object.keys(SRC).map(k=>`<div class="lk" style="padding:6px 0">${ico(k,'')}${SRC[k][2]}</div>`).join('')}<div class="sub">News and website icons show the outlet's initials.</div></div>
 <div class="card"><h3>🔥 Your top topics</h3>${Object.entries(S.aff).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,4).map(e=>`<span class="chip on">${e[0]}</span> `).join('')||'<span class="mut">Like posts to teach your For You feed.</span>'}</div></aside>`;drawList()}
 else if(V.view=='links'){m.innerHTML=`<div class="card"><h3>Group links</h3><div class="mut" style="margin-bottom:6px">Rename groups so they match the real names (saved on this device).</div>${G.map(g=>`<div class="lk"><button class="star ${S.fav.includes(g.id)?'on':''}" onclick="fv(${g.id})">★</button><input class="f" value="${esc(gn(g))}" onchange="S.nm[${g.id}]=this.value;sv();render()"><a class="btn" href="${g.url}" target="_blank" rel="noopener">Go to group</a></div>`).join('')}</div>`}
-else if(V.view=='post'){m.innerHTML=`<div class="card"><h3>Create a post</h3><div class="note">Facebook does not let third-party apps publish into groups. GoRoadHub copies your text, saves a draft in your feed, and opens the group so you paste and hit Post.</div>
+else if(V.view=='post'){m.innerHTML=`<div class="card"><h3>Create a post</h3><div class="note">Facebook does not let third-party apps publish into groups. The Drivers Advocate App copies your text, saves a draft in your feed, and opens the group so you paste and hit Post.</div>
 <div class="bar" id="pg">${G.map(g=>`<span class="chip" data-g="${g.id}" onclick="this.classList.toggle('on')">${esc(gn(g))}</span>`).join('')}</div>
 <div class="bar" style="margin:10px 0"><select id="pt">${TOP.map(t=>`<option>${t}</option>`).join('')}</select></div>
 <textarea id="px" rows="5" style="width:100%" placeholder="What's on your mind?"></textarea>
@@ -159,7 +159,7 @@ $('#rbody').innerHTML=[...new Set(ITEMS.map(i=>i.c))].map(c=>{const L=ITEMS.filt
 function keep(f){const y=scrollY;f();rsv();remView();scrollTo(0,y);nav();drawTk()}
 const tg=id=>keep(()=>{const k=qk(...curQ());R.done[k]=R.done[k]||{};R.done[k][id]=!R.done[k][id]});
 const rp=id=>keep(()=>{R.rep[id]=!R.rep[id]});
-function yrText(y){const fl=ITEMS.filter(i=>R.rep[i.id]).map(i=>'- '+i.n);return'GoRoadHub year-end reconciliation '+y+'\n'+[1,2,3,4].map(q=>'Q'+q+': '+(ITEMS.length-pend(qk(y,q)))+'/'+ITEMS.length+' done').join('\n')+'\nNeeds replacing:\n'+(fl.join('\n')||'- none')+'\nNotes: '+(R.notes[y]||'')}
+function yrText(y){const fl=ITEMS.filter(i=>R.rep[i.id]).map(i=>'- '+i.n);return'The Drivers Advocate App year-end reconciliation '+y+'\n'+[1,2,3,4].map(q=>'Q'+q+': '+(ITEMS.length-pend(qk(y,q)))+'/'+ITEMS.length+' done').join('\n')+'\nNeeds replacing:\n'+(fl.join('\n')||'- none')+'\nNotes: '+(R.notes[y]||'')}
 function drawYr(){const[y]=curQ(),c=(q,i)=>(R.done[qk(y,q)]||{})[i.id]?'✓':'–';
 $('#rbody').innerHTML=`<div class="card"><h3>Year-end reconciliation ${y} <span class="sub">due 31 Dec</span></h3><div class="bar">${[1,2,3,4].map(q=>`<span class="chip on">Q${q}: ${ITEMS.length-pend(qk(y,q))}/${ITEMS.length}</span>`).join('')}</div><div style="overflow-x:auto;margin:10px 0"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr><th align="left">Item</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Replace?</th></tr>${ITEMS.map(i=>`<tr style="border-top:1px solid var(--bd)"><td>${esc(i.n)}</td>${[1,2,3,4].map(q=>`<td align="center">${c(q,i)}</td>`).join('')}<td align="center">${R.rep[i.id]?'⚠':''}</td></tr>`).join('')}</table></div><textarea rows="3" style="width:100%" placeholder="Year-end notes: what failed, what to buy, what to book" onchange="R.notes[${y}]=this.value;rsv()">${esc(R.notes[y]||'')}</textarea><div class="bar" style="margin-top:8px"><button class="btn" onclick="keep(()=>{R.rec[${y}]=!R.rec[${y}]})">${R.rec[y]?'✓ Reconciled (undo)':'Mark year reconciled'}</button><button class="btn g" onclick="cp(yrText(${y}));this.textContent='Copied'">Copy summary</button></div></div>`}
 function remPop(){const o=rems(),t=ymd(td0());if(!o.length||R.shown==t)return;R.shown=t;rsv();const e=document.createElement('div');e.id='rp';e.style.cssText='position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:grid;place-items:center;padding:16px';
