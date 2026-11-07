@@ -376,6 +376,13 @@ function calendarHtml(data, opts) {
   const marks = markedDays(data);
   const standardDays = new Set(o.standardDays || []);
   const mineDays = new Set(o.mineDays || []);
+  const mineByDay = {};
+  (o.mineItems || []).forEach(item => {
+    if (!item || !item.date || !item.id || !item.kind) return;
+    if (!mineByDay[item.date]) mineByDay[item.date] = [];
+    mineByDay[item.date].push(item);
+    mineDays.add(item.date);
+  });
   const title = new Intl.DateTimeFormat('en-AU', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, 1)));
   const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(name => `<span>${name}</span>`).join('');
   const cells = monthCells(year, month).map(cell => {
@@ -389,12 +396,16 @@ function calendarHtml(data, opts) {
     const dots = [];
     if (marks.has(cell.ymd)) dots.push('<span class="ev-cal-dot" aria-hidden="true"></span>');
     if (standardDays.has(cell.ymd)) dots.push('<span class="ev-cal-std" aria-hidden="true"></span>');
+    const mineHere = mineByDay[cell.ymd] || [];
     if (mineDays.has(cell.ymd)) dots.push('<span class="ev-cal-mine" aria-hidden="true"></span>');
     const dot = dots.length ? `<span class="ev-cal-marks">${dots.join('')}</span>` : '';
-    return `<button type="button" class="${classes.join(' ')}" data-cal-day="${cell.ymd}" aria-pressed="${cell.ymd === selected ? 'true' : 'false'}"><span class="ev-cal-num">${cell.day}</span>${dot}</button>`;
+    const mineAttr = mineHere.length ? ` data-mine="${esc(mineHere.map(item => item.kind + ':' + item.id).join(' '))}"` : '';
+    const mineLabel = mineHere.length ? ` aria-label="${esc(cell.ymd + ', ' + mineHere.map(item => item.label || 'Your date').join(', '))}"` : '';
+    return `<button type="button" class="${classes.join(' ')}" data-cal-day="${cell.ymd}"${mineAttr}${mineLabel} aria-pressed="${cell.ymd === selected ? 'true' : 'false'}"><span class="ev-cal-num">${cell.day}</span>${dot}</button>`;
   }).join('');
   const showAll = `<button type="button" class="ev-cal-all" data-cal-all${selected ? '' : ' hidden'}>Show all</button>`;
-  return `<div class="ev-cal" data-cal-month="${padYmd(year, month, 1).slice(0, 7)}"><div class="ev-cal-bar"><button type="button" class="ev-cal-nav" data-cal-nav="-1" aria-label="Previous month">‹</button><h4 class="ev-cal-title">${esc(title)}</h4><button type="button" class="ev-cal-nav" data-cal-nav="1" aria-label="Next month">›</button></div><div class="ev-cal-dow" aria-hidden="true">${week}</div><div class="ev-cal-grid">${cells}</div>${showAll}</div>`;
+  const key = `<ul class="ev-cal-key"><li><span class="ev-cal-dot"></span> Events</li><li><span class="ev-cal-mine"></span> Your dates</li><li><span class="ev-cal-std"></span> Public dates</li></ul>`;
+  return `<div class="ev-cal" data-cal-month="${padYmd(year, month, 1).slice(0, 7)}"><div class="ev-cal-bar"><button type="button" class="ev-cal-nav" data-cal-nav="-1" aria-label="Previous month">‹</button><h4 class="ev-cal-title">${esc(title)}</h4><button type="button" class="ev-cal-nav" data-cal-nav="1" aria-label="Next month">›</button></div><div class="ev-cal-dow" aria-hidden="true">${week}</div><div class="ev-cal-grid">${cells}</div>${key}${showAll}</div>`;
 }
 
 function eventCard(event, timeZone) {
@@ -429,7 +440,7 @@ function eventsHtml(data, status) {
   const filter = st.stdFilter || defaultStdFilter();
   const filtered = filterStandardItems(st.standardItems || [], filter);
   const monthItems = Array.isArray(st.standardItems) ? itemsInMonth(filtered, Number(st.year), Number(st.month)) : [];
-  const cal = calendarHtml(data, { year: st.year, month: st.month, selected: st.selected || '', now: st.now instanceof Date ? st.now : new Date(), standardDays: Array.isArray(st.standardItems) ? standardItemDays(filtered) : (st.standardDays || []), mineDays: st.mineDays || [] });
+  const cal = calendarHtml(data, { year: st.year, month: st.month, selected: st.selected || '', now: st.now instanceof Date ? st.now : new Date(), standardDays: Array.isArray(st.standardItems) ? standardItemDays(filtered) : (st.standardDays || []), mineDays: st.mineDays || [], mineItems: st.mineItems || [] });
   const extra = `${st.nearbyHtml || ''}${st.countdownHtml || ''}${standardFilterHtml(filter)}${cal}${standardListHtml(monthItems, st)}`;
   return `<section class="card events-card">${extra}<h3>Events</h3><p class="sub">Times use ${esc(zone)}.</p><p class="ev-sub"><a class="btn" href="${esc(CALENDAR_URL)}">Subscribe to the calendar</a></p>${saved}${state}<p class="mut ev-day-empty" hidden>No events on that day.</p>${upcomingHtml ? `<div class="ev-list">${upcomingHtml}</div>` : ''}${recentHtml}${st.personalHtml || ''}</section>`;
 }

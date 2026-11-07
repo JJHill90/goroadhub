@@ -79,17 +79,25 @@ async function refreshStandard() {
   if (typeof V !== 'undefined' && V.view === 'evt' && typeof eventsView === 'function') repaint();
 }
 
-function phoneEventStatus() {
+function personalMarks() {
   const reminders = typeof readReminders === 'function' ? readReminders(localStorage) : [];
   const sites = typeof readSites === 'function' ? readSites(localStorage) : [];
+  const rows = [];
+  reminders.forEach(item => { if (item && item.date && item.id) rows.push({ date: item.date, kind: 'reminder', id: item.id, label: item.label || '' }); });
+  sites.forEach(item => { if (item && item.expiry && item.id) rows.push({ date: item.expiry, kind: 'site', id: item.id, label: item.name || '' }); });
+  return rows;
+}
+function phoneEventStatus() {
   const filter = typeof readStdFilter === 'function' ? readStdFilter(localStorage) : null;
   const items = typeof filterStandardItems === 'function' ? filterStandardItems((STD && STD.items) || [], filter) : [];
+  const personal = personalMarks();
   return {
     stdFilter: filter,
     standardItems: (STD && STD.items) || [],
     holidayNote: STD && STD.holidayNote || '',
     standardNotes: STD && STD.notes || [],
-    mineDays: [],
+    mineDays: personal.map(item => item.date),
+    mineItems: personal,
     standardDays: typeof standardItemDays === 'function' ? standardItemDays(items) : [],
     countdownHtml: '',
     nearbyHtml: '',
@@ -111,7 +119,7 @@ function repaint() {
 }
 function phoneCalendarMarks() {
   const status = phoneEventStatus();
-  return { standardDays: status.standardDays, mineDays: status.mineDays };
+  return { standardDays: status.standardDays, mineDays: status.mineDays, mineItems: status.mineItems };
 }
 
 function paintSmash() {
