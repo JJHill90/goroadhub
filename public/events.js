@@ -243,6 +243,95 @@ function formatEventWhen(event, timeZone) {
   return when + ' – ' + (sameDay ? formatTime(end, zone) : formatStamp(end, zone));
 }
 
+function ymdParts(ymd) {
+  const match = String(ymd || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return match ? [+match[1], +match[2], +match[3]] : null;
+}
+
+function padYmd(year, month, day) {
+  return String(year) + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+}
+
+function eventYmds(event, timeZone) {
+  const zone = safeZone(timeZone);
+  const startRaw = text(event && event.start);
+  if (!startRaw) return [];
+  const endRaw = text(event && event.end);
+  const startDay = ymdParts(startRaw);
+  const endDay = ymdParts(endRaw);
+  let startYmd = '';
+  let endYmd = '';
+  if (startDay) startYmd = padYmd(startDay[0], startDay[1], startDay[2]);
+  else {
+    const start = new Date(startRaw);
+    if (Number.isNaN(start.getTime())) return [];
+    startYmd = ymdInZone(start, zone);
+  }
+  if (!endRaw) endYmd = startYmd;
+  else if (endDay) endYmd = padYmd(endDay[0], endDay[1], endDay[2]);
+  else {
+    const end = new Date(endRaw);
+    endYmd = Number.isNaN(end.getTime()) ? startYmd : ymdInZone(end, zone);
+  }
+  if (endYmd < startYmd) endYmd = startYmd;
+  const out = [];
+  let cursor = ymdParts(startYmd);
+  if (!cursor) return [];
+  for (let i = 0; i < 370; i++) {
+    const ymd = padYmd(cursor[0], cursor[1], cursor[2]);
+    out.push(ymd);
+    if (ymd >= endYmd) break;
+    cursor = nextDay(cursor[0], cursor[1], cursor[2]);
+  }
+  return out;
+}
+
+function monthCells(year, month) {
+  const first = new Date(Date.UTC(year, month - 1, 1));
+  const lead = (first.getUTCDay() + 6) % 7;
+  const count = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push(null);
+  for (let day = 1; day <= count; day++) cells.push({ day, ymd: padYmd(year, month, day) });
+  while (cells.length % 7) cells.push(null);
+  return cells;
+}
+
+function markedDays(data) {
+  const pack = parseEvents(data);
+  const days = new Set();
+  pack.upcoming.concat(pack.recent).forEach(event => {
+    eventYmds(event, pack.timezone).forEach(ymd => days.add(ymd));
+  });
+  return days;
+}
+
+function calendarHtml(data, opts) {
+  const o = opts || {};
+  const pack = parseEvents(data);
+  const zone = pack.timezone;
+  const now = o.now instanceof Date ? o.now : new Date();
+  const today = ymdInZone(now, zone);
+  const todayParts = ymdParts(today) || [now.getFullYear(), now.getMonth() + 1, now.getDate()];
+  const year = Number(o.year) || todayParts[0];
+  const month = Number(o.month) || todayParts[1];
+  const selected = text(o.selected);
+  const marks = markedDays(data);
+  const title = new Intl.DateTimeFormat('en-AU', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, 1)));
+  const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(name => `<span>${name}</span>`).join('');
+  const cells = monthCells(year, month).map(cell => {
+    if (!cell) return '<span class="ev-cal-pad"></span>';
+    const classes = ['ev-cal-day'];
+    if (cell.ymd === today) classes.push('ev-cal-today');
+    if (marks.has(cell.ymd)) classes.push('ev-cal-has');
+    if (cell.ymd === selected) classes.push('ev-cal-on');
+    const dot = marks.has(cell.ymd) ? '<span class="ev-cal-dot" aria-hidden="true"></span>' : '';
+    return `<button type="button" class="${classes.join(' ')}" data-cal-day="${cell.ymd}" aria-pressed="${cell.ymd === selected ? 'true' : 'false'}"><span class="ev-cal-num">${cell.day}</span>${dot}</button>`;
+  }).join('');
+  const showAll = `<button type="button" class="ev-cal-all" data-cal-all${selected ? '' : ' hidden'}>Show all</button>`;
+  return `<div class="ev-cal" data-cal-month="${padYmd(year, month, 1).slice(0, 7)}"><div class="ev-cal-bar"><button type="button" class="ev-cal-nav" data-cal-nav="-1" aria-label="Previous month">‹</button><h4 class="ev-cal-title">${esc(title)}</h4><button type="button" class="ev-cal-nav" data-cal-nav="1" aria-label="Next month">›</button></div><div class="ev-cal-dow" aria-hidden="true">${week}</div><div class="ev-cal-grid">${cells}</div>${showAll}</div>`;
+}
+
 function eventCard(event, timeZone) {
   const actions = eventActions(event);
   const when = formatEventWhen(event, timeZone);
@@ -253,7 +342,8 @@ function eventCard(event, timeZone) {
   const where = event.location ? `<p class="ev-loc">${esc(event.location)}</p>` : '';
   const badge = event.category ? `<span class="ev-cat">${esc(event.category)}</span>` : '';
   const about = event.description ? `<p class="ev-desc">${esc(event.description)}</p>` : '';
-  return `<article class="ev-item" data-event-id="${esc(event.id)}">${when ? `<p class="ev-when">${esc(when)}</p>` : ''}<h4>${heading}</h4>${where}${badge}${about}<div class="ev-actions"><a class="btn" href="${esc(actions.calendar)}">Add to my calendar</a></div></article>`;
+  const days = eventYmds(event, timeZone).join(' ');
+  return `<article class="ev-item" data-event-id="${esc(event.id)}" data-ev-days="${esc(days)}">${when ? `<p class="ev-when">${esc(when)}</p>` : ''}<h4>${heading}</h4>${where}${badge}${about}<div class="ev-actions"><a class="btn" href="${esc(actions.calendar)}">Add to my calendar</a></div></article>`;
 }
 
 function eventsHtml(data, status) {
@@ -271,7 +361,8 @@ function eventsHtml(data, status) {
   const recentHtml = recent.length
     ? `<h4 class="ev-recent-head">Recent</h4><div class="ev-list ev-recent">${recent.map(event => eventCard(event, zone)).join('')}</div>`
     : '';
-  return `<section class="card events-card"><h3>Events</h3><p class="sub">Times use ${esc(zone)}.</p><p class="ev-sub"><a class="btn" href="${esc(CALENDAR_URL)}">Subscribe to the calendar</a></p>${saved}${state}${upcomingHtml ? `<div class="ev-list">${upcomingHtml}</div>` : ''}${recentHtml}</section>`;
+  const cal = calendarHtml(data, { year: st.year, month: st.month, selected: st.selected || '', now: st.now instanceof Date ? st.now : new Date() });
+  return `<section class="card events-card">${cal}<h3>Events</h3><p class="sub">Times use ${esc(zone)}.</p><p class="ev-sub"><a class="btn" href="${esc(CALENDAR_URL)}">Subscribe to the calendar</a></p>${saved}${state}<p class="mut ev-day-empty" hidden>No events on that day.</p>${upcomingHtml ? `<div class="ev-list">${upcomingHtml}</div>` : ''}${recentHtml}</section>`;
 }
 
 function nextDay(year, month, day) {
@@ -412,6 +503,62 @@ function visibleStats(raw) {
   return cards;
 }
 
+const PODCAST_PROFILE = 'https://soundcloud.com/the-drivers-advocate-podcast';
+const GROUP_STATS = [];
+
+function podcastStats(episodes) {
+  const rows = (Array.isArray(episodes) ? episodes : []).filter(item => item && text(item.h || item.title));
+  const sorted = rows.slice().sort((a, b) => (Number(b.at) || 0) - (Number(a.at) || 0));
+  const latest = sorted[0] || null;
+  return {
+    total: rows.length,
+    latest: latest ? { title: text(latest.h || latest.title), at: Number(latest.at) || 0 } : null,
+    profile: PODCAST_PROFILE,
+    groups: GROUP_STATS
+  };
+}
+
+function formatStatDate(at) {
+  const n = Number(at);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Sydney', day: 'numeric', month: 'short', year: 'numeric'
+  }).format(new Date(n));
+}
+
+function cleanFirstName(value) {
+  return String(value == null ? '' : value).replace(/[\u0000-\u001F]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
+}
+
+function thankYouText(name) {
+  const clean = cleanFirstName(name);
+  return clean
+    ? 'Thank You ' + clean + ' for being part of a truly unique group'
+    : 'Thank You for being part of a truly unique group';
+}
+
+function driverCountHtml(groupStats) {
+  const count = groupStats && !Array.isArray(groupStats) ? Number(groupStats.drivers) : NaN;
+  if (Number.isFinite(count) && count > 0) return `<p class="driver-count">You're one of ${esc(count)} drivers</p>`;
+  return `<p class="driver-count" hidden>You're one of X drivers</p>`;
+}
+
+function thankYouBlock(name, groupStats) {
+  const saved = cleanFirstName(name);
+  return `<div class="thanks-banner"><p class="thanks-line">${esc(thankYouText(saved))}</p>${driverCountHtml(groupStats)}<form class="name-ask" onsubmit="return saveFirstName(event)"><label>What's your first name? <input class="f" id="first-name" name="first-name" maxlength="40" autocomplete="given-name" value="${esc(saved)}"></label><button type="submit" class="btn stat-link">${saved ? 'Change name' : 'Save name'}</button></form></div>`;
+}
+
+function podcastStatsHtml(episodes, name) {
+  const info = podcastStats(episodes);
+  const thanks = thankYouBlock(name, info.groups);
+  const link = `<p class="stat-actions"><a class="btn stat-link" href="${esc(info.profile)}" target="_blank" rel="noopener noreferrer">SoundCloud profile</a></p>`;
+  if (!info.total || !info.latest) {
+    return `<section class="card stats-page">${thanks}<h3>Podcast</h3><p class="mut">Episodes will show here when the feed can be reached.</p>${link}</section>`;
+  }
+  const when = formatStatDate(info.latest.at);
+  return `<section class="card stats-page">${thanks}<h3>Podcast</h3><div class="stat-grid"><article class="stat-tile"><p class="stat-value">${esc(info.total)}</p><p class="stat-label">Episodes</p></article><article class="stat-tile"><p class="stat-label">Latest episode</p><p class="stat-title">${esc(info.latest.title)}</p>${when ? `<p class="stat-note">${esc(when)}</p>` : ''}</article></div>${link}</section>`;
+}
+
 function statsHtml(raw) {
   const cards = visibleStats(raw);
   if (!cards.length) return '';
@@ -439,8 +586,10 @@ async function loadStats(opts) {
 const api = {
   EVENTS_URL, STATS_URL, CALENDAR_URL, EVENTS_POLL_MS, EVENTS_CACHE_KEY, REMINDER_SEEN_KEY,
   parseEvents, loadEvents, readCache, writeCache, eventActions, formatEventWhen, eventsHtml,
+  eventYmds, monthCells, calendarHtml,
   reminderActive, selectReminders, reminderSession, remindersHtml, readSeen, writeSeen,
-  visibleStats, statsHtml, loadStats
+  visibleStats, statsHtml, loadStats,
+  GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, thankYouText, driverCountHtml, cleanFirstName
 };
 Object.keys(api).forEach(key => { root[key] = api[key]; });
 if (typeof module !== 'undefined' && module.exports) module.exports = api;

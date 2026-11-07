@@ -1,7 +1,7 @@
 importScripts('/quarter.js');
 
-const CACHE = 'goroadhub-shell-15';
-const SHELL = ['/index.html', '/app.js', '/areas.js', '/quarter.js', '/listen-out.js', '/events.js', '/manifest.webmanifest', '/icon.svg'];
+const CACHE = 'goroadhub-shell-16';
+const SHELL = ['/index.html', '/app.js', '/areas.js', '/quarter.js', '/listen-out.js', '/events.js', '/manifest.webmanifest', '/icon.svg', '/favicon-16.png', '/favicon-32.png', '/apple-touch-icon.png', '/icon-192.png', '/icon-512.png', '/icon-maskable-192.png', '/icon-maskable-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));

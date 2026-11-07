@@ -2,9 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { STATS_URL, loadStats, statsHtml, visibleStats } = require('../public/events.js');
+const { STATS_URL, loadStats, statsHtml, visibleStats, GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, thankYouText, driverCountHtml } = require('../public/events.js');
 
 const app = fs.readFileSync(path.join(__dirname, '../public/app.js'), 'utf8');
+const index = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
 
 function jsonResponse(status, body) {
   return { ok: status >= 200 && status < 300, status, json: async () => body };
@@ -68,6 +69,53 @@ test('a failed or empty stats fetch stays completely hidden', async () => {
   });
   assert.equal(live.generated, '2026-11-08T00:00:00+11:00');
   assert.match(statsHtml(live), /Topics/);
+});
+
+test('the Stats tab shows podcast facts from the feed and no group numbers', () => {
+  assert.deepEqual(GROUP_STATS, []);
+  assert.equal(PODCAST_PROFILE, 'https://soundcloud.com/the-drivers-advocate-podcast');
+  const at = Date.parse('2026-11-01T12:00:00+11:00');
+  const info = podcastStats([
+    { h: 'Older show', at: at - 86400000 },
+    { h: 'Latest show', at }
+  ]);
+  assert.equal(info.total, 2);
+  assert.equal(info.latest.title, 'Latest show');
+  assert.equal(info.groups, GROUP_STATS);
+  const html = podcastStatsHtml([
+    { h: 'Older show', at: at - 86400000 },
+    { h: 'Latest show', at }
+  ]);
+  assert.match(html, /class="stat-grid"/);
+  assert.match(html, /<p class="stat-value">2<\/p>/);
+  assert.match(html, /Latest show/);
+  assert.match(html, /1 Nov 2026/);
+  assert.match(html, /href="https:\/\/soundcloud.com\/the-drivers-advocate-podcast"/);
+  assert.match(html, /Thank You for being part of a truly unique group/);
+  assert.equal(html.includes('Members'), false);
+  assert.equal(html.includes('Groups'), false);
+  assert.match(html, /<p class="driver-count" hidden>You're one of X drivers<\/p>/);
+  assert.equal(thankYouText(''), 'Thank You for being part of a truly unique group');
+  assert.equal(thankYouText(' Sam '), 'Thank You Sam for being part of a truly unique group');
+  const named = podcastStatsHtml([{ h: 'Latest show', at }], 'Sam');
+  assert.match(named, /Thank You Sam for being part of a truly unique group/);
+  assert.match(named, /What's your first name\?/);
+  assert.match(named, />Change name</);
+  assert.match(driverCountHtml({ drivers: 1200 }), /You're one of 1200 drivers/);
+  assert.equal(driverCountHtml({ drivers: 1200 }).includes('hidden'), false);
+  const waiting = podcastStatsHtml([]);
+  assert.equal(waiting.includes('stat-value'), false);
+  assert.match(waiting, /when the feed can be reached/);
+  assert.match(waiting, /Thank You for being part of a truly unique group/);
+  assert.match(app, /\['sta','📊 Stats'\]/);
+  assert.match(app, /function statsView\(\)/);
+  assert.match(app, /podcastStatsHtml\(EPS,readFirstName\(\)\)/);
+  assert.match(app, /localStorage\.setItem\('rh-first-name'/);
+  const save = app.slice(app.indexOf('function saveFirstName'), app.indexOf('function statsView'));
+  assert.equal(save.includes('fetch('), false);
+  assert.equal(save.includes('api('), false);
+  assert.match(index, /\.stats-page \.stat-grid\{[^}]*grid-template-columns:1fr 1fr/);
+  assert.match(index, /\.stat-link\{[^}]*background:#1877F2/);
 });
 
 test('the home view paints the stats strip from the public feed', () => {

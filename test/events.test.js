@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   EVENTS_URL, CALENDAR_URL, EVENTS_POLL_MS, EVENTS_CACHE_KEY, REMINDER_SEEN_KEY,
-  loadEvents, readCache, eventActions, formatEventWhen, eventsHtml,
+  loadEvents, readCache, eventActions, formatEventWhen, eventsHtml, eventYmds, calendarHtml,
   reminderActive, selectReminders, reminderSession, remindersHtml, readSeen, writeSeen, parseEvents
 } = require('../public/events.js');
 
@@ -193,10 +193,37 @@ test('an active reminder is shown once, and a dismissed id stays dismissed', () 
   assert.deepEqual(nextVisit.visible(data, fresh, now), []);
 });
 
+test('the month calendar marks event days and the list is a compact grid', () => {
+  const now = new Date('2026-11-08T10:00:00+11:00');
+  assert.deepEqual(eventYmds(show, 'Australia/Sydney'), ['2026-11-14']);
+  assert.deepEqual(eventYmds({ id: 'reunion', title: 'Reunion', start: '2026-11-14', end: '2026-11-15' }, 'Australia/Sydney'), ['2026-11-14', '2026-11-15']);
+  const html = calendarHtml(feed({ upcoming: [show, yard] }), { now, year: 2026, month: 11, selected: '2026-11-14' });
+  assert.match(html, /November 2026/);
+  assert.match(html, /data-cal-nav="-1"/);
+  assert.match(html, /data-cal-nav="1"/);
+  assert.match(html, /class="ev-cal-day ev-cal-today" data-cal-day="2026-11-08"/);
+  assert.match(html, /class="ev-cal-day ev-cal-has ev-cal-on" data-cal-day="2026-11-14"/);
+  assert.match(html, /ev-cal-dot/);
+  assert.match(html, /data-cal-all(?! hidden)/);
+  const cleared = calendarHtml(feed({ upcoming: [show] }), { now, year: 2026, month: 11 });
+  assert.match(cleared, /data-cal-all hidden/);
+  const beforeFirst = html.split('data-cal-day="2026-11-01"')[0];
+  assert.equal((beforeFirst.match(/ev-cal-pad/g) || []).length, 6);
+  const page = eventsHtml(feed({ upcoming: [show] }), { now, year: 2026, month: 11 });
+  assert.match(page, /class="ev-cal"/);
+  assert.match(page, /data-ev-days="2026-11-14"/);
+  assert.match(index, /\.ev-list\{[^}]*display:grid[^}]*grid-template-columns:1fr 1fr/);
+  assert.match(index, /@media\(max-width:339px\)\{\.ev-list\{grid-template-columns:1fr\}/);
+  assert.match(app, /data-cal-nav/);
+  assert.match(app, /data-cal-day/);
+  assert.match(app, /data-cal-all/);
+  assert.match(app, /selectEventDay/);
+});
+
 test('the events tab is in the public nav and the page polls on open', () => {
   assert.match(index, /src="\/events\.js"/);
   assert.match(index, /id="ev-notes"/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\]/);
+  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\]/);
   assert.match(app, /else if\(V\.view=='evt'\)\{eventsView\(\)\}/);
   assert.match(app, /if\(v==='evt'\)refreshEvents\(\)/);
   assert.match(app, /refreshEvents\(\);refreshStats\(\)/);
@@ -206,6 +233,12 @@ test('the events tab is in the public nav and the page polls on open', () => {
   assert.match(app, /data-dismiss/);
   assert.match(app, /reminderSession\(/);
   assert.match(app, /evSession\.dismiss/);
+  assert.match(app, /querySelector\('\.contact-us'\)/);
+  assert.match(app, /contact\.hidden=V\.view==='evt'\|\|V\.view==='pod'/);
+  assert.match(index, /\.ev-cat\{[^}]*background:#1877F2/);
+  assert.match(index, /\.events-card \.btn\{[^}]*background:#1877F2/);
+  assert.match(index, /\.ev-dismiss:hover\{[^}]*background:#166FE5/);
+  assert.equal(/\.ev-banner\{[^}]*#C80813/.test(index), false);
   assert.match(server, /connect-src 'self' https:\/\/tdaau\.com/);
   assert.equal(EVENTS_CACHE_KEY, 'rh-events');
 });
