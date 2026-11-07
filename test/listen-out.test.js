@@ -107,7 +107,23 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(app.includes('newsletterOpenPlan('), false);
   assert.match(app, /podcastOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\]/);
+  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\]/);
+  const view = app.slice(app.indexOf('function pView'), app.indexOf('function drawEps'));
+  assert.ok(view.indexOf('id="ep-feature"') < view.indexOf('id="eps"') && view.indexOf('id="eps"') < view.indexOf('Listen in your podcast app'));
+  assert.match(view, /<h3>Listen in your podcast app<\/h3><p class="sub">Listen only when safe<\/p>/);
+  assert.match(view, /class="pod-pills"/);
+  assert.match(view, /id==='pocketcasts'/);
+  assert.match(view, /id==='overcast'/);
+  assert.match(view, /id==='soundcloud'/);
+  assert.match(view, /<details class="pod-more"><summary>More<\/summary>/);
+  assert.equal(view.includes('out-feed'), false);
+  assert.equal(view.includes('out-primary'), false);
+  assert.match(app, /<article class="ep/);
+  assert.match(app, /class="btn ep-play"/);
+  assert.match(index, /#eps\{[^}]*display:grid[^}]*grid-template-columns:1fr 1fr/);
+  assert.match(index, /\.ep \.ep-play\{[^}]*background:#1877F2/);
+  assert.match(index, /\.ep \.ep-play:hover\{[^}]*background:#166FE5/);
+  assert.match(index, /@media\(max-width:339px\)\{\.ev-list\{grid-template-columns:1fr\}#eps\{grid-template-columns:1fr\}/);
 });
 
 test('Contact us is a small site-bar link to the website contact page', () => {
