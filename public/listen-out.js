@@ -4,7 +4,7 @@ const SOUNDCLOUD_SHOW = 'https://soundcloud.com/user-915018744-314651726';
 const NEWSLETTER_SITE = 'https://tdaau.com/newsletter/';
 const CONTACT_URL = 'https://tdaau.com/contact/';
 const SHOP_URL = 'https://thedriversadvocate.myshopify.com';
-const TAX_URL = 'https://gotaxationhub.com';
+const TAX_URL = 'https://haulage-finance.onrender.com/haulage/';
 
 function podcastScheme(feed) {
   return 'podcast://' + String(feed || '').replace(/^https?:\/\//i, '');

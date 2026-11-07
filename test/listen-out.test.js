@@ -72,7 +72,7 @@ test('stopping automatic opening clears the redirect, including the Apple defaul
 test('newsletters stay on the page until the reader opens them', () => {
   assert.equal(NEWSLETTER_SITE, 'https://tdaau.com/newsletter/');
   assert.equal(SHOP_URL, 'https://thedriversadvocate.myshopify.com');
-  assert.equal(TAX_URL, 'https://gotaxationhub.com');
+  assert.equal(TAX_URL, 'https://haulage-finance.onrender.com/haulage/');
   const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
   assert.ok(mag.indexOf('toolPills()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
   assert.match(app, /function toolPills\(\)/);
