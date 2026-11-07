@@ -32,12 +32,12 @@ test('newsletter groups follow the set Facebook list, with the partner group sec
     ['Truck Drivers Food and Showers Australia', 'https://www.facebook.com/groups/217669642677604/'],
     ['Compliance & Induction', 'https://www.facebook.com/groups/1792433288617560'],
     ['Work Diaries and EWDs', 'https://www.facebook.com/groups/977148505415763'],
-    ['Taxation, Income & Expenditure', 'https://www.facebook.com/groups/tdataxationincomeandexpenditure/'],
+    ['Taxation', 'https://www.facebook.com/groups/tdataxationincomeandexpenditure/'],
     ['Legal Matters', 'https://www.facebook.com/groups/thedriversadvocatelegalmatters/'],
     ['Promoting Australian Transport', 'https://www.facebook.com/groups/thedriversadvocatepromotingaustraliantransport/'],
     ['Employment', 'https://www.facebook.com/groups/thedriversadvocateemployment/'],
     ['Dash Cam', 'https://www.facebook.com/groups/ontheroaddashcam/'],
-    ['Truck Shows, Events and Reunions', 'https://www.facebook.com/groups/thedriversadvocatetruckshows/'],
+    ['Truck Shows', 'https://www.facebook.com/groups/thedriversadvocatetruckshows/'],
     ['Health and Welfare', 'https://www.facebook.com/groups/healthandwelfare/'],
     ['Trucking News', 'https://www.facebook.com/groups/thedriversadvocatetruckingnews/'],
     ['Winners, Losers and The Good Ones', 'https://www.facebook.com/groups/winnerslosersandgoodones/'],
@@ -50,14 +50,14 @@ test('newsletter groups follow the set Facebook list, with the partner group sec
     ['Technology Hub', 'https://www.facebook.com/groups/2346522435751912/'],
     ['Employ A Worker', 'https://www.facebook.com/groups/thedriversadvocateemployadriver/'],
     ['Trip Planner', 'https://www.facebook.com/groups/thedriversadvocatetripplanner/'],
-    ['Not Well or Passed On', 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/']
+    ['Not Well or Passed', 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/']
   ]);
   const ordered = orderAdvocatePages(parseAdvocateHome(htmlSample()));
   assert.equal(ordered[0].name, 'The Drivers Advocate');
   assert.equal(ordered[0].facebook, 'https://www.facebook.com/groups/thedriversadvocate');
   assert.equal(ordered[1].name, 'Truck Drivers Food and Showers Australia');
   assert.equal(ordered[1].facebook, 'https://www.facebook.com/groups/217669642677604/');
-  assert.equal(ordered[ordered.length - 1].name, 'Not Well or Passed On');
+  assert.equal(ordered[ordered.length - 1].name, 'Not Well or Passed');
   assert.equal(ordered[ordered.length - 1].facebook, 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/');
   assert.equal(ordered.length, pages.length);
   assert.deepEqual(ordered.map(page => facebookKey(page.facebook)), pages.map(page => facebookKey(page.facebook)));
@@ -69,12 +69,12 @@ test('newsletter groups follow the set Facebook list, with the partner group sec
   const fromOld = orderAdvocatePages(parseAdvocateHome(`
     <a class="cell cell--group" href="https://www.facebook.com/groups/969273342879706">
       <span class="cell__kicker">Our people</span>
-      <h3 class="cell__name">Not Well or Passed On</h3>
+      <h3 class="cell__name">Not Well or Passed</h3>
       <p class="cell__blurb">Drivers doing it tough.</p>
     </a>`));
   assert.equal(fromOld.length, pages.length);
-  assert.equal(fromOld.filter(page => page.name === 'Not Well or Passed On').length, 1);
-  const passed = fromOld.find(page => page.name === 'Not Well or Passed On');
+  assert.equal(fromOld.filter(page => page.name === 'Not Well or Passed').length, 1);
+  const passed = fromOld.find(page => page.name === 'Not Well or Passed');
   assert.equal(passed.facebook, 'https://www.facebook.com/groups/thedriversadvocatenotwellpassed/');
   assert.equal(passed.site, 'https://tdaau.com/groups/not-well-or-passed/');
 });
