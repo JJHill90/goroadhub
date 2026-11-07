@@ -33,8 +33,14 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rg
 .brand-blurb{margin:0;color:var(--mut);font-size:12px;font-style:italic;font-weight:400;line-height:1.25}
 header input{flex:1;min-width:120px;max-width:300px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:20px;padding:9px 14px;font-size:15px}
 header input::placeholder{color:#8EA0B5}
-nav{display:flex;justify-content:flex-start;align-items:center;gap:16px;margin:2px 0 0;padding:0}
-nav button{border:0;background:none;color:var(--mut);padding:8px 0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
+.brand-lockup{flex:1 1 240px}
+.brand-copy{width:100%;align-items:stretch}
+nav{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 16px;width:100%;margin:2px 0 0;padding:0}
+nav button{border:0;background:none;color:var(--mut);padding:8px 0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;flex:none}
+nav button.nav-end{margin-left:auto}
+.tax-hub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;box-sizing:border-box;min-height:76px;margin:0 auto 14px;padding:14px 16px;border:2px solid #fff;border-radius:12px;background:#C80813;color:#fff;text-align:center;text-decoration:none;box-shadow:0 4px 0 #4A0508}
+.tax-hub-title{font-size:22px;font-weight:800;letter-spacing:.02em;line-height:1.1}
+.tax-hub-sub{font-size:15px;font-weight:700;line-height:1.3}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .contact-us{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:2px solid #fff;border-radius:8px;background:#C80813;color:#fff;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none;flex:none}
 .contact-us[hidden]{display:none}
@@ -89,7 +95,19 @@ h3{margin:0 0 8px}.mut{color:var(--mut)}
 .news-card{max-width:840px;margin:0 auto 16px}
 .news-card h3{margin:0 0 6px;text-align:center}
 .news-card .sub{margin:0 0 12px;text-align:center}
-.news-card .btn{display:flex;width:100%;min-height:44px;align-items:center;justify-content:center;text-align:center}
+.news-card .btn{display:flex;width:100%;box-sizing:border-box;min-height:44px;align-items:center;justify-content:center;text-align:center}
+.news-card .shop-link{margin-top:8px}
+.shop-row{margin:0 0 12px}
+.shop-link{display:flex;width:100%;box-sizing:border-box;min-height:44px;align-items:center;justify-content:center;text-align:center;text-decoration:none}
+.fb-list{display:flex;flex-direction:column}
+.fb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:8px 0;border-bottom:1px solid var(--bd);color:#fff;text-decoration:none}
+.fb-name{min-width:0;font-weight:800}
+.fb-go{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border-radius:8px;background:#1877F2;color:#fff;font-weight:800;white-space:nowrap}
+.pod-hours{width:100%;border-collapse:collapse;margin:14px 0 0;font-size:13px}
+.pod-hours caption{caption-side:top;text-align:left;font-weight:800;font-size:16px;margin:0 0 8px}
+.pod-hours th,.pod-hours td{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--bd)}
+.pod-hours .stat-note{margin:4px 0 0;color:#D5DEE8}
+.stat-actions{display:flex;flex-direction:column;gap:8px}
 .page-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px auto 0;align-items:stretch}
 .page-card{display:flex;flex-direction:column;height:100%;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--bd);background:#001428;color:#F7F8FA}
 .page-name{display:flex;align-items:flex-start;gap:8px;min-width:0;font-weight:700;font-size:14px;line-height:1.25}
@@ -172,14 +190,21 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .site-foot a{color:#D5DEE8;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .site-foot .site-sep{padding:0 10px;color:#D5DEE8}
 .talk{position:fixed;left:0;right:0;bottom:8px;z-index:35;text-align:center}
+.talk[open]{bottom:148px;display:flex;flex-direction:column-reverse;align-items:center}
+.talk[open] .talk-card{width:min(420px,100%)}
 .talk-open{display:inline-block;background:rgba(0,20,40,.92);color:#F4F7FB;border:1px solid #D5DEE8;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
-.talk-card{display:none;margin:8px auto 0;max-width:420px;background:#F4F7FB;color:#102033;border-radius:12px;padding:14px 14px 8px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.28)}
-.talk[open] .talk-card{display:block;max-height:70vh;overflow:auto;padding-bottom:76px}
-.talk-card p{margin:0 0 8px;font-size:14px;font-weight:600;line-height:1.35}
-.talk-card .tap-call{display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 8px;background:#16324F;color:#fff;border-radius:10px;font-weight:800;text-decoration:none}
-.talk-card .page-link{color:#16324F;font-size:13px;font-weight:700}
-.talk-h{margin:12px 0 6px;font-size:16px;color:#102033}
-.talk-note{display:block;color:#3d4d5c;font-size:13px;font-weight:600}
+.talk-card{display:none;margin:8px auto 0;max-width:420px;background:#F4F7FB;color:#102033;border-radius:12px;padding:12px 12px 4px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.talk[open] .talk-card{display:block;max-height:calc(100dvh - 220px);overflow:auto;padding-bottom:12px}
+.talk-sec{margin:0 0 14px;padding:0 0 4px}
+.talk-sec+.talk-sec{border-top:1px solid #D5DEE8;padding-top:12px}
+.talk-h{margin:0 0 8px;font-size:16px;line-height:1.2;color:#102033}
+.talk-lead{margin:0 0 8px;font-size:14px;font-weight:600;line-height:1.35}
+.talk-card .tap-call{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;min-height:48px;margin:0 0 8px;padding:8px 12px;background:#16324F;color:#fff;border-radius:10px;font-weight:800;text-decoration:none;text-align:center}
+.help-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;padding:8px 0;border-bottom:1px solid #E1E7EE}
+.help-copy{min-width:0;flex:1 1 auto}
+.help-name{display:block;color:#102033;font-size:15px;font-weight:800;line-height:1.2;text-decoration:underline;text-underline-offset:2px}
+.talk-note{display:block;margin-top:2px;color:#3d4d5c;font-size:12px;font-weight:600;line-height:1.35}
+.help-num{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;background:#16324F;color:#fff;border-radius:10px;font-weight:800;font-size:15px;line-height:1;text-decoration:none;white-space:nowrap}
 #smash-glass{position:fixed;right:12px;bottom:56px;z-index:45;display:inline-flex;flex-direction:column;align-items:center;gap:2px;max-width:168px;background:#C80813;color:#fff;border:3px solid #fff;border-radius:6px;min-height:48px;padding:8px 10px 10px;font-weight:800;letter-spacing:.04em;line-height:1.15;text-align:center;box-shadow:0 0 0 3px #C80813,0 6px 0 #4A0508}
 #smash-glass::before{content:"";width:100%;height:8px;margin:0 0 4px;border-radius:2px;background:repeating-linear-gradient(135deg,#1A1204 0 4px,#F5B942 4px 8px);flex:0 0 auto}
 .smash-title{font-size:14px;letter-spacing:.05em}
@@ -294,21 +319,27 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <details class="talk">
 <summary class="talk-open">Need to talk?</summary>
 <div class="talk-card">
-<p>If life is in danger, call <a class="tap-call" href="tel:000">000</a>.</p>
-<p><a class="tap-call" href="tel:131114">Call Lifeline 13 11 14</a><a class="page-link" href="https://www.lifeline.org.au/" target="_blank" rel="noopener noreferrer">Lifeline</a></p>
-<p><a class="tap-call" href="tel:1300224636">Call Beyond Blue 1300 22 4636</a><a class="page-link" href="https://www.beyondblue.org.au/" target="_blank" rel="noopener noreferrer">Beyond Blue</a></p>
-<p><a class="tap-call" href="tel:139276">Call 13YARN 13 92 76</a><a class="page-link" href="https://www.13yarn.org.au/" target="_blank" rel="noopener noreferrer">13YARN</a></p>
-<p><a class="page-link" href="https://www.healthyheads.org.au/" target="_blank" rel="noopener noreferrer">Healthy Heads in Trucks &amp; Sheds</a></p>
+<section class="talk-sec">
+<h3 class="talk-h">Need to talk?</h3>
+<p class="talk-lead">If life is in danger, call 000.</p>
+<a class="tap-call" href="tel:000">Call 000</a>
+<div class="help-row"><a class="help-name" href="https://www.lifeline.org.au/" target="_blank" rel="noopener noreferrer">Lifeline</a><a class="help-num" href="tel:131114" aria-label="Call Lifeline 13 11 14">13 11 14</a></div>
+<div class="help-row"><a class="help-name" href="https://www.beyondblue.org.au/" target="_blank" rel="noopener noreferrer">Beyond Blue</a><a class="help-num" href="tel:1300224636" aria-label="Call Beyond Blue 1300 22 4636">1300 22 4636</a></div>
+<div class="help-row"><a class="help-name" href="https://www.13yarn.org.au/" target="_blank" rel="noopener noreferrer">13YARN</a><a class="help-num" href="tel:139276" aria-label="Call 13YARN 13 92 76">13 92 76</a></div>
+<div class="help-row"><a class="help-name" href="https://www.healthyheads.org.au/" target="_blank" rel="noopener noreferrer">Healthy Heads in Trucks &amp; Sheds</a></div>
+</section>
+<section class="talk-sec">
 <h3 class="talk-h">Health advice 24/7</h3>
-<p>Call 000 in an emergency.</p>
+<p class="talk-lead">Call 000 in an emergency.</p>
 <div data-health-list>
-<p data-health-state="ALL"><a class="tap-call" href="tel:1800022222">Call healthdirect 1800 022 222</a><span class="talk-note">Registered nurses, 24/7. After hours, the nurse may offer a call back from a GP.</span> <a class="page-link" href="https://www.healthdirect.gov.au/how-healthdirect-can-help-you" target="_blank" rel="noopener noreferrer">healthdirect</a></p>
-<p data-health-state="QLD"><a class="tap-call" href="tel:13432584">Call 13 HEALTH 13 43 25 84</a><span class="talk-note">Queensland. Registered nurses, 24/7.</span> <a class="page-link" href="https://www.qld.gov.au/health/contacts/advice/13health" target="_blank" rel="noopener noreferrer">13 HEALTH</a></p>
-<p data-health-state="VIC"><a class="tap-call" href="tel:1300606024">Call NURSE-ON-CALL 1300 60 60 24</a><span class="talk-note">Victoria. Registered nurses, 24/7.</span> <a class="page-link" href="https://www.health.vic.gov.au/primary-care/nurse-on-call" target="_blank" rel="noopener noreferrer">NURSE-ON-CALL</a></p>
+<div class="help-row" data-health-state="ALL"><div class="help-copy"><a class="help-name" href="https://www.healthdirect.gov.au/how-healthdirect-can-help-you" target="_blank" rel="noopener noreferrer">healthdirect</a><span class="talk-note">Registered nurses, 24/7. After hours, the nurse may offer a call back from a GP.</span></div><a class="help-num" href="tel:1800022222" aria-label="Call healthdirect 1800 022 222">1800 022 222</a></div>
+<div class="help-row" data-health-state="QLD"><div class="help-copy"><a class="help-name" href="https://www.qld.gov.au/health/contacts/advice/13health" target="_blank" rel="noopener noreferrer">13 HEALTH</a><span class="talk-note">Queensland. Registered nurses, 24/7.</span></div><a class="help-num" href="tel:13432584" aria-label="Call 13 HEALTH 13 43 25 84">13 43 25 84</a></div>
+<div class="help-row" data-health-state="VIC"><div class="help-copy"><a class="help-name" href="https://www.health.vic.gov.au/primary-care/nurse-on-call" target="_blank" rel="noopener noreferrer">NURSE-ON-CALL</a><span class="talk-note">Victoria. Registered nurses, 24/7.</span></div><a class="help-num" href="tel:1300606024" aria-label="Call NURSE-ON-CALL 1300 60 60 24">1300 60 60 24</a></div>
 </div>
-<p><a class="tap-call" data-find-doctor href="https://www.healthdirect.gov.au/australian-health-services" target="_blank" rel="noopener noreferrer">Find a doctor near me</a></p>
+<a class="tap-call" data-find-doctor href="https://www.healthdirect.gov.au/australian-health-services" target="_blank" rel="noopener noreferrer">Find a doctor near me</a>
 <p class="talk-note">Opens the healthdirect Service Finder for a GP, after-hours clinic, hospital or pharmacy. That page does not take a pin in the link. Choose Use current location there.</p>
-<p><a class="tap-call" data-nearest-hospital href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20emergency" target="_blank" rel="noopener noreferrer">Nearest hospital</a></p>
+<a class="tap-call" data-nearest-hospital href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20emergency" target="_blank" rel="noopener noreferrer">Nearest hospital</a>
+</section>
 </div>
 </details>
 </footer>

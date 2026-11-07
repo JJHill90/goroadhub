@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { PODCAST } = require('../feeds');
 const {
-  PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL,
+  PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL, SHOP_URL, TAX_URL,
   podcastScheme, podcastApps, podcastOpenPlan, applePlatform
 } = require('../public/listen-out');
 
@@ -71,11 +71,20 @@ test('stopping automatic opening clears the redirect, including the Apple defaul
 
 test('newsletters stay on the page until the reader opens them', () => {
   assert.equal(NEWSLETTER_SITE, 'https://tdaau.com/newsletter/');
+  assert.equal(SHOP_URL, 'https://thedriversadvocate.myshopify.com');
+  assert.equal(TAX_URL, 'https://gotaxationhub.com');
   const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
-  assert.ok(mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.ok(mag.indexOf('taxHubLink()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.match(app, /function taxHubLink\(\)/);
+  assert.match(app, /Tax Hub/);
+  assert.match(app, /Record your receipts/);
+  assert.match(app, /typeof TAX_URL==='string'\?TAX_URL:''/);
+  assert.match(app, /function sitesView\(\)/);
   assert.match(mag, /<h3>Newsletters<\/h3>/);
   assert.match(mag, /<p class="sub">Every issue in one place on our website\.<\/p>/);
   assert.match(mag, /<a class="btn" href="\$\{esc\(href\)\}" target="_blank" rel="noopener noreferrer">Read the newsletters<\/a>/);
+  assert.match(mag, /class="btn shop-link" href="\$\{esc\(shop\)\}" target="_blank" rel="noopener noreferrer">TDA Shop</);
+  assert.match(mag, /typeof SHOP_URL==='string'\?SHOP_URL:''/);
   assert.equal(mag.includes('newsAuto('), false);
   assert.equal(mag.includes('newsletterOpenPlan('), false);
   assert.equal(mag.includes('Stop opening automatically'), false);
@@ -107,7 +116,7 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(app.includes('newsletterOpenPlan('), false);
   assert.match(app, /podcastOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\]/);
+  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\],\['sit','My Sites & Inductions'\]/);
   const view = app.slice(app.indexOf('function pView'), app.indexOf('function drawEps'));
   assert.ok(view.indexOf('id="ep-feature"') < view.indexOf('id="eps"') && view.indexOf('id="eps"') < view.indexOf('Listen in your podcast app'));
   assert.match(view, /<h3>Listen in your podcast app<\/h3><p class="sub">Listen only when safe<\/p>/);

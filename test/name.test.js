@@ -28,7 +28,7 @@ test('the page title, header, and share tags use the app name', () => {
   assert.match(index, /\.brand-blurb\{[^}]*color:var\(--mut\)[^}]*font-size:12px[^}]*font-weight:400/);
   assert.equal(/\.brand-blurb\{[^}]*text-decoration/.test(index), false);
   assert.match(index, /@media\(max-width:600px\)\{nav button\{padding:8px 0;font-size:12px\}\.brand\{font-size:13px\}\.brand-blurb\{font-size:11px\}\}/);
-  assert.match(index, /nav\{display:flex;justify-content:flex-start/);
+  assert.match(index, /nav\{display:flex;[^}]*justify-content:flex-start/);
   assert.equal(/nav\{[^}]*margin-left:auto/.test(index), false);
   assert.match(index, /main\.two\{grid-template-columns:290px minmax\(0,1fr\)\}/);
   assert.equal(index.includes('Go Road Hub'), false);
