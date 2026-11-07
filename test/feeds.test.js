@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseFeed, fetchFeed, assertPublicUrl, changedPatch, POST_KEYS, podcastEpisodes } = require('../feeds');
+const { parseFeed, fetchFeed, assertPublicUrl, changedPatch, POST_KEYS, podcastEpisodes, throughEpisode315 } = require('../feeds');
 
 const RSS = `<?xml version="1.0"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
@@ -94,6 +94,25 @@ test('a changed headline updates without touching pins or likes', () => {
   const patch = changedPatch(old, incoming, POST_KEYS);
   assert.deepEqual(patch, { h: 'New' });
   assert.equal(POST_KEYS.includes('pin'), false);
+});
+
+test('the podcast list keeps the newest episodes through 315 and drops older ones', () => {
+  const items = [
+    { h: 'On the road Podcast - Original', audio: 'https://cdn.example/a.mp3' },
+    { h: 'Ep2 - Raw interview', audio: 'https://cdn.example/b.mp3' },
+    { h: '340. News', audio: 'https://cdn.example/c.mp3' },
+    { h: '315. In The Weeds Mike and Kath', audio: 'https://cdn.example/d.mp3' },
+    { h: '314. Older show', audio: 'https://cdn.example/e.mp3' },
+    { h: '30. Very old', audio: 'https://cdn.example/f.mp3' }
+  ];
+  const kept = throughEpisode315(items).map(item => item.h);
+  assert.deepEqual(kept, items.slice(0, 4).map(item => item.h));
+  assert.equal(kept.includes('314. Older show'), false);
+  const fs = require('fs');
+  const app = fs.readFileSync(require('path').join(__dirname, '..', 'public/app.js'), 'utf8');
+  assert.match(app, /function epShowMore\(\)\{epShown\+=20;drawEps\(\)\}/);
+  assert.match(app, /Show more/);
+  assert.match(app, /rest\.slice\(0,epShown\)/);
 });
 
 test('a non-feed document does not become a story', () => {

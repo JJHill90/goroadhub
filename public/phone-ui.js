@@ -76,7 +76,7 @@ async function refreshStandard() {
   } catch (e) {
     try { STD = JSON.parse(localStorage.getItem('rh-standard-dates') || 'null'); } catch (err) {}
   }
-  if (typeof V !== 'undefined' && V.view === 'evt' && typeof eventsView === 'function') eventsView();
+  if (typeof V !== 'undefined' && V.view === 'evt' && typeof eventsView === 'function') repaint();
 }
 
 function phoneEventStatus() {
@@ -89,12 +89,25 @@ function phoneEventStatus() {
     standardItems: (STD && STD.items) || [],
     holidayNote: STD && STD.holidayNote || '',
     standardNotes: STD && STD.notes || [],
-    mineDays: typeof mineDays === 'function' ? mineDays(reminders, sites) : [],
+    mineDays: [],
     standardDays: typeof standardItemDays === 'function' ? standardItemDays(items) : [],
-    countdownHtml: typeof dueEntries === 'function' ? countdownHtml(dueEntries(reminders, sites, new Date())) : '',
-    nearbyHtml: HERE && typeof sitesWithin === 'function' ? nearbyHtml(sitesWithin(sites, HERE)) : '',
-    personalHtml: typeof personalHtml === 'function' ? personalHtml({ reminders, sites, contacts: readContacts(localStorage), query: siteQuery, sort: siteSort, here: HERE }) : ''
+    countdownHtml: '',
+    nearbyHtml: '',
+    personalHtml: ''
   };
+}
+function sitesPageHtml() {
+  const reminders = typeof readReminders === 'function' ? readReminders(localStorage) : [];
+  const sites = typeof readSites === 'function' ? readSites(localStorage) : [];
+  const nearby = HERE && typeof sitesWithin === 'function' ? nearbyHtml(sitesWithin(sites, HERE)) : '';
+  const due = typeof dueEntries === 'function' ? countdownHtml(dueEntries(reminders, sites, new Date())) : '';
+  const body = typeof personalHtml === 'function' ? personalHtml({ reminders, sites, contacts: typeof readContacts === 'function' ? readContacts(localStorage) : [], query: siteQuery, sort: siteSort, here: HERE }) : '';
+  return nearby + due + body;
+}
+function repaint() {
+  if (typeof V === 'undefined') return;
+  if (V.view === 'sit' && typeof sitesView === 'function') sitesView();
+  else if (V.view === 'evt' && typeof eventsView === 'function') eventsView();
 }
 function phoneCalendarMarks() {
   const status = phoneEventStatus();
@@ -208,7 +221,7 @@ function applyScan(purpose, siteId, text) {
     saveSite(localStorage, site);
     showQr(site);
   }
-  if (typeof V !== 'undefined' && V.view === 'evt') eventsView();
+  repaint();
 }
 function showGate(html, bright) {
   const old = document.getElementById('gate-view');
@@ -274,7 +287,7 @@ function formValue(id) { const el = document.getElementById(id); return el ? el.
 function submitReminder() {
   const custom = formValue('rem-warn') === 'custom' ? formValue('rem-custom') : formValue('rem-warn');
   saveReminder(localStorage, { id: formValue('rem-id'), kind: formValue('rem-kind'), label: formValue('rem-label'), date: formValue('rem-date'), warnDays: custom });
-  eventsView();
+  repaint();
 }
 function submitSite() {
   const existing = readSites(localStorage).find(item => item.id === formValue('site-id'));
@@ -283,11 +296,11 @@ function submitSite() {
     inductionLabel: formValue('site-induction'), inductionUrl: formValue('site-url'),
     completed: formValue('site-completed'), expiry: formValue('site-expiry'), warnDays: formValue('site-warn'), notes: formValue('site-notes')
   }));
-  eventsView();
+  repaint();
 }
 function submitContact() {
   saveContact(localStorage, { name: formValue('contact-name'), role: formValue('contact-role'), phone: formValue('contact-phone') });
-  eventsView();
+  repaint();
 }
 function submitEmployer() {
   const key = formValue('w3w-key');
@@ -297,7 +310,7 @@ function submitEmployer() {
     afterHoursPhone: formValue('emp-after'), insurer: formValue('emp-insurer'), claimPhone: formValue('emp-claim'), policyNumber: formValue('emp-policy'),
     fleetUnit: formValue('emp-fleet'), rego: formValue('emp-rego'), companyName: formValue('emp-company'), abn: formValue('emp-abn'), instructions: formValue('emp-notes')
   });
-  eventsView();
+  repaint();
 }
 function downloadIcs(token) {
   const parts = String(token || '').split(':');
@@ -366,7 +379,7 @@ document.addEventListener('click', event => {
       site.lng = pos.coords.longitude;
       saveSite(localStorage, site);
       HERE = { lat: site.lat, lng: site.lng };
-      eventsView();
+      repaint();
     }, () => {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 12000 });
     return;
   }
@@ -376,7 +389,7 @@ document.addEventListener('click', event => {
   if (editRem) {
     const row = readReminders(localStorage).find(item => item.id === editRem);
     if (!row) return;
-    eventsView();
+    repaint();
     document.getElementById('rem-id').value = row.id;
     document.getElementById('rem-kind').value = row.kind;
     document.getElementById('rem-label').value = row.label;
@@ -384,7 +397,7 @@ document.addEventListener('click', event => {
     document.getElementById('rem-warn').value = [30, 60, 90, 120, 160].indexOf(row.warnDays) >= 0 ? String(row.warnDays) : 'custom';
     return;
   }
-  if (el.hasAttribute('data-rem-del')) { deleteReminder(localStorage, el.getAttribute('data-rem-del')); eventsView(); return; }
+  if (el.hasAttribute('data-rem-del')) { deleteReminder(localStorage, el.getAttribute('data-rem-del')); repaint(); return; }
   const editSite = el.getAttribute('data-site-edit');
   if (editSite) {
     const row = readSites(localStorage).find(item => item.id === editSite);
@@ -400,8 +413,8 @@ document.addEventListener('click', event => {
     document.getElementById('site-notes').value = row.notes;
     return;
   }
-  if (el.hasAttribute('data-site-del')) { deleteSite(localStorage, el.getAttribute('data-site-del')); eventsView(); return; }
-  if (el.hasAttribute('data-contact-del')) { deleteContact(localStorage, el.getAttribute('data-contact-del')); eventsView(); return; }
+  if (el.hasAttribute('data-site-del')) { deleteSite(localStorage, el.getAttribute('data-site-del')); repaint(); return; }
+  if (el.hasAttribute('data-contact-del')) { deleteContact(localStorage, el.getAttribute('data-contact-del')); repaint(); return; }
   const addContact = el.getAttribute('data-add-site-contact');
   if (addContact) {
     const card = el.closest('article');
@@ -409,7 +422,7 @@ document.addEventListener('click', event => {
     if (!site || !card) return;
     site.contacts = (site.contacts || []).concat([{ name: card.querySelector('[data-c-name]').value, role: card.querySelector('[data-c-role]').value, phone: card.querySelector('[data-c-phone]').value, email: card.querySelector('[data-c-email]').value }]);
     saveSite(localStorage, site);
-    eventsView();
+    repaint();
     return;
   }
   const dropContact = el.getAttribute('data-site-contact-del');
@@ -418,7 +431,7 @@ document.addEventListener('click', event => {
     if (!site) return;
     site.contacts = (site.contacts || []).filter(item => item.id !== el.getAttribute('data-contact-id'));
     saveSite(localStorage, site);
-    eventsView();
+    repaint();
     return;
   }
   if (el.hasAttribute('data-add-witness') && SMASH) {
@@ -437,13 +450,13 @@ document.addEventListener('change', event => {
     const filter = readStdFilter(localStorage);
     filter.kinds[t.getAttribute('data-std-kind')] = t.checked;
     writeStdFilter(localStorage, filter);
-    eventsView();
+    repaint();
     return;
   }
-  if (t.id === 'site-sort') { siteSort = t.value; eventsView(); return; }
+  if (t.id === 'site-sort') { siteSort = t.value; repaint(); return; }
   if (t.id === 'personal-import' && t.files && t.files[0]) {
     const reader = new FileReader();
-    reader.onload = async () => { await importBackup(localStorage, String(reader.result || ''), store()); eventsView(); };
+    reader.onload = async () => { await importBackup(localStorage, String(reader.result || ''), store()); repaint(); };
     reader.readAsText(t.files[0]);
     return;
   }
@@ -471,10 +484,11 @@ document.addEventListener('submit', event => {
   if (form.id === 'emp-form') { event.preventDefault(); submitEmployer(); }
 });
 window.phoneEventStatus = phoneEventStatus;
+window.sitesPageHtml = sitesPageHtml;
 window.phoneCalendarMarks = phoneCalendarMarks;
 window.refreshStandard = refreshStandard;
 refreshStandard();
 if (typeof sitesHavePins === 'function' && sitesHavePins(localStorage) && navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => { HERE = { lat: pos.coords.latitude, lng: pos.coords.longitude }; if (typeof V !== 'undefined' && V.view === 'evt') eventsView(); }, () => {}, { enableHighAccuracy: true, maximumAge: 60000, timeout: 8000 });
+  navigator.geolocation.getCurrentPosition(pos => { HERE = { lat: pos.coords.latitude, lng: pos.coords.longitude }; repaint(); }, () => {}, { enableHighAccuracy: true, maximumAge: 60000, timeout: 8000 });
 }
 })();

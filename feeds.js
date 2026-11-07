@@ -117,11 +117,15 @@ function linkOf(it) {
   return tx(preferred);
 }
 
-function parseFeed(xml) {
+function parseFeed(xml, opts) {
+  const o = opts || {};
+  const scan = o.scan == null ? 60 : o.scan;
+  const limit = o.limit == null ? 30 : o.limit;
   const j = px.parse(String(xml || '')), ch = j.rss && j.rss.channel;
   const items = ch ? arr(ch.item) : arr(j.feed && j.feed.entry);
   const chImg = ch && ch['itunes:image'] && ch['itunes:image']['@_href'] || '';
-  return items.slice(0, 60).map(it => {
+  const chosen = scan > 0 ? items.slice(0, scan) : items;
+  return chosen.map(it => {
     const html = tx(it['content:encoded'] || it.content || it.description || it.summary);
     const link = linkOf(it);
     const enc = arr(it.enclosure)[0], mc = arr(it['media:content'])[0] || arr(it['media:thumbnail'])[0];
@@ -129,7 +133,27 @@ function parseFeed(xml) {
     const d = new Date(tx(it.pubDate || it.published || it.updated || it['dc:date']));
     return { guid: tx(it.guid) || tx(it.id) || link || tx(it.title), h: strip(it.title), x: strip(html).slice(0, 400), link: http(link), img: http(img), chImg: http(chImg),
       at: isNaN(d) ? Date.now() : d.getTime(), audio: enc && /audio|video/.test(enc['@_type'] || '') ? http(enc['@_url']) : '', dur: tx(it['itunes:duration']) };
-  }).filter(i => i.h && !/^(redirecting\.*|facebook|log ?in.*)$/i.test(i.h) && !/\/login(\/|$|\?)/.test(i.link)).slice(0, 30);
+  }).filter(i => i.h && !/^(redirecting\.*|facebook|log ?in.*)$/i.test(i.h) && !/\/login(\/|$|\?)/.test(i.link)).slice(0, limit > 0 ? limit : undefined);
+}
+
+const PODCAST_OLDEST = 315;
+
+function leadingEpisodeNumber(title) {
+  const match = String(title || '').trim().match(/^(\d+)\s*\./);
+  return match ? Number(match[1]) : null;
+}
+
+function throughEpisode315(items) {
+  const out = [];
+  let seenNewer = false;
+  for (const item of items || []) {
+    const number = leadingEpisodeNumber(item && item.h);
+    if (number === PODCAST_OLDEST) { out.push(item); break; }
+    if (seenNewer && number != null && number < PODCAST_OLDEST) break;
+    if (number != null && number >= PODCAST_OLDEST) seenNewer = true;
+    out.push(item);
+  }
+  return out;
 }
 
 async function pull(f) { return parseFeed(await fetchFeed(f.url)); }
@@ -150,7 +174,7 @@ function podcastEpisodes(items, name = PODCAST.name) {
 
 async function podcastNow(now = Date.now) {
   if (podcastCache.episodes.length && now - podcastCache.at < 10 * 60 * 1000) return podcastCache;
-  const episodes = podcastEpisodes(await pull({ url: PODCAST.url }));
+  const episodes = podcastEpisodes(throughEpisode315(parseFeed(await fetchFeed(PODCAST.url), { scan: 0, limit: 0 })));
   podcastCache = { at: now, show: PODCAST.name, home: PODCAST.home, episodes };
   return podcastCache;
 }
@@ -219,6 +243,7 @@ function install(app, pool, need) {
           const traffic = f.kind === 'traffic';
           let items;
           if (traffic) items = parseIncidents(await fetchFeed(f.url));
+          else if (pod) items = throughEpisode315(parseFeed(await fetchFeed(f.url), { scan: 0, limit: 0 }));
           else {
             items = await pull(f);
             if (f.filter) items = items.filter(it => transportRelated(it.h + ' ' + it.x)).slice(0, 8);
@@ -256,6 +281,8 @@ function install(app, pool, need) {
 }
 
 install.podcastEpisodes = podcastEpisodes;
+install.throughEpisode315 = throughEpisode315;
+install.PODCAST_OLDEST = PODCAST_OLDEST;
 install.PODCAST = PODCAST;
 install.parseFeed = parseFeed;
 install.changedPatch = changedPatch;

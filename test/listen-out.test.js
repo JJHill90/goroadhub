@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { PODCAST } = require('../feeds');
 const {
-  PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL,
+  PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL, SHOP_URL, TAX_URL,
   podcastScheme, podcastApps, podcastOpenPlan, applePlatform
 } = require('../public/listen-out');
 
@@ -71,11 +71,23 @@ test('stopping automatic opening clears the redirect, including the Apple defaul
 
 test('newsletters stay on the page until the reader opens them', () => {
   assert.equal(NEWSLETTER_SITE, 'https://tdaau.com/newsletter/');
+  assert.equal(SHOP_URL, 'https://thedriversadvocate.myshopify.com');
+  assert.equal(TAX_URL, 'https://gotaxationhub.com');
   const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
-  assert.ok(mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.ok(mag.indexOf('toolPills()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.match(app, /function toolPills\(\)/);
+  assert.match(app, /<b>Tax Hub<\/b><span>Record your receipts<\/span>/);
+  assert.match(app, /class="tool-pill"/);
+  assert.match(app, /typeof TAX_URL==='string'\?TAX_URL:''/);
+  assert.match(app, /typeof SHOP_URL==='string'\?SHOP_URL:''/);
+  assert.match(app, /function sitesView\(\)/);
+  assert.match(app, /sites-page">'\+toolPills\(\)/);
   assert.match(mag, /<h3>Newsletters<\/h3>/);
   assert.match(mag, /<p class="sub">Every issue in one place on our website\.<\/p>/);
   assert.match(mag, /<a class="btn" href="\$\{esc\(href\)\}" target="_blank" rel="noopener noreferrer">Read the newsletters<\/a>/);
+  assert.match(mag, /toolPills\(\)/);
+  assert.equal(mag.includes('shop-link'), false);
+  assert.equal(mag.includes('#C80813'), false);
   assert.equal(mag.includes('newsAuto('), false);
   assert.equal(mag.includes('newsletterOpenPlan('), false);
   assert.equal(mag.includes('Stop opening automatically'), false);
@@ -107,7 +119,7 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(app.includes('newsletterOpenPlan('), false);
   assert.match(app, /podcastOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\]/);
+  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\],\['sit','My Sites & Inductions'\]/);
   const view = app.slice(app.indexOf('function pView'), app.indexOf('function drawEps'));
   assert.ok(view.indexOf('id="ep-feature"') < view.indexOf('id="eps"') && view.indexOf('id="eps"') < view.indexOf('Listen in your podcast app'));
   assert.match(view, /<h3>Listen in your podcast app<\/h3><p class="sub">Listen only when safe<\/p>/);
@@ -120,10 +132,15 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(view.includes('out-primary'), false);
   assert.match(app, /<article class="ep/);
   assert.match(app, /class="btn ep-play"/);
-  assert.match(index, /#eps\{[^}]*display:grid[^}]*grid-template-columns:1fr 1fr/);
-  assert.match(index, /\.ep \.ep-play\{[^}]*background:#1877F2/);
+  assert.match(index, /#eps\{[^}]*display:grid[^}]*grid-template-columns:1fr;/);
+  assert.match(index, /@media\(min-width:720px\)\{#eps\{grid-template-columns:1fr 1fr\}/);
+  assert.match(index, /\.ep-snip\{/);
+  assert.match(index, /\.ep \.ep-play\{[^}]*width:100%[^}]*background:#1877F2/);
   assert.match(index, /\.ep \.ep-play:hover\{[^}]*background:#166FE5/);
-  assert.match(index, /@media\(max-width:339px\)\{\.ev-list\{grid-template-columns:1fr\}#eps\{grid-template-columns:1fr\}/);
+  assert.match(app, /function epDate\(/);
+  assert.match(app, /function epSnip\(/);
+  assert.match(app, /class="ep-meta"/);
+  assert.match(app, /class="ep-snip"/);
 });
 
 test('Contact us is a small site-bar link to the website contact page', () => {

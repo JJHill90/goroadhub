@@ -573,18 +573,238 @@ function visibleStats(raw) {
 }
 
 const PODCAST_PROFILE = 'https://soundcloud.com/the-drivers-advocate-podcast';
+const PODCAST_FEED = 'https://feeds.soundcloud.com/users/soundcloud:users:877172068/sounds.rss';
 const GROUP_STATS = [];
+const FACEBOOK_URL = 'https://tdaau.com/facebook.json';
+const FACEBOOK_API = '/api/facebook';
+const FACEBOOK_CACHE_KEY = 'rh-facebook';
+const PODCAST_LINKS = [
+  { name: 'SoundCloud', href: PODCAST_PROFILE },
+  { name: 'Pocket Casts', href: 'pktc://subscribe/' + PODCAST_FEED },
+  { name: 'Overcast', href: 'overcast://x-callback-url/add?url=' + encodeURIComponent(PODCAST_FEED) }
+];
+const HOUR_WINDOWS = [
+  { id: 'month', label: 'Last month', months: 1 },
+  { id: '6', label: 'Last 6 months', months: 6 },
+  { id: '12', label: 'Last 12 months', months: 12 },
+  { id: '24', label: 'Last 24 months', months: 24 },
+  { id: 'all', label: 'All time', months: 0 }
+];
 
-function podcastStats(episodes) {
+function durationSeconds(value) {
+  const raw = text(value);
+  if (!raw) return null;
+  if (/^\d+(\.\d+)?$/.test(raw)) return Math.round(Number(raw));
+  const parts = raw.split(':').map(Number);
+  if (parts.length < 2 || parts.length > 3 || parts.some(part => !Number.isFinite(part) || part < 0)) return null;
+  if (parts.length === 2) return Math.round(parts[0] * 60 + parts[1]);
+  return Math.round(parts[0] * 3600 + parts[1] * 60 + parts[2]);
+}
+
+function sydneyParts(ms) {
+  const parts = new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(new Date(ms));
+  const pick = type => +parts.find(part => part.type === type).value;
+  return { y: pick('year'), m: pick('month'), d: pick('day') };
+}
+
+function ymdKey(part) {
+  return String(part.y).padStart(4, '0') + '-' + String(part.m).padStart(2, '0') + '-' + String(part.d).padStart(2, '0');
+}
+
+function shiftMonths(part, delta) {
+  const base = new Date(Date.UTC(part.y, part.m - 1 + delta, 1));
+  const days = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + 1, 0)).getUTCDate();
+  return { y: base.getUTCFullYear(), m: base.getUTCMonth() + 1, d: Math.min(part.d, days) };
+}
+
+function formatYmd(part) {
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Sydney', day: 'numeric', month: 'short', year: 'numeric'
+  }).format(new Date(Date.UTC(part.y, part.m - 1, part.d, 3)));
+}
+
+function formatHours(seconds) {
+  const hours = (Number(seconds) || 0) / 3600;
+  const rounded = Math.round(hours * 10) / 10;
+  const shown = Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  return shown + (rounded === 1 ? ' hour' : ' hours');
+}
+
+function missingNote(missing) {
+  if (!missing) return '';
+  if (missing === 1) return '1 episode has no length listed, so it is not in this total.';
+  return missing + ' episodes have no length listed, so they are not in this total.';
+}
+
+function podcastHourRows(episodes, now) {
+  const when = now instanceof Date ? now : new Date(now || Date.now());
+  const today = sydneyParts(when.getTime());
+  const todayKey = ymdKey(today);
+  const dated = (Array.isArray(episodes) ? episodes : [])
+    .filter(item => item && text(item.h || item.title) && Number(item.at) > 0)
+    .map(item => ({ item, key: ymdKey(sydneyParts(Number(item.at))) }));
+  return HOUR_WINDOWS.map(win => {
+    let start = win.months ? shiftMonths(today, -win.months) : null;
+    if (!start) {
+      const oldest = dated.reduce((min, row) => row.key < min ? row.key : min, '9999-99-99');
+      if (oldest !== '9999-99-99') start = { y: +oldest.slice(0, 4), m: +oldest.slice(5, 7), d: +oldest.slice(8, 10) };
+    }
+    const startKey = start ? ymdKey(start) : '';
+    const picked = dated.filter(row => (!startKey || row.key >= startKey) && row.key <= todayKey);
+    let seconds = 0;
+    let missing = 0;
+    picked.forEach(row => {
+      const length = durationSeconds(row.item.dur);
+      if (length == null) missing += 1;
+      else seconds += length;
+    });
+    return {
+      id: win.id,
+      label: win.label,
+      since: start ? 'Since ' + formatYmd(start) : '',
+      episodes: picked.length,
+      seconds: picked.length && missing === picked.length ? null : seconds,
+      missing
+    };
+  });
+}
+
+function podcastHoursHtml(rows) {
+  const body = (rows || []).map(row => {
+    const note = row.missing ? `<p class="stat-note">${esc(missingNote(row.missing))}</p>` : '';
+    const hours = !row.episodes ? '0 hours' : (row.seconds == null ? 'Not listed' : formatHours(row.seconds));
+    return `<tr><th scope="row">${esc(row.label)}</th><td>${esc(row.since)}</td><td>${esc(row.episodes)}</td><td>${hours}${note}</td></tr>`;
+  }).join('');
+  return `<table class="pod-hours"><caption>Hours published</caption><thead><tr><th scope="col">Period</th><th scope="col">From</th><th scope="col">Episodes</th><th scope="col">Hours</th></tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function podcastStats(episodes, summary) {
   const rows = (Array.isArray(episodes) ? episodes : []).filter(item => item && text(item.h || item.title));
   const sorted = rows.slice().sort((a, b) => (Number(b.at) || 0) - (Number(a.at) || 0));
   const latest = sorted[0] || null;
+  const oldest = sorted.length ? sorted[sorted.length - 1] : null;
+  const extra = summary && typeof summary === 'object' ? summary : null;
+  const periods = extra && Array.isArray(extra.periods) && extra.periods.length ? extra.periods : podcastHourRows(rows);
+  const fromFeed = extra && extra.latest && text(extra.latest.title)
+    ? { title: text(extra.latest.title), at: Number(extra.latest.at) || 0 }
+    : (latest ? { title: text(latest.h || latest.title), at: Number(latest.at) || 0 } : null);
+  const first = extra && extra.first && Number(extra.first.at) > 0
+    ? { title: text(extra.first.title), at: Number(extra.first.at) || 0 }
+    : (oldest ? { title: text(oldest.h || oldest.title), at: Number(oldest.at) || 0 } : null);
   return {
-    total: rows.length,
-    latest: latest ? { title: text(latest.h || latest.title), at: Number(latest.at) || 0 } : null,
+    total: extra && Number(extra.total) > 0 ? Number(extra.total) : rows.length,
+    latest: fromFeed,
+    first,
+    periods,
     profile: PODCAST_PROFILE,
+    links: PODCAST_LINKS,
     groups: GROUP_STATS
   };
+}
+
+function suppliedNumber(value) {
+  const clean = text(value).replace(/[—–]/g, '').trim();
+  if (!clean || clean === '-' || /^n\/?a$/i.test(clean) || /^x$/i.test(clean)) return null;
+  if (!/^[\d,]+(\.\d+)?$/.test(clean)) return null;
+  return clean;
+}
+
+function facebookStatList(raw) {
+  const source = raw && Array.isArray(raw.stats) ? raw.stats : (Array.isArray(raw) ? raw : []);
+  const cards = [];
+  source.forEach((item, index) => {
+    if (!item || typeof item !== 'object') return;
+    const value = suppliedNumber(item.value);
+    const label = text(item.label);
+    if (value == null || !label) return;
+    const orderRaw = item.order;
+    const order = orderRaw === '' || orderRaw == null || !Number.isFinite(Number(orderRaw)) ? index : Number(orderRaw);
+    cards.push({ key: text(item.key) || label.toLowerCase(), label, value, note: text(item.note), order });
+  });
+  cards.sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
+  return cards;
+}
+
+function normaliseGroups(raw) {
+  const list = Array.isArray(raw) ? raw : (raw && Array.isArray(raw.groups) ? raw.groups : (raw && Array.isArray(raw.pages) ? raw.pages : []));
+  const seen = new Set();
+  const groups = [];
+  list.forEach(item => {
+    if (!item || typeof item !== 'object') return;
+    const name = text(item.name);
+    const facebook = text(item.facebook || item.url || item.href);
+    if (!name || !/^https:\/\/(www\.)?facebook\.com\//i.test(facebook)) return;
+    const key = facebook.toLowerCase().replace(/\/+$/, '');
+    if (seen.has(key)) return;
+    seen.add(key);
+    const members = suppliedNumber(item.members);
+    groups.push(members == null ? { name, facebook } : { name, facebook, members });
+  });
+  return groups;
+}
+
+function shopLink() {
+  const href = typeof root.SHOP_URL === 'string' ? root.SHOP_URL.trim() : '';
+  if (!/^https:\/\//i.test(href)) return '';
+  return `<p class="shop-row"><a class="tool-pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">TDA Shop</a></p>`;
+}
+
+function facebookCommunityHtml(groups, stats) {
+  const cards = facebookStatList(stats && stats.stats ? stats : { stats: stats || [] });
+  const statBlock = cards.map(card => {
+    const note = card.note ? `<p class="stat-note">${esc(card.note)}</p>` : '';
+    return `<article class="stat-tile" data-stat="${esc(card.key)}"><p class="stat-value">${esc(card.value)}</p><p class="stat-label">${esc(card.label)}</p>${note}</article>`;
+  }).join('');
+  const rows = normaliseGroups(groups).map(group => {
+    const count = group.members ? `<span class="fb-count">${esc(group.members)}</span>` : '';
+    return `<a class="fb-row" href="${esc(group.facebook)}" target="_blank" rel="noopener noreferrer"><span class="fb-name">${esc(group.name)}</span>${count}<span class="fb-go">Open</span></a>`;
+  }).join('');
+  const numbers = statBlock ? `<div class="stat-grid fb-stats">${statBlock}</div>` : '';
+  const list = rows ? `<div class="fb-list">${rows}</div>` : '<p class="mut">Groups will show here when the list can be reached.</p>';
+  return `<section class="card fb-community"><h3>Our Facebook community</h3>${shopLink()}${numbers}${list}</section>`;
+}
+
+async function loadFacebook(opts) {
+  const o = opts || {};
+  const storage = o.storage;
+  let groups = [];
+  let stats = [];
+  async function read(url) {
+    const res = await callFetch(o.fetch, url);
+    if (!res || !res.ok) return null;
+    return res.json();
+  }
+  try {
+    const json = await read(FACEBOOK_URL);
+    if (json) {
+      groups = normaliseGroups(json);
+      stats = facebookStatList(json);
+    }
+  } catch (e) {}
+  if (!groups.length) {
+    try {
+      const json = await read(FACEBOOK_API);
+      if (json) {
+        groups = normaliseGroups(json);
+        if (!stats.length) stats = facebookStatList(json);
+      }
+    } catch (e) {}
+  }
+  if (groups.length) {
+    storageSet(storage, FACEBOOK_CACHE_KEY, JSON.stringify({ groups, stats }));
+    return { groups, stats };
+  }
+  try {
+    const cached = JSON.parse(storageGet(storage, FACEBOOK_CACHE_KEY) || 'null');
+    const cachedGroups = normaliseGroups(cached);
+    if (cachedGroups.length) return { groups: cachedGroups, stats: facebookStatList(cached) };
+  } catch (e) {}
+  try {
+    groups = normaliseGroups(await read('/advocate.json'));
+  } catch (e) {}
+  return { groups, stats: [] };
 }
 
 function formatStatDate(at) {
@@ -609,7 +829,7 @@ function thankYouText(name) {
 function driverCountHtml(groupStats) {
   const count = groupStats && !Array.isArray(groupStats) ? Number(groupStats.drivers) : NaN;
   if (Number.isFinite(count) && count > 0) return `<p class="driver-count">You're one of ${esc(count)} drivers</p>`;
-  return `<p class="driver-count" hidden>You're one of X drivers</p>`;
+  return '';
 }
 
 function thankYouBlock(name, groupStats) {
@@ -617,15 +837,20 @@ function thankYouBlock(name, groupStats) {
   return `<div class="thanks-banner"><p class="thanks-line">${esc(thankYouText(saved))}</p>${driverCountHtml(groupStats)}<form class="name-ask" onsubmit="return saveFirstName(event)"><label>What's your first name? <input class="f" id="first-name" name="first-name" maxlength="40" autocomplete="given-name" value="${esc(saved)}"></label><button type="submit" class="btn stat-link">${saved ? 'Change name' : 'Save name'}</button></form></div>`;
 }
 
-function podcastStatsHtml(episodes, name) {
-  const info = podcastStats(episodes);
+function podcastStatsHtml(episodes, name, summary) {
+  const info = podcastStats(episodes, summary);
   const thanks = thankYouBlock(name, info.groups);
-  const link = `<p class="stat-actions"><a class="btn stat-link" href="${esc(info.profile)}" target="_blank" rel="noopener noreferrer">SoundCloud profile</a></p>`;
+  const links = `<div class="stat-actions">${(info.links || []).map(link => `<a class="btn stat-link" href="${esc(link.href)}" target="_blank" rel="noopener noreferrer">${esc(link.name)}</a>`).join('')}</div>`;
+  const table = podcastHoursHtml(info.periods);
   if (!info.total || !info.latest) {
-    return `<section class="card stats-page">${thanks}<h3>Podcast</h3><p class="mut">Episodes will show here when the feed can be reached.</p>${link}</section>`;
+    return `<section class="card stats-page">${thanks}<h3>Podcast</h3><p class="mut">Episodes will show here when the feed can be reached.</p>${table}${links}</section>`;
   }
   const when = formatStatDate(info.latest.at);
-  return `<section class="card stats-page">${thanks}<h3>Podcast</h3><div class="stat-grid"><article class="stat-tile"><p class="stat-value">${esc(info.total)}</p><p class="stat-label">Episodes</p></article><article class="stat-tile"><p class="stat-label">Latest episode</p><p class="stat-title">${esc(info.latest.title)}</p>${when ? `<p class="stat-note">${esc(when)}</p>` : ''}</article></div>${link}</section>`;
+  const firstWhen = info.first ? formatStatDate(info.first.at) : '';
+  const all = (info.periods || []).find(row => row.id === 'all');
+  const hoursTile = all && all.seconds > 0 ? `<article class="stat-tile"><p class="stat-value">${esc(formatHours(all.seconds).replace(/ hours?$/, ''))}</p><p class="stat-label">Listening hours</p></article>` : '';
+  const firstTile = firstWhen ? `<article class="stat-tile"><p class="stat-label">First episode</p>${info.first.title ? `<p class="stat-title">${esc(info.first.title)}</p>` : ''}<p class="stat-note">${esc(firstWhen)}</p></article>` : '';
+  return `<section class="card stats-page">${thanks}<h3>Podcast</h3><div class="stat-grid"><article class="stat-tile"><p class="stat-value">${esc(info.total)}</p><p class="stat-label">Episodes</p></article>${hoursTile}<article class="stat-tile"><p class="stat-label">Latest episode</p><p class="stat-title">${esc(info.latest.title)}</p>${when ? `<p class="stat-note">${esc(when)}</p>` : ''}</article>${firstTile}</div>${table}${links}</section>`;
 }
 
 function statsHtml(raw) {
@@ -658,7 +883,9 @@ const api = {
   eventYmds, monthCells, calendarHtml, readStdFilter, writeStdFilter, filterStandardItems, standardItemDays, defaultStdFilter,
   reminderActive, selectReminders, reminderSession, remindersHtml, readSeen, writeSeen,
   visibleStats, statsHtml, loadStats,
-  GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, thankYouText, driverCountHtml, cleanFirstName
+  GROUP_STATS, PODCAST_PROFILE, PODCAST_FEED, podcastStats, podcastStatsHtml, podcastHourRows, durationSeconds, formatHours,
+  thankYouText, driverCountHtml, cleanFirstName,
+  FACEBOOK_URL, FACEBOOK_API, loadFacebook, facebookCommunityHtml, facebookStatList, suppliedNumber
 };
 Object.keys(api).forEach(key => { root[key] = api[key]; });
 if (typeof module !== 'undefined' && module.exports) module.exports = api;

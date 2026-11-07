@@ -2,7 +2,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { STATS_URL, loadStats, statsHtml, visibleStats, GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, thankYouText, driverCountHtml } = require('../public/events.js');
+const { STATS_URL, loadStats, statsHtml, visibleStats, GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, podcastHourRows, thankYouText, driverCountHtml, facebookCommunityHtml } = require('../public/events.js');
+require('../public/listen-out');
 
 const app = fs.readFileSync(path.join(__dirname, '../public/app.js'), 'utf8');
 const index = fs.readFileSync(path.join(__dirname, '../public/index.html'), 'utf8');
@@ -94,7 +95,13 @@ test('the Stats tab shows podcast facts from the feed and no group numbers', () 
   assert.match(html, /Thank You for being part of a truly unique group/);
   assert.equal(html.includes('Members'), false);
   assert.equal(html.includes('Groups'), false);
-  assert.match(html, /<p class="driver-count" hidden>You're one of X drivers<\/p>/);
+  assert.equal(html.includes("You're one of X drivers"), false);
+  assert.equal(driverCountHtml({}), '');
+  assert.equal(driverCountHtml([]), '');
+  assert.match(html, /Hours published/);
+  assert.match(html, /Last 24 months/);
+  assert.match(html, /Pocket Casts/);
+  assert.match(html, /Overcast/);
   assert.equal(thankYouText(''), 'Thank You for being part of a truly unique group');
   assert.equal(thankYouText(' Sam '), 'Thank You Sam for being part of a truly unique group');
   const named = podcastStatsHtml([{ h: 'Latest show', at }], 'Sam');
@@ -114,7 +121,8 @@ test('the Stats tab shows podcast facts from the feed and no group numbers', () 
   const save = app.slice(app.indexOf('function saveFirstName'), app.indexOf('function statsView'));
   assert.equal(save.includes('fetch('), false);
   assert.equal(save.includes('api('), false);
-  assert.match(index, /\.stats-page \.stat-grid\{[^}]*grid-template-columns:1fr 1fr/);
+  assert.match(index, /\.stats-page \.stat-grid\{[^}]*grid-template-columns:1fr;/);
+  assert.match(index, /@media\(min-width:720px\)\{#eps\{grid-template-columns:1fr 1fr\}\.stats-page \.stat-grid\{grid-template-columns:1fr 1fr\}/);
   assert.match(index, /\.stat-link\{[^}]*background:#1877F2/);
 });
 

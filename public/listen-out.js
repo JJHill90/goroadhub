@@ -3,6 +3,8 @@ const PODCAST_FEED = 'https://feeds.soundcloud.com/users/soundcloud:users:877172
 const SOUNDCLOUD_SHOW = 'https://soundcloud.com/user-915018744-314651726';
 const NEWSLETTER_SITE = 'https://tdaau.com/newsletter/';
 const CONTACT_URL = 'https://tdaau.com/contact/';
+const SHOP_URL = 'https://thedriversadvocate.myshopify.com';
+const TAX_URL = 'https://gotaxationhub.com';
 
 function podcastScheme(feed) {
   return 'podcast://' + String(feed || '').replace(/^https?:\/\//i, '');
@@ -53,6 +55,8 @@ root.PODCAST_FEED = PODCAST_FEED;
 root.SOUNDCLOUD_SHOW = SOUNDCLOUD_SHOW;
 root.NEWSLETTER_SITE = NEWSLETTER_SITE;
 root.CONTACT_URL = CONTACT_URL;
+root.SHOP_URL = SHOP_URL;
+root.TAX_URL = TAX_URL;
 root.podcastScheme = podcastScheme;
 root.podcastApps = podcastApps;
 root.orderApps = orderApps;
@@ -60,7 +64,7 @@ root.podcastOpenPlan = podcastOpenPlan;
 root.applePlatform = applePlatform;
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL,
+    PODCAST_FEED, SOUNDCLOUD_SHOW, NEWSLETTER_SITE, CONTACT_URL, SHOP_URL, TAX_URL,
     podcastScheme, podcastApps, orderApps, podcastOpenPlan, applePlatform
   };
 }
