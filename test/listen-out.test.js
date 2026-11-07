@@ -117,6 +117,10 @@ test('Contact us is a small site-bar link to the website contact page', () => {
   assert.match(link[0], /href="https:\/\/tdaau\.com\/contact\/"/);
   assert.match(link[0], /target="_blank"/);
   assert.match(link[0], /rel="noopener noreferrer"/);
+  const header = index.slice(index.indexOf('<header>'), index.indexOf('</header>') + 9);
+  assert.ok(header.includes('class="contact-us"'));
+  assert.equal(index.includes('class="site-link"'), false);
+  assert.match(index, /\.contact-us\{[^}]*background:#C80813[^}]*color:#fff/);
   assert.equal(index.slice(index.indexOf('<nav'), index.indexOf('</nav>')).includes('Contact us'), false);
   assert.equal(/mailto:|tel:/i.test(index + app + fs.readFileSync(path.join(root, 'public/listen-out.js'), 'utf8')), false);
   assert.match(index, /Created for Driver's by Driver's/);

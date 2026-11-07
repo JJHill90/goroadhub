@@ -18,7 +18,7 @@ function meta(html, attr, key) {
 test('the page title, header, and share tags use the app name', () => {
   assert.match(index, new RegExp('<title>' + NAME + '</title>'));
   assert.equal(meta(index, 'name', 'application-name'), NAME);
-  assert.equal(meta(index, 'name', 'apple-mobile-web-app-title'), NAME);
+  assert.equal(meta(index, 'name', 'apple-mobile-web-app-title'), 'Drivers Advocate');
   assert.equal(meta(index, 'property', 'og:title'), NAME);
   assert.equal(meta(index, 'property', 'og:site_name'), NAME);
   assert.equal(meta(index, 'name', 'twitter:title'), NAME);
@@ -74,18 +74,30 @@ test('the groups index blurb is not shown', () => {
   assert.equal(/https:\/\/tdaau\.com\/groups\/?(["'<]|\s)/.test(shown), false);
 });
 
-test('the installed name is the app name, with a short label that fits a home screen', () => {
+test('the installed name is the app name, with Drivers Advocate on the home screen', () => {
   assert.equal(manifest.name, NAME);
-  assert.equal(manifest.short_name, 'TDA App');
-  assert.ok(manifest.short_name.length <= 12);
-  assert.ok(NAME.length > 12);
+  assert.equal(manifest.short_name, 'Drivers Advocate');
+  assert.equal(meta(index, 'name', 'apple-mobile-web-app-title'), 'Drivers Advocate');
+  const icons = Object.fromEntries(manifest.icons.map(icon => [icon.sizes + ' ' + icon.purpose, icon]));
+  assert.equal(icons['192x192 any'].src, '/icon-192.png');
+  assert.equal(icons['512x512 any'].src, '/icon-512.png');
+  assert.equal(icons['192x192 maskable'].src, '/icon-maskable-192.png');
+  assert.equal(icons['512x512 maskable'].src, '/icon-maskable-512.png');
+  for (const icon of manifest.icons) assert.equal(icon.type, 'image/png');
+  for (const file of ['favicon-16.png', 'favicon-32.png', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png']) {
+    const buf = fs.readFileSync(path.join(root, 'public', file));
+    assert.ok(buf.length > 80, file);
+  }
+  assert.match(index, /rel="icon" type="image\/png" sizes="32x32" href="\/favicon-32.png"/);
+  assert.match(index, /rel="icon" type="image\/png" sizes="16x16" href="\/favicon-16.png"/);
+  assert.match(index, /rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon.png"/);
 });
 
 test('photo credits name the app in the title, header, and share tags', () => {
   assert.match(credits, new RegExp('<title>Photo credits — ' + NAME + '</title>'));
   assert.match(credits, new RegExp('<header><a href="/">' + NAME + '</a></header>'));
   assert.equal(meta(credits, 'name', 'application-name'), NAME);
-  assert.equal(meta(credits, 'name', 'apple-mobile-web-app-title'), NAME);
+  assert.equal(meta(credits, 'name', 'apple-mobile-web-app-title'), 'Drivers Advocate');
   assert.equal(meta(credits, 'property', 'og:site_name'), NAME);
   assert.equal(meta(credits, 'property', 'og:title'), 'Photo credits — ' + NAME);
   assert.equal(credits.includes('Go Road Hub'), false);
