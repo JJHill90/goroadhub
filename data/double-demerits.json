@@ -1,0 +1,21 @@
+{
+  "compiled": "2026-11-07",
+  "note": "NSW and WA publish period lists on web pages, not a stable JSON feed. Rows were copied from those pages on the compiled date. ACT was not copied: no dated official list was fetched. Other states are not listed in this file.",
+  "periods": [
+    {"state": "NSW", "title": "Christmas, Boxing Day and New Year", "start": "2025-12-24", "end": "2026-01-04", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points"},
+    {"state": "NSW", "title": "Australia Day", "start": "2026-01-23", "end": "2026-01-26", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points"},
+    {"state": "NSW", "title": "Easter", "start": "2026-04-02", "end": "2026-04-06", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points", "detail": "On Thursday 2 April, Friday 24 April and Friday 5 June, school zones are in operation."},
+    {"state": "NSW", "title": "Anzac Day", "start": "2026-04-24", "end": "2026-04-27", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points", "detail": "On Thursday 2 April, Friday 24 April and Friday 5 June, school zones are in operation."},
+    {"state": "NSW", "title": "King's Birthday", "start": "2026-06-05", "end": "2026-06-08", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points", "detail": "On Thursday 2 April, Friday 24 April and Friday 5 June, school zones are in operation."},
+    {"state": "NSW", "title": "Labour Day", "start": "2026-10-02", "end": "2026-10-05", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points"},
+    {"state": "NSW", "title": "Christmas, Boxing Day and New Year", "start": "2026-12-24", "end": "2027-01-03", "source": "https://www.transport.nsw.gov.au/roadsafety/topics-tips/demerit-points"},
+    {"state": "WA", "title": "New Year's Day", "start": "2025-12-19", "end": "2026-01-04", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "Australia Day", "start": "2026-01-23", "end": "2026-01-26", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "Labour Day", "start": "2026-02-27", "end": "2026-03-02", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "Easter", "start": "2026-04-02", "end": "2026-04-06", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "Anzac Day", "start": "2026-04-24", "end": "2026-04-27", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "Western Australia Day", "start": "2026-05-29", "end": "2026-06-01", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"},
+    {"state": "WA", "title": "King's Birthday", "start": "2026-09-25", "end": "2026-09-28", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits", "detail": "Except for the City of Karratha and Town of Port Hedland, which observe the King's Birthday public holiday on Monday 3 August 2026 and Monday 2 August 2027."},
+    {"state": "WA", "title": "Christmas and Boxing Day", "start": "2026-12-18", "end": "2027-01-03", "source": "https://www.wa.gov.au/organisation/road-safety-commission/double-demerits"}
+  ]
+}

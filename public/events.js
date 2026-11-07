@@ -306,6 +306,63 @@ function markedDays(data) {
   return days;
 }
 
+const STD_STATES = ['ALL', 'NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
+const STD_KINDS = [['holiday', 'Holidays'], ['school', 'School holidays'], ['demerit', 'Double demerits'], ['daylight', 'Daylight saving']];
+
+function defaultStdFilter() {
+  return { state: 'ALL', kinds: { holiday: true, school: true, demerit: true, daylight: true } };
+}
+function readStdFilter(storage) {
+  const filter = defaultStdFilter();
+  try {
+    const state = storage.getItem('rh-std-state') || 'ALL';
+    if (STD_STATES.indexOf(state) >= 0) filter.state = state;
+    const kinds = JSON.parse(storage.getItem('rh-std-kinds') || '');
+    if (kinds && typeof kinds === 'object') STD_KINDS.forEach(pair => { if (typeof kinds[pair[0]] === 'boolean') filter.kinds[pair[0]] = kinds[pair[0]]; });
+  } catch (e) {}
+  return filter;
+}
+function writeStdFilter(storage, filter) {
+  storage.setItem('rh-std-state', filter.state || 'ALL');
+  storage.setItem('rh-std-kinds', JSON.stringify(filter.kinds || defaultStdFilter().kinds));
+}
+function filterStandardItems(items, filter) {
+  const chosen = filter || defaultStdFilter();
+  return (items || []).filter(item => item && chosen.kinds[item.kind] && (chosen.state === 'ALL' || item.state === chosen.state));
+}
+function itemsInMonth(items, year, month) {
+  if (!year || !month) return items || [];
+  const start = padYmd(year, month, 1);
+  const end = padYmd(year, month, new Date(Date.UTC(year, month, 0)).getUTCDate());
+  return (items || []).filter(item => item.end >= start && item.start <= end);
+}
+function standardItemDays(items) {
+  const days = [];
+  (items || []).forEach(item => eventYmds({ start: item.start, end: item.end || item.start }).forEach(ymd => days.push(ymd)));
+  return days;
+}
+function standardFilterHtml(filter) {
+  const chosen = filter || defaultStdFilter();
+  const states = STD_STATES.map(code => `<option value="${code}"${code === chosen.state ? ' selected' : ''}>${code === 'ALL' ? 'All' : code}</option>`).join('');
+  const kinds = STD_KINDS.map(pair => `<label><input type="checkbox" data-std-kind="${pair[0]}"${chosen.kinds[pair[0]] ? ' checked' : ''}> ${pair[1]}</label>`).join('');
+  return `<form class="std-filter"><label>State <select id="std-state">${states}</select></label>${kinds}</form>`;
+}
+function standardListHtml(items, status) {
+  const st = status || {};
+  if (!Array.isArray(st.standardItems)) return '';
+  const notes = (st.standardNotes || []).filter(note => !note.kind || (st.stdFilter || defaultStdFilter()).kinds[note.kind]);
+  const noteHtml = notes.map(note => `<p class="std-border">${esc(note.text)} <a href="${esc(note.source)}">Daylight saving rule</a></p>`).join('');
+  const holiday = st.holidayNote ? `<p class="std-feed">${esc(st.holidayNote)}</p>` : '';
+  const cards = (items || []).map(item => {
+    const when = formatEventWhen({ start: item.start, end: item.end }, 'UTC');
+    const days = eventYmds({ start: item.start, end: item.end || item.start }).join(' ');
+    const kind = { holiday: 'Public holiday', school: 'School holidays', demerit: 'Double demerits', daylight: 'Daylight saving' }[item.kind] || item.kind;
+    return `<article class="ev-item std-item" data-ev-days="${esc(days)}"><p class="std-kicker"><span class="std-state">${esc(item.state)}</span> ${esc(kind)}</p><h4>${esc(item.title)}</h4><p class="std-when">${esc(when)}</p>${item.detail ? `<p>${esc(item.detail)}</p>` : ''}${item.note ? `<p>${esc(item.note)} <a href="${esc(item.noteSource)}">NHVR</a></p>` : ''}<p class="std-src"><a href="${esc(item.source)}">${esc(item.sourceLabel || 'Source')}</a></p></article>`;
+  }).join('');
+  const empty = cards ? '' : '<p class="mut">Nothing on this month for these filters.</p>';
+  return `<h3 class="std-head">On this month</h3>${holiday}${noteHtml}${empty}${cards ? `<div class="ev-list">${cards}</div>` : ''}`;
+}
+
 function calendarHtml(data, opts) {
   const o = opts || {};
   const pack = parseEvents(data);
@@ -317,6 +374,8 @@ function calendarHtml(data, opts) {
   const month = Number(o.month) || todayParts[1];
   const selected = text(o.selected);
   const marks = markedDays(data);
+  const standardDays = new Set(o.standardDays || []);
+  const mineDays = new Set(o.mineDays || []);
   const title = new Intl.DateTimeFormat('en-AU', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(year, month - 1, 1)));
   const week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(name => `<span>${name}</span>`).join('');
   const cells = monthCells(year, month).map(cell => {
@@ -324,8 +383,14 @@ function calendarHtml(data, opts) {
     const classes = ['ev-cal-day'];
     if (cell.ymd === today) classes.push('ev-cal-today');
     if (marks.has(cell.ymd)) classes.push('ev-cal-has');
+    if (standardDays.has(cell.ymd)) classes.push('ev-cal-std-day');
+    if (mineDays.has(cell.ymd)) classes.push('ev-cal-mine-day');
     if (cell.ymd === selected) classes.push('ev-cal-on');
-    const dot = marks.has(cell.ymd) ? '<span class="ev-cal-dot" aria-hidden="true"></span>' : '';
+    const dots = [];
+    if (marks.has(cell.ymd)) dots.push('<span class="ev-cal-dot" aria-hidden="true"></span>');
+    if (standardDays.has(cell.ymd)) dots.push('<span class="ev-cal-std" aria-hidden="true"></span>');
+    if (mineDays.has(cell.ymd)) dots.push('<span class="ev-cal-mine" aria-hidden="true"></span>');
+    const dot = dots.length ? `<span class="ev-cal-marks">${dots.join('')}</span>` : '';
     return `<button type="button" class="${classes.join(' ')}" data-cal-day="${cell.ymd}" aria-pressed="${cell.ymd === selected ? 'true' : 'false'}"><span class="ev-cal-num">${cell.day}</span>${dot}</button>`;
   }).join('');
   const showAll = `<button type="button" class="ev-cal-all" data-cal-all${selected ? '' : ' hidden'}>Show all</button>`;
@@ -361,8 +426,12 @@ function eventsHtml(data, status) {
   const recentHtml = recent.length
     ? `<h4 class="ev-recent-head">Recent</h4><div class="ev-list ev-recent">${recent.map(event => eventCard(event, zone)).join('')}</div>`
     : '';
-  const cal = calendarHtml(data, { year: st.year, month: st.month, selected: st.selected || '', now: st.now instanceof Date ? st.now : new Date() });
-  return `<section class="card events-card">${cal}<h3>Events</h3><p class="sub">Times use ${esc(zone)}.</p><p class="ev-sub"><a class="btn" href="${esc(CALENDAR_URL)}">Subscribe to the calendar</a></p>${saved}${state}<p class="mut ev-day-empty" hidden>No events on that day.</p>${upcomingHtml ? `<div class="ev-list">${upcomingHtml}</div>` : ''}${recentHtml}</section>`;
+  const filter = st.stdFilter || defaultStdFilter();
+  const filtered = filterStandardItems(st.standardItems || [], filter);
+  const monthItems = Array.isArray(st.standardItems) ? itemsInMonth(filtered, Number(st.year), Number(st.month)) : [];
+  const cal = calendarHtml(data, { year: st.year, month: st.month, selected: st.selected || '', now: st.now instanceof Date ? st.now : new Date(), standardDays: Array.isArray(st.standardItems) ? standardItemDays(filtered) : (st.standardDays || []), mineDays: st.mineDays || [] });
+  const extra = `${st.nearbyHtml || ''}${st.countdownHtml || ''}${standardFilterHtml(filter)}${cal}${standardListHtml(monthItems, st)}`;
+  return `<section class="card events-card">${extra}<h3>Events</h3><p class="sub">Times use ${esc(zone)}.</p><p class="ev-sub"><a class="btn" href="${esc(CALENDAR_URL)}">Subscribe to the calendar</a></p>${saved}${state}<p class="mut ev-day-empty" hidden>No events on that day.</p>${upcomingHtml ? `<div class="ev-list">${upcomingHtml}</div>` : ''}${recentHtml}${st.personalHtml || ''}</section>`;
 }
 
 function nextDay(year, month, day) {
@@ -586,7 +655,7 @@ async function loadStats(opts) {
 const api = {
   EVENTS_URL, STATS_URL, CALENDAR_URL, EVENTS_POLL_MS, EVENTS_CACHE_KEY, REMINDER_SEEN_KEY,
   parseEvents, loadEvents, readCache, writeCache, eventActions, formatEventWhen, eventsHtml,
-  eventYmds, monthCells, calendarHtml,
+  eventYmds, monthCells, calendarHtml, readStdFilter, writeStdFilter, filterStandardItems, standardItemDays, defaultStdFilter,
   reminderActive, selectReminders, reminderSession, remindersHtml, readSeen, writeSeen,
   visibleStats, statsHtml, loadStats,
   GROUP_STATS, PODCAST_PROFILE, podcastStats, podcastStatsHtml, thankYouText, driverCountHtml, cleanFirstName

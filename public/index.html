@@ -171,6 +171,15 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .site-foot{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;max-width:none;margin:12px 0 0;padding:10px 12px 2px;border-top:1px solid var(--bd);text-align:center;font-size:12px;font-weight:600;line-height:1.4}
 .site-foot a{color:#D5DEE8;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .site-foot .site-sep{padding:0 10px;color:#D5DEE8}
+.talk{position:fixed;left:0;right:0;bottom:8px;z-index:35;text-align:center}
+.talk-open{display:inline-block;background:rgba(0,20,40,.92);color:#F4F7FB;border:1px solid #D5DEE8;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.talk-card{display:none;margin:8px auto 0;max-width:420px;background:#F4F7FB;color:#102033;border-radius:12px;padding:14px 14px 8px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.talk[open] .talk-card{display:block}
+.talk-card p{margin:0 0 8px;font-size:14px;font-weight:600;line-height:1.35}
+.talk-card .tap-call{display:flex;align-items:center;justify-content:center;min-height:48px;margin:0 0 8px;background:#16324F;color:#fff;border-radius:10px;font-weight:800;text-decoration:none}
+.talk-card .page-link{color:#16324F;font-size:13px;font-weight:700}
+.talk-h{margin:12px 0 6px;font-size:16px;color:#102033}
+.talk-note{display:block;color:#3d4d5c;font-size:13px;font-weight:600}
 #ev-notes{max-width:1060px;margin:0 auto;padding:0 12px}
 #ev-notes[hidden]{display:none}
 .ev-banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#001D3D;color:#fff;border:2px solid #1877F2;border-left:8px solid #1877F2;border-radius:8px;padding:12px 14px;margin:8px 0 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
@@ -247,6 +256,23 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <p>port.jpg — backdrop. Author: BlackCab. Licence: <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>. Source: <a href="https://commons.wikimedia.org/wiki/File:Trucks_on_Francis_Street,_Yarraville.jpg">Trucks on Francis Street, Yarraville</a>. Change: cropped and resized.</p>
 <p>share.jpg — backdrop. Author: Kgbo. Licence: <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a>. Source: <a href="https://commons.wikimedia.org/wiki/File:B-Triple_road_trains_in_Queensland,_Australia,_2024,_01.jpg">B-Triple road trains in Queensland, Australia, 2024</a>. Change: cropped and resized.</p>
 <nav class="site-foot" aria-label="Footer"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><span class="site-sep" aria-hidden="true">·</span><a href="/photo-credits.html">Photo credits</a></nav>
+<details class="talk">
+<summary class="talk-open">Need to talk?</summary>
+<div class="talk-card">
+<p>If life is in danger, call <a class="tap-call" href="tel:000">000</a>.</p>
+<p><a class="tap-call" href="tel:131114">Call Lifeline 13 11 14</a><a class="page-link" href="https://www.lifeline.org.au/" target="_blank" rel="noopener noreferrer">Lifeline</a></p>
+<p><a class="tap-call" href="tel:1300224636">Call Beyond Blue 1300 22 4636</a><a class="page-link" href="https://www.beyondblue.org.au/" target="_blank" rel="noopener noreferrer">Beyond Blue</a></p>
+<p><a class="tap-call" href="tel:139276">Call 13YARN 13 92 76</a><a class="page-link" href="https://www.13yarn.org.au/" target="_blank" rel="noopener noreferrer">13YARN</a></p>
+<p><a class="page-link" href="https://www.healthyheads.org.au/" target="_blank" rel="noopener noreferrer">Healthy Heads in Trucks &amp; Sheds</a></p>
+<h3 class="talk-h">Health advice 24/7</h3>
+<p>Call 000 in an emergency.</p>
+<div data-health-list>
+<p data-health-state="ALL"><a class="tap-call" href="tel:1800022222">Call healthdirect 1800 022 222</a><span class="talk-note">Registered nurses, 24/7. After hours, the nurse may offer a call back from a GP.</span> <a class="page-link" href="https://www.healthdirect.gov.au/how-healthdirect-can-help-you" target="_blank" rel="noopener noreferrer">healthdirect</a></p>
+<p data-health-state="QLD"><a class="tap-call" href="tel:13432584">Call 13 HEALTH 13 43 25 84</a><span class="talk-note">Queensland. Registered nurses, 24/7.</span> <a class="page-link" href="https://www.qld.gov.au/health/contacts/advice/13health" target="_blank" rel="noopener noreferrer">13 HEALTH</a></p>
+<p data-health-state="VIC"><a class="tap-call" href="tel:1300606024">Call NURSE-ON-CALL 1300 60 60 24</a><span class="talk-note">Victoria. Registered nurses, 24/7.</span> <a class="page-link" href="https://www.health.vic.gov.au/primary-care/nurse-on-call" target="_blank" rel="noopener noreferrer">NURSE-ON-CALL</a></p>
+</div>
+</div>
+</details>
 </footer>
 <div id="pl"></div>
-<script src="/areas.js"></script><script src="/quarter.js"></script><script src="/listen-out.js"></script><script src="/events.js"></script><script src="/app.js"></script></body></html>
+<script src="/areas.js"></script><script src="/quarter.js"></script><script src="/listen-out.js"></script><script src="/events.js"></script><script src="/my-phone.js"></script><script src="/app.js"></script></body></html>

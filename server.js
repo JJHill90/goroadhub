@@ -11,12 +11,12 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
   res.setHeader('Content-Security-Policy', [
-    "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self'",
+    "default-src 'self' blob:", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self'",
     "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' https: data:", "media-src 'self' https: blob:",
-    "frame-src https://www.facebook.com", "connect-src 'self' https://tdaau.com"
+    "img-src 'self' https: data: blob:", "media-src 'self' https: blob:",
+    "frame-src https://www.facebook.com", "connect-src 'self' https://tdaau.com https://nominatim.openstreetmap.org https://api.what3words.com"
   ].join('; '));
   next();
 });
@@ -67,6 +67,7 @@ app.post('/api/register', wrap(async (q, r) => {
 }));
 app.get('/api/advocate', wrap(async (q, r) => { r.json({ pages: await advocatePages() }); }));
 require('./feeds')(app, pool, need);
+require('./standard-dates').mount(app);
 app.post('/api/community/posts', wrap(async (q, r) => {
   if (!allowPost(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many posts' });
   const data = driverPost(q.body);
