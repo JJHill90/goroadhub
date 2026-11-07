@@ -43,6 +43,27 @@ test('the homepage link is a short website button with no raw address', () => {
   assert.equal(/>https:\/\/tdaau\.com\/</.test(index), false);
 });
 
+test('Open on Facebook buttons share one size and sit on the card base', () => {
+  const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
+  assert.match(index, /\.page-card\{[^}]*display:flex[^}]*flex-direction:column[^}]*height:100%/);
+  assert.match(index, /\.page-cols\{[^}]*align-items:stretch/);
+  assert.match(index, /\.fb-open\{[^}]*margin-top:auto[^}]*width:100%[^}]*height:44px[^}]*min-height:44px/);
+  assert.match(index, /\.adv\{[^}]*display:flex[^}]*flex-direction:column[^}]*height:100%/);
+  assert.match(index, /\.adv-go\{[^}]*margin-top:auto/);
+  assert.match(app, /<article class="page-card"><span class="page-name">/);
+  assert.match(app, /<a class="fb-open"[^>]*>Open on Facebook<\/a>/);
+  assert.equal((app.match(/class="fb-open"/g) || []).length, 2);
+});
+
+test('the groups index blurb is not shown', () => {
+  const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
+  const shown = index + '\n' + app + '\n' + credits;
+  assert.equal(shown.includes('Listed in our chosen group order'), false);
+  assert.equal(shown.includes('Rather know what you are walking into'), false);
+  assert.equal(shown.includes('Read more about our groups'), false);
+  assert.equal(/https:\/\/tdaau\.com\/groups\/?(["'<]|\s)/.test(shown), false);
+});
+
 test('the installed name is the app name, with a short label that fits a home screen', () => {
   assert.equal(manifest.name, NAME);
   assert.equal(manifest.short_name, 'TDA App');
