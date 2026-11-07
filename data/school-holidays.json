@@ -1,0 +1,28 @@
+{
+  "compiled": "2026-11-07",
+  "note": "No national machine-readable school-holiday feed. NSW, Victoria and Queensland rows were copied from the linked official pages on the compiled date. Victorian rows marked derived are the days after a published term end and before the next published term start. South Australia, Western Australia, Tasmania and the Northern Territory are not listed. ACT school holidays are derived at runtime from the ACT open-data calendar.",
+  "periods": [
+    {"state": "NSW", "title": "Summer school holidays", "division": "Eastern", "start": "2025-12-22", "end": "2026-01-26", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Autumn school holidays", "division": "Eastern", "start": "2026-04-07", "end": "2026-04-17", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Winter school holidays", "division": "Eastern", "start": "2026-07-06", "end": "2026-07-17", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Spring school holidays", "division": "Eastern", "start": "2026-09-28", "end": "2026-10-09", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Summer school holidays", "division": "Eastern", "start": "2026-12-18", "end": "2027-01-27", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Summer school holidays", "division": "Western", "start": "2025-12-22", "end": "2026-02-02", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Autumn school holidays", "division": "Western", "start": "2026-04-07", "end": "2026-04-17", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Winter school holidays", "division": "Western", "start": "2026-07-06", "end": "2026-07-17", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Spring school holidays", "division": "Western", "start": "2026-09-28", "end": "2026-10-09", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "NSW", "title": "Summer school holidays", "division": "Western", "start": "2026-12-18", "end": "2027-02-03", "source": "https://education.nsw.gov.au/schooling/calendars/2026", "derived": false},
+    {"state": "VIC", "title": "Autumn school holidays", "start": "2026-04-03", "end": "2026-04-19", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published term dates: the days after Term 1 ends and before Term 2 starts."},
+    {"state": "VIC", "title": "Winter school holidays", "start": "2026-06-27", "end": "2026-07-12", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published term dates: the days after Term 2 ends and before Term 3 starts."},
+    {"state": "VIC", "title": "Spring school holidays", "start": "2026-09-19", "end": "2026-10-04", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published term dates: the days after Term 3 ends and before Term 4 starts."},
+    {"state": "VIC", "title": "Summer school holidays", "start": "2026-12-21", "end": "2027-01-27", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": false, "detail": "Printed school-holiday range on the Victorian term dates page."},
+    {"state": "VIC", "title": "Autumn school holidays", "start": "2027-03-26", "end": "2027-04-11", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published 2027 term dates."},
+    {"state": "VIC", "title": "Winter school holidays", "start": "2027-06-26", "end": "2027-07-11", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published 2027 term dates."},
+    {"state": "VIC", "title": "Spring school holidays", "start": "2027-09-18", "end": "2027-10-03", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published 2027 term dates."},
+    {"state": "VIC", "title": "Summer school holidays", "start": "2027-12-18", "end": "2028-01-26", "source": "https://www.vic.gov.au/school-term-dates-and-holidays-victoria", "derived": true, "detail": "Derived from the published 2027 Term 4 end and the 2028 Term 1 start."},
+    {"state": "QLD", "title": "Term 1 school holidays", "start": "2026-04-03", "end": "2026-04-19", "source": "https://education.qld.gov.au/about-us/calendar/term-dates", "derived": false},
+    {"state": "QLD", "title": "Term 2 school holidays", "start": "2026-06-27", "end": "2026-07-12", "source": "https://education.qld.gov.au/about-us/calendar/term-dates", "derived": false},
+    {"state": "QLD", "title": "Term 3 school holidays", "start": "2026-09-19", "end": "2026-10-05", "source": "https://education.qld.gov.au/about-us/calendar/term-dates", "derived": false},
+    {"state": "QLD", "title": "Term 4 school holidays", "start": "2026-12-12", "end": "2027-01-26", "source": "https://education.qld.gov.au/about-us/calendar/term-dates", "derived": false}
+  ]
+}

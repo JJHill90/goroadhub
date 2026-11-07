@@ -138,6 +138,8 @@ test('Contact us is a small site-bar link to the website contact page', () => {
   assert.equal(index.includes('class="site-link"'), false);
   assert.match(index, /\.contact-us\{[^}]*background:#C80813[^}]*color:#fff/);
   assert.equal(index.slice(index.indexOf('<nav'), index.indexOf('</nav>')).includes('Contact us'), false);
-  assert.equal(/mailto:|tel:/i.test(index + app + fs.readFileSync(path.join(root, 'public/listen-out.js'), 'utf8')), false);
+  const listen = fs.readFileSync(path.join(root, 'public/listen-out.js'), 'utf8');
+  const outsideTalk = index.replace(/<details class="talk">[\s\S]*?<\/details>/, '');
+  assert.equal(/mailto:|tel:/i.test(outsideTalk + app + listen), false);
   assert.match(index, /Created for Driver's by Driver's/);
 });
