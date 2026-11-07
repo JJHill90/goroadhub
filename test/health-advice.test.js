@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { HEALTH_ADVICE, orderedHealthAdvice, healthAdviceHtml, smashHtml } = require('../public/my-phone.js');
+const { HEALTH_ADVICE, orderedHealthAdvice, healthAdviceHtml, smashHtml, serviceFinderUrl, hospitalMapUrl, SERVICE_FINDER_URL } = require('../public/my-phone.js');
 
 const root = path.join(__dirname, '..');
 const index = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
@@ -25,6 +25,17 @@ test('health advice numbers match the official pages and state lines come first'
   const card = smashHtml({ path: 'witness', step: 0 }, '', 'VIC');
   assert.match(card, /Health advice 24\/7/);
   assert.ok(card.indexOf('NURSE-ON-CALL') < card.indexOf('Call healthdirect'));
+  assert.equal(serviceFinderUrl(), SERVICE_FINDER_URL);
+  assert.equal(serviceFinderUrl().includes('lat='), false);
+  assert.equal(hospitalMapUrl(null, null, 'Mozilla/5.0'), 'https://www.google.com/maps/search/?api=1&query=hospital%20emergency');
+  assert.equal(hospitalMapUrl(-33.86, 151.21, ''), 'https://www.google.com/maps/search/hospital+emergency/@-33.860000,151.210000,13z');
+  assert.equal(hospitalMapUrl(-33.86, 151.21, 'iPhone'), 'https://maps.apple.com/?q=hospital%20emergency&sll=-33.860000,151.210000');
+  const finder = healthAdviceHtml('NSW', { lat: -33.86, lng: 151.21, ua: '' });
+  assert.match(finder, /Find a doctor near me/);
+  assert.match(finder, /Nearest hospital/);
+  assert.match(finder, /https:\/\/www\.healthdirect\.gov\.au\/australian-health-services"/);
+  assert.equal(finder.includes('Heavy vehicle'), false);
+  assert.equal(finder.includes('Call ahead'), false);
   for (const page of [index, credits]) {
     assert.match(page, /Need to talk\?/);
     assert.match(page, /Health advice 24\/7/);
@@ -35,5 +46,9 @@ test('health advice numbers match the official pages and state lines come first'
     assert.match(page, /https:\/\/www\.healthdirect\.gov\.au\/how-healthdirect-can-help-you/);
     assert.match(page, /https:\/\/www\.qld\.gov\.au\/health\/contacts\/advice\/13health/);
     assert.match(page, /https:\/\/www\.health\.vic\.gov\.au\/primary-care\/nurse-on-call/);
+    assert.match(page, /Find a doctor near me/);
+    assert.match(page, /Nearest hospital/);
+    assert.match(page, /https:\/\/www\.healthdirect\.gov\.au\/australian-health-services/);
+    assert.equal(page.includes('Heavy vehicle parking'), false);
   }
 });

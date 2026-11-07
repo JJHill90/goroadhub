@@ -311,10 +311,19 @@ function downloadIcs(token) {
 
 document.getElementById('smash-glass').addEventListener('click', openSmash);
 document.addEventListener('click', event => {
-  const el = event.target && event.target.closest ? event.target.closest('[data-wiz],[data-loc],[data-scan],[data-scan-stop],[data-show-qr],[data-view-photo],[data-gate-close],[data-here],[data-ics],[data-rem-edit],[data-rem-del],[data-site-edit],[data-site-del],[data-contact-del],[data-site-contact-del],[data-add-site-contact],[data-add-witness],[data-police],#personal-export') : null;
+  const el = event.target && event.target.closest ? event.target.closest('[data-nearest-hospital],[data-wiz],[data-loc],[data-scan],[data-scan-stop],[data-show-qr],[data-view-photo],[data-gate-close],[data-here],[data-ics],[data-rem-edit],[data-rem-del],[data-site-edit],[data-site-del],[data-contact-del],[data-site-contact-del],[data-add-site-contact],[data-add-witness],[data-police],#personal-export') : null;
   if (!el) return;
   if (el.id === 'personal-export') {
     exportBackup(localStorage, store()).then(data => downloadBytes('drivers-advocate-phone-backup.json', JSON.stringify(data, null, 2), 'application/json'));
+    return;
+  }
+  if (el.hasAttribute('data-nearest-hospital')) {
+    event.preventDefault();
+    const known = SMASH && Number.isFinite(Number(SMASH.lat)) ? SMASH : HERE;
+    const open = (lat, lng) => window.open(hospitalMapUrl(lat, lng, navigator.userAgent), '_blank', 'noopener');
+    if (known && Number.isFinite(Number(known.lat))) { open(known.lat, known.lng); return; }
+    if (!navigator.geolocation) { open(); return; }
+    navigator.geolocation.getCurrentPosition(pos => open(pos.coords.latitude, pos.coords.longitude), () => open(), { enableHighAccuracy: true, maximumAge: 60000, timeout: 8000 });
     return;
   }
   const wiz = el.getAttribute('data-wiz');

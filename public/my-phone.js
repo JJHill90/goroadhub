@@ -49,6 +49,7 @@ const SUPPORT_LINES = [
   { name: '13YARN', phone: '13 92 76', tel: 'tel:139276', href: 'https://www.13yarn.org.au/', note: '24/7' }
 ];
 const HEALTHY_HEADS = { name: 'Healthy Heads in Trucks & Sheds', href: 'https://www.healthyheads.org.au/' };
+const SERVICE_FINDER_URL = 'https://www.healthdirect.gov.au/australian-health-services';
 const HEALTH_ADVICE = [
   { state: 'ALL', name: 'healthdirect', phone: '1800 022 222', tel: 'tel:1800022222', href: 'https://www.healthdirect.gov.au/how-healthdirect-can-help-you', note: 'Registered nurses, 24/7. After hours, the nurse may offer a call back from a GP.' },
   { state: 'QLD', name: '13 HEALTH', phone: '13 43 25 84', tel: 'tel:13432584', href: 'https://www.qld.gov.au/health/contacts/advice/13health', note: 'Queensland. Registered nurses, 24/7.' },
@@ -570,9 +571,23 @@ function orderedHealthAdvice(state) {
     return rank(a) - rank(b);
   });
 }
-function healthAdviceHtml(state) {
+function serviceFinderUrl() {
+  return SERVICE_FINDER_URL;
+}
+function hospitalMapUrl(lat, lng, ua) {
+  const ios = /iPad|iPhone|iPod/i.test(String(ua || ''));
+  const has = lat != null && lng != null && lat !== '' && lng !== '' && Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+  const query = encodeURIComponent('hospital emergency');
+  if (ios) return 'https://maps.apple.com/?q=' + query + (has ? '&sll=' + trimCoord(lat) + ',' + trimCoord(lng) : '');
+  if (has) return 'https://www.google.com/maps/search/hospital+emergency/@' + trimCoord(lat) + ',' + trimCoord(lng) + ',13z';
+  return 'https://www.google.com/maps/search/?api=1&query=' + query;
+}
+function healthAdviceHtml(state, place) {
+  const where = place || {};
   const lines = orderedHealthAdvice(state).map(line => '<p data-health-state="' + esc(line.state) + '"><a class="tap-call" href="' + esc(line.tel) + '">Call ' + esc(line.name) + ' ' + esc(line.phone) + '</a> <span class="wiz-note">' + esc(line.note) + '</span> <a class="page-link" href="' + esc(line.href) + '" target="_blank" rel="noopener noreferrer">' + esc(line.name) + '</a></p>').join('');
-  return '<section class="health-advice"><h3>Health advice 24/7</h3><p>Call 000 in an emergency.</p>' + lines + '</section>';
+  const finder = '<p><a class="tap-call" data-find-doctor href="' + esc(serviceFinderUrl()) + '" target="_blank" rel="noopener noreferrer">Find a doctor near me</a></p><p class="wiz-note">Opens the healthdirect Service Finder for a GP, after-hours clinic, hospital or pharmacy. That page does not take a pin in the link. Choose Use current location there.</p>';
+  const hospital = '<p><a class="tap-call" data-nearest-hospital href="' + esc(hospitalMapUrl(where.lat, where.lng, where.ua)) + '" target="_blank" rel="noopener noreferrer">Nearest hospital</a></p>';
+  return '<section class="health-advice"><h3>Health advice 24/7</h3><p>Call 000 in an emergency.</p>' + lines + finder + hospital + '</section>';
 }
 function orderHealthCards(state) {
   if (typeof document === 'undefined') return orderedHealthAdvice(state);
@@ -601,13 +616,13 @@ function smashHtml(draft, ua, state) {
     return '<div class="wiz" role="dialog" aria-modal="true"><h2>SMASH GLASS</h2>' + head +
       '<button type="button" class="wiz-next" data-wiz="involved">I was in one</button>' +
       '<button type="button" class="wiz-next" data-wiz="witness">Came across a crash</button>' +
-      healthAdviceHtml(state) + navButtons() + '</div>';
+      healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
   }
   if (step === 'choose') {
     return '<div class="wiz" role="dialog" aria-modal="true"><h2>What happened?</h2>' + head +
       '<button type="button" class="wiz-next" data-wiz="minor">Minor bump (no injuries)</button>' +
       '<button type="button" class="wiz-next" data-wiz="serious">Serious / injuries</button>' +
-      '<p class="wiz-note">Every step can be skipped.</p>' + healthAdviceHtml(state) + navButtons() + '</div>';
+      '<p class="wiz-note">Every step can be skipped.</p>' + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
   }
   let body = '';
   if (step === 'serious' || step === 'call') {
@@ -639,7 +654,7 @@ function smashHtml(draft, ua, state) {
       '<button type="button" class="wiz-next" data-wiz="send">Send to depot</button><p class="wiz-note">Send opens your mail app and, where the phone allows, the share sheet. Nothing is uploaded to the Drivers Advocate server.</p>';
   }
   const index = Math.max(0, ids.indexOf(step));
-  return '<div class="wiz" role="dialog" aria-modal="true">' + head + '<p>Step ' + (index + 1) + ' of ' + ids.length + '. Optional.</p>' + body + healthAdviceHtml(state) + navButtons() + '</div>';
+  return '<div class="wiz" role="dialog" aria-modal="true">' + head + '<p>Step ' + (index + 1) + ' of ' + ids.length + '. Optional.</p>' + body + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
 }
 
 function countdownHtml(entries) {
@@ -766,6 +781,7 @@ function browserFiles() {
 const api = {
   MY_REMINDERS_KEY, MY_SITES_KEY, MY_CONTACTS_KEY, MY_EMPLOYERS_KEY, MY_INCIDENTS_KEY, DRAFT_KEY, W3W_KEY,
   WARN_PRESETS, NEAR_METRES, PHONE_NOTE, DISCLAIMER, EMERGENCY_NOTE, EMERGENCY_PAGE, IOS_APP, ANDROID_APP,
+  SERVICE_FINDER_URL, serviceFinderUrl, hospitalMapUrl,
   BYSTANDER_STEPS, REMOTE_NOTES, AFTER_SCENE, SUPPORT_LINES, HEALTHY_HEADS, HEALTH_ADVICE, orderedHealthAdvice, healthAdviceHtml, orderHealthCards,
   readReminders, readSites, readContacts, readEmployers, readIncidents,
   saveReminder, saveSite, saveContact, saveEmployer, deleteReminder, deleteSite, deleteContact, deleteEmployer,
