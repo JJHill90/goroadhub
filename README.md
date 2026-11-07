@@ -1,4 +1,4 @@
-# The Drivers Advocate
+# The Drivers Advocate App
 
 Express + Postgres app. Posts and ticker headlines are public to read. The built-in oversight account RoadHub_Admin can add, edit, delete, pin and reorder posts, correct replies, and restore a recovery file if the hub data is lost. That login is not stored in the database.
 
@@ -34,4 +34,4 @@ Add `PGSSL=1` when `DATABASE_URL` is an external Render connection string. Open 
 ## News, podcast and Facebook
 - Sign in as admin, open **Admin > Auto-fetch feeds**, and add each RSS/Atom feed (type: Drivers Advocate site, News outlet, Other website, or Podcast). The server checks them every 30 minutes; **Fetch now** runs it immediately.
 - Stories appear in the **Magazine** tab, on the ticker and in the Feed. Podcast episodes appear in the **Podcast** tab with a player that stays on screen.
-- Drivers post and reply on GoRoadHub from the Post tab. Those messages are shared with everyone. Facebook groups still cannot be posted into automatically: use **Copy for Facebook**, or add a group post by hand in the Admin tab.
+- Drivers post and reply in The Drivers Advocate App from the Post tab. Those messages are shared with everyone. Facebook groups still cannot be posted into automatically: use **Copy for Facebook**, or add a group post by hand in the Admin tab.

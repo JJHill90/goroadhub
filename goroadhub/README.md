@@ -1,4 +1,4 @@
-# GoRoadHub
+# The Drivers Advocate App
 
 Express + Postgres app. Posts and ticker headlines are public to read; only the admin (password login) can add, edit, delete, pin and reorder.
 
