@@ -748,7 +748,7 @@ function normaliseGroups(raw) {
 function shopLink() {
   const href = typeof root.SHOP_URL === 'string' ? root.SHOP_URL.trim() : '';
   if (!/^https:\/\//i.test(href)) return '';
-  return `<p class="shop-row"><a class="btn shop-link" href="${esc(href)}" target="_blank" rel="noopener noreferrer">TDA Shop</a></p>`;
+  return `<p class="shop-row"><a class="tool-pill" href="${esc(href)}" target="_blank" rel="noopener noreferrer">TDA Shop</a></p>`;
 }
 
 function facebookCommunityHtml(groups, stats) {
