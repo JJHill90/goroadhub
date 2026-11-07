@@ -16,7 +16,7 @@ app.use((req, res, next) => {
     "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self'",
     "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
     "img-src 'self' https: data:", "media-src 'self' https: blob:",
-    "frame-src https://www.facebook.com", "connect-src 'self'"
+    "frame-src https://www.facebook.com", "connect-src 'self' https://tdaau.com"
   ].join('; '));
   next();
 });

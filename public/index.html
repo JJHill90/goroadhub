@@ -155,10 +155,36 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl
 .site-foot{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;max-width:none;margin:12px 0 0;padding:10px 12px 2px;border-top:1px solid var(--bd);text-align:center;font-size:12px;font-weight:600;line-height:1.4}
 .site-foot a{color:#D5DEE8;font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:2px}
 .site-foot .site-sep{padding:0 10px;color:#D5DEE8}
+#ev-notes{max-width:1060px;margin:0 auto;padding:0 12px}
+#ev-notes[hidden]{display:none}
+.ev-banner{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#001D3D;color:#fff;border:2px solid #C80813;border-left:8px solid #C80813;border-radius:8px;padding:12px 14px;margin:8px 0 0;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.ev-banner p{margin:0;flex:1 1 180px;font-weight:700}
+.ev-banner a{color:#fff;font-weight:700}
+.ev-dismiss{margin-left:auto;background:#C80813;color:#fff;border:0;border-radius:6px;min-height:44px;padding:8px 14px;font-weight:700;cursor:pointer}
+.stats-strip{margin:0 0 12px}
+.stats-head{margin:0 0 8px;color:#fff}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.stat-card{background:rgba(0,29,61,.92);color:#fff;border-top:4px solid #C80813;border-radius:8px;padding:12px 14px}
+.stat-value{margin:0;font-weight:800;font-size:28px;line-height:1.1;overflow-wrap:anywhere}
+.stat-label{margin:4px 0 0;font-weight:700}
+.stat-note{margin:2px 0 0;color:#D5DEE8;font-size:13px}
+.ev-sub{margin:8px 0 12px}
+.ev-item{padding:12px 0;border-top:1px solid var(--bd)}
+.ev-when{margin:0;color:#fff;font-weight:700}
+.ev-item h4{margin:4px 0;font-size:18px;line-height:1.3}
+.ev-item h4 a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.ev-loc{margin:0 0 6px;color:var(--mut)}
+.ev-cat{display:inline-block;background:#C80813;color:#fff;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:700;margin:0 8px 8px 0}
+.ev-desc{margin:6px 0 0;color:#F7F8FA}
+.ev-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ev-actions .btn,.ev-sub .btn{min-height:44px}
+.ev-recent-head{margin:16px 0 0}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.ev-actions{flex-direction:column}.ev-actions .btn{width:100%;text-align:center}}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div></header>
 <div class="site-link"><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></div>
+<div id="ev-notes" hidden></div>
 <main id="m"></main>
 <footer id="photo-credits" class="photo-foot">
 <p>Photo credits. These photographs rotate behind the Newsletter and Podcast. They are from Wikimedia Commons and were cropped and resized to 1920×1080. The adapted copies stay under the same licence as the original.</p>
@@ -173,4 +199,4 @@ body:not(.in) header,body:not(.in) .site-link,body:not(.in) #m,body:not(.in) #pl
 <nav class="site-foot" aria-label="Footer"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><span class="site-sep" aria-hidden="true">·</span><a href="/photo-credits.html">Photo credits</a></nav>
 </footer>
 <div id="pl"></div>
-<script src="/areas.js"></script><script src="/quarter.js"></script><script src="/listen-out.js"></script><script src="/app.js"></script></body></html>
+<script src="/areas.js"></script><script src="/quarter.js"></script><script src="/listen-out.js"></script><script src="/events.js"></script><script src="/app.js"></script></body></html>
