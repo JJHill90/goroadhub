@@ -350,6 +350,65 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .contact-card a.tap-call::before{content:"\260E\FE0E";margin-right:6px}
 .contact-card a.tap-mail:focus-visible,.contact-card a.tap-call:focus-visible,.contact-us:focus-visible{outline:3px solid #C80813;outline-offset:2px}
 .contact-card .talk-back{margin-bottom:12px}
+/* Glance: large type, solid contrast, one card pattern, dock clear of the page */
+html{height:100%;scroll-padding-bottom:24px}
+body{font-size:18px;line-height:1.45;min-height:0;height:calc(100dvh - 116px);overflow:auto;padding-bottom:0;box-sizing:border-box}
+.brand-lockup{align-items:flex-start}
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:116px;background:#001428;z-index:30;pointer-events:none}
+header{background:#001D3D}
+.brand{font-size:22px;line-height:1.2;color:#fff}
+.brand-blurb{color:#fff;font-size:18px;font-weight:700}
+nav button{color:#fff;font-size:18px;font-weight:800;min-height:48px;padding:8px 2px}
+.contact-us{min-height:48px;font-size:18px;font-weight:800}
+@media(max-width:600px){nav button{font-size:18px;padding:8px 2px}.brand{font-size:20px}.brand-blurb{font-size:18px}}
+main{padding:16px 14px 20px;gap:16px}
+.card,.stats-strip{background:#fff;color:#102033;border-radius:12px;border-top:4px solid #C80813;box-shadow:0 2px 8px rgba(0,0,0,.28);padding:16px}
+.stats-strip{margin:0 0 16px}
+.card h2,.card h3,.card h4,.stats-head{color:#001D3D;font-weight:800;line-height:1.2}
+.card h3,.stats-head{font-size:26px;margin:0 0 12px}
+.card .sub,.card .mut,.news-card .sub{color:#102033;font-size:18px}
+.page-card,.ep,.ev-item,.stat-tile,.stat-card,.ev-cal,.thanks-banner,.adv,.std-item{background:#F4F7FB;color:#102033;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-top:0}
+.page-name,.ep b,.ev-item h4,.ev-item h4 a,.ev-when,.stat-value,.stat-label,.stat-tile .stat-title,.adv b,.credit h2{color:#001D3D}
+.page-name,.ep-meta,.ep-snip,.ev-loc,.ev-desc,.stat-note,.pod-hours .stat-note,.stat-tile .stat-note,.ev-cal-key,.name-ask label,.std-item,.pod-more summary{color:#102033;font-size:18px}
+.page-name{font-size:18px;font-weight:800}
+.ep b,.ep-feature b{font-size:22px;color:#001D3D}
+.ev-item h4{font-size:20px}
+.ev-cal-day{min-height:48px;font-size:18px;color:#001D3D}
+.ev-cal-day.ev-cal-on{background:#001D3D;color:#fff}
+.ev-cal-dow span{color:#102033;font-size:16px;font-weight:800}
+.btn,.fb-open,.pod-pill,.tool-pill,.ev-dismiss,.ev-cal-nav,.ev-cal-all,.stat-link,.fb-go,.mine-btn,.tap-call,.site-open,.help-num,.talk-open,.page-back{min-height:48px;font-size:18px;font-weight:800}
+.page-card .fb-open,.events-card .btn,.ev-actions .btn,.ev-sub .btn,.ev-dismiss,.stat-link,.pod-pill,.ev-cal-nav,.ev-cal-all,.fb-go,.ev-cat{background:#001D3D;color:#fff}
+.news-card .btn,.ep .ep-play,#ep-more,.offbar{background:#C80813;color:#fff}
+.page-card .fb-open:hover,.events-card .btn:hover,.ev-actions .btn:hover,.ev-sub .btn:hover,.ev-dismiss:hover,.stat-link:hover,.pod-pill:hover,.ev-cal-nav:hover,.ev-cal-all:hover{background:#0A2C52;color:#fff}
+.news-card .btn:hover,.ep .ep-play:hover{background:#9d0610;color:#fff}
+.fb-open{height:48px;min-height:48px;font-size:18px}
+@media(max-width:600px){.page-cols{grid-template-columns:1fr;gap:12px}.page-card{padding:14px}.page-name{font-size:18px}.fb-open{height:48px;min-height:48px;font-size:18px}.ev-list{grid-template-columns:1fr}}
+.tool-pill{background:#001D3D;color:#fff;border:2px solid #fff;padding:10px 16px}
+.tool-pill span,.tool-pill b{color:#fff;font-size:18px}
+.site-foot,#photo-credits.photo-foot,.photo-foot{background:#001D3D;color:#fff;font-size:18px}
+.site-foot a,.site-foot .site-sep,.photo-foot a{color:#fff;font-size:18px}
+.talk{left:12px;right:auto;bottom:18px;width:auto;max-width:calc(50% - 18px);text-align:left;z-index:36}
+.talk-open{display:inline-flex;align-items:center;justify-content:center;background:#001D3D;color:#fff;border:2px solid #fff;border-radius:12px;padding:8px 12px;font-size:18px}
+#smash-glass{bottom:12px;right:12px;max-width:calc(50% - 18px);z-index:46}
+.smash-title{font-size:16px}
+.smash-sub{font-size:14px;font-weight:800}
+.talk[open]{left:8px;right:8px;bottom:124px;max-width:none;width:auto}
+.page-back{width:100%;margin:0 0 12px}
+.contact-card{margin:0 auto 16px;background:#fff}
+.contact-card h2,.personal-card h3{font-size:26px;color:#001D3D}
+.personal-card form label,.contact-label,.contact-lead,.contact-note,.talk-lead,.talk-note,.help-name{color:#102033;font-size:18px}
+.card input,.card select,.card textarea,.personal-card input,.personal-card select,.personal-card textarea,.name-ask input{color:#102033;background:#fff;min-height:48px;font-size:18px;border:2px solid #001D3D}
+input::placeholder,textarea::placeholder{color:#102033;opacity:1}
+.news-card .btn::before{content:"\1F4F0"}
+.out-card h3::before{content:"\1F3A7"}
+#pod-here h3::before{content:"\25B6"}
+.events-card>h3::before{content:"\1F4C5"}
+.stats-page>h3::before{content:"\1F4CA"}
+.pod-pill::before{content:"\1F3A7"}
+.ev-sub .btn::before,.ev-actions .btn::before{content:"\1F4C5"}
+.news-card .btn::before,.out-card h3::before,#pod-here h3::before,.events-card>h3::before,.stats-page>h3::before,.pod-pill::before,.ev-sub .btn::before,.ev-actions .btn::before{margin-right:8px}
+.wiz{font-size:18px;color:#1A1204;padding-bottom:132px}
+.wiz-quiet{min-height:48px;font-size:18px;color:#102033}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><button type="button" class="contact-us" onclick="go('ctc')">Contact us</button></header>
@@ -388,7 +447,7 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <div class="help-row" data-health-state="VIC"><div class="help-copy"><a class="help-name" href="https://www.health.vic.gov.au/primary-care/nurse-on-call" target="_blank" rel="noopener noreferrer">NURSE-ON-CALL</a><span class="talk-note">Victoria. Registered nurses, 24/7.</span></div><a class="help-num" href="tel:1300606024" aria-label="Call NURSE-ON-CALL 1300 60 60 24">1300 60 60 24</a></div>
 </div>
 <a class="tap-call" data-find-doctor href="https://www.healthdirect.gov.au/australian-health-services" target="_blank" rel="noopener noreferrer">Find a doctor near me</a>
-<p class="talk-note">Opens the healthdirect Service Finder for a GP, after-hours clinic, hospital or pharmacy. That page does not take a pin in the link. Choose Use current location there.</p>
+<p class="talk-note">Opens healthdirect for a GP, clinic, hospital or pharmacy. Tap Use current location there.</p>
 <a class="tap-call" data-nearest-hospital href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20emergency" target="_blank" rel="noopener noreferrer">Nearest hospital</a>
 </section>
 </div>

@@ -83,7 +83,7 @@ test('newsletters stay on the page until the reader opens them', () => {
   assert.match(app, /function sitesView\(\)/);
   assert.match(app, /sites-page">'\+toolPills\(\)/);
   assert.match(mag, /<h3>Newsletters<\/h3>/);
-  assert.match(mag, /<p class="sub">Every issue in one place on our website\.<\/p>/);
+  assert.match(mag, /<p class="sub">All issues, on our site\.<\/p>/);
   assert.match(mag, /<a class="btn" href="\$\{esc\(href\)\}" target="_blank" rel="noopener noreferrer">Read the newsletters<\/a>/);
   assert.match(mag, /toolPills\(\)/);
   assert.equal(mag.includes('shop-link'), false);
@@ -110,9 +110,9 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.match(app, /Listen in your podcast app/);
   assert.match(app, /Or listen here/);
   assert.match(app, /Copy RSS feed/);
-  assert.match(app, /Stop opening my app automatically/);
+  assert.match(app, /Stop auto-open/);
   assert.match(app, /<h3>Newsletters<\/h3>/);
-  assert.match(app, /Every issue in one place on our website\./);
+  assert.match(app, /All issues, on our site\./);
   assert.match(app, />Read the newsletters</);
   assert.equal(app.includes('Read the newsletters on tdaau.com'), false);
   assert.equal(app.includes('Stop opening automatically'), false);
