@@ -26,7 +26,7 @@ function repliesOf(id){return CM.filter(c=>String(c.postId)==String(id)).sort((a
 function talk(id){const rows=repliesOf(id).slice(-6);return `<div class="replies">${rows.map(c=>`<div class="sub"><b>${esc(c.a)}</b> ${esc(c.x)}</div>`).join('')}<div class="bar" style="margin-top:8px"><input class="f" id="ry-${esc(id)}" placeholder="${S.me?'Reply to this post':'Set your name on the Post tab first'}" ${S.me?'':'disabled'} style="flex:1"><button class="btn" onclick="sendReply('${js(id)}')">Reply</button></div></div>`}
 function card(p){const g=gOf(p),si=sinfo(p),on=S.lk.includes(String(p.id)),f=S.fol.includes(p.a),open=su(p.url);const link=open?`<a style="flex:1;display:flex" href="${esc(open)}" target="_blank" rel="noopener noreferrer"><button style="flex:1">${si.s=='traffic'?'Open the report':si.s=='news'||si.s=='web'?'🔗 Open source':'🔗 Open link'}</button></a>`:(si.s=='hub'?'':`<a style="flex:1;display:flex" href="${esc(g.url||'#')}" target="_blank" rel="noopener noreferrer"><button style="flex:1">💬 Open in Facebook</button></a>`);return`<div class="card post"><div class="top"><div class="av" style="background:${col(p.a||'?')}">${esc((p.a||'?')[0])}</div><div><div class="nm">${esc(p.a)}${p.a=='You'?'':`<button class="fl" onclick="fol('${js(p.a)}')">${f?'✓ Following':'+ Follow'}</button>`}</div><div class="sub">${p.pin?'📌 Pinned · ':''}${ico(si.s,si.n,si.logo)}<b>${esc(si.n)}</b>${si.s=='fb'||si.s=='main'||p.g<0?'':' · '+esc(gn(g))} · ${p.m<2?'just now':ago(p.m)}${p.d?' · <b>Draft, not yet on Facebook</b>':''}</div></div></div>${p.h?'<p><b>'+esc(p.h)+'</b></p>':''}<p>${esc(p.x)}</p>${su(p.img)?'<img referrerpolicy="no-referrer" alt="" style="width:100%;border-radius:8px" src="'+esc(su(p.img))+'" onerror="this.remove()">':''}<span class="tag">${esc(p.t)}</span><div class="sub" style="margin-top:6px">👍 ${(Number(p.l)||0)+(on?1:0)} · ${repliesOf(p.id).length||Number(p.c)||0} replies</div><div class="acts"><button class="${on?'on':''}" onclick="like('${js(p.id)}')">👍 Like</button>${link}${open||si.s!='hub'?`<button onclick="cp('${js(open||g.url||'')}')">↗ Copy link</button>`:''}</div>${talk(p.id)}</div>`}
 function drawList(){if($('#mag'))drawMag();const e=$('#list');if(!e)return;const r=list();e.innerHTML=r.length?r.map(card).join(''):'<div class="card mut">'+(OFFLINE?'No saved stories on this phone yet. They stay after the next visit with reception.':'Nothing here yet. Post from the Post tab, or add a news feed in Admin.')+'</div>'}
-function nav(){const tabs=[['mag','📰 Newsletter'],['pod','🎧 Podcast'],['evt','📅 Events'],['sta','📊 Stats'],['sit','My Sites & Inductions']].map(([k,l])=>`<button class="${V.view==k?'on':''}${k==='sit'?' nav-end':''}" onclick="go('${k}')">${l}</button>`).join('');$('#nav').innerHTML=tabs+`<button class="${V.view=='ctc'?'on':''}" onclick="go('ctc')">Contact us</button><button class="${V.view=='adw'?'on':''}" onclick="go('adw')">Advertise with us</button>`}
+function nav(){const tabs=[['mag','📰 Newsletter'],['pod','🎧 Podcast'],['evt','📅 Events'],['sta','📊 Stats'],['sit','My Sites & Inductions']].map(([k,l])=>`<button class="${V.view==k?'on':''}${k==='sit'?' nav-end':''}" onclick="go('${k}')">${l}</button>`).join('');$('#nav').innerHTML=tabs+`<button class="${V.view=='ctc'?'on':''}" onclick="go('ctc')">Contact us</button><button class="${V.view=='adw'?'on':''}" onclick="go('adw')">Advertise with us</button><button class="${V.view=='svc'?'on':''}" onclick="go('svc')">TDA Services</button>`}
 const go=v=>{V.view=v;render();if(v==='evt')refreshEvents();else if(v==='mag')refreshStats();else if(v==='sta'){loadPodcast();loadFacebookGroups()}};
 function render(){nav();const m=$('#m');if(m)m.className='';
 if(V.view=='traffic'){trafficView()}
@@ -36,6 +36,7 @@ else if(V.view=='sta'){statsView()}
 else if(V.view=='sit'){sitesView()}
 else if(V.view=='ctc'){contactView()}
 else if(V.view=='adw'){advertiseView()}
+else if(V.view=='svc'){servicesView()}
 else if(V.view=='adm'&&ADMIN){admView()}
 else{V.view='mag';nav();magView()}
 const contact=document.querySelector('.contact-us');if(contact)contact.hidden=V.view==='evt'||V.view==='pod'}
@@ -62,6 +63,15 @@ function advertiseHtml(){
 }
 function advertiseView(){const m=$('#m');if(!m)return;m.innerHTML=advertiseHtml();scrollTo(0,0)}
 /* /advertise-panel */
+function servicesHtml(){
+  const rows=[
+    ['GoTraccarHub','The Drivers Advocate personal drivers tracking system','https://gotraccarhub.com'],
+    ['GoEquipHub','The Drivers Advocate Equipment Tracking Service','https://goequiphub.com']
+  ];
+  const cards=rows.map(([name,line,href])=>`<article class="contact-group ad-option"><h3>${esc(name)}</h3><p class="contact-note">${esc(line)}</p><a class="tap-mail ad-touch" href="${esc(href)}" target="_blank" rel="noopener noreferrer">Open ${esc(name)}</a></article>`).join('');
+  return `<section class="contact-card" aria-labelledby="svc-title"><button type="button" class="talk-back" onclick="go('mag');scrollTo(0,0)">&larr; Back to main menu</button><h2 id="svc-title">TDA Services</h2>${cards}</section>`;
+}
+function servicesView(){const m=$('#m');if(!m)return;m.innerHTML=servicesHtml();scrollTo(0,0)}
 function tp(t){V.topics=V.topics.includes(t)?V.topics.filter(x=>x!=t):[...V.topics,t];render()}
 function fv(i){S.fav=S.fav.includes(i)?S.fav.filter(x=>x!=i):[...S.fav,i];sv();render()}
 function fol(a){S.fol=S.fol.includes(a)?S.fol.filter(x=>x!=a):[...S.fol,a];sv();render()}
