@@ -167,6 +167,8 @@ test('Contact us is a small site-bar control for the in-app contact page', () =>
   assert.match(panel[0], /mailto:shopsupport@tdaau\.com/);
   assert.match(panel[0], /mailto:shoppartners@tdaau\.com/);
   assert.match(panel[0], /mailto:advertising@tdaau\.com/);
+  assert.match(panel[0], /Podcast app sales/);
+  assert.match(panel[0], /mailto:sales@tdatt\.com/);
   assert.match(panel[0], /PODCAST_PHONE/);
   assert.match(panel[0], /0435 123 123/);
   assert.match(panel[0], /TODO: replace this placeholder with the real podcast phone number/);
@@ -177,6 +179,8 @@ test('Contact us is a small site-bar control for the in-app contact page', () =>
   const ads = app.match(/\/\* advertise-panel \*\/[\s\S]*?\/\* \/advertise-panel \*\//);
   assert.ok(ads, 'advertise panel');
   assert.match(ads[0], /mailto:advertising@tdaau\.com/);
+  assert.match(ads[0], /Podcast app sales/);
+  assert.match(ads[0], /mailto:sales@tdatt\.com/);
   assert.match(ads[0], /coming soon/);
   assert.equal(/\d{2,}/.test(ads[0].replace(/23 pages and groups/, '')), false);
   assert.match(index, /Created for Driver's by Driver's/);
