@@ -608,7 +608,7 @@ function afterSceneHtml(state) {
 }
 
 function wizFrame(inner, state, row, ua) {
-  return '<div class="wiz" role="dialog" aria-modal="true"><header class="wiz-head"><p class="wiz-brand">SMASH GLASS</p><p class="wiz-sub">In the event of an emergency</p><div class="wiz-stripe" aria-hidden="true"></div></header>' + inner + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
+  return '<div class="wiz" role="dialog" aria-modal="true"><button type="button" class="talk-back page-back" data-wiz="home">&larr; Back to main menu</button><header class="wiz-head"><p class="wiz-brand">SMASH GLASS</p><p class="wiz-sub">In the event of an emergency</p><div class="wiz-stripe" aria-hidden="true"></div></header>' + inner + healthAdviceHtml(state, { lat: row.lat, lng: row.lng, ua: ua }) + navButtons() + '</div>';
 }
 function smashHtml(draft, ua, state) {
   const row = draft || blankDraft();
