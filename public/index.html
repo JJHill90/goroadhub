@@ -443,6 +443,35 @@ main>*{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-
 .ev-cal-nav{width:48px;height:48px}
 .wiz-nav{grid-template-columns:1fr}
 }
+/* Events page: solid header, even menu, even cards, compact dock */
+header{background:#001D3D;background-color:#001D3D}
+@media(max-width:600px){
+header{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:16px}
+.brand-lockup{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px 12px;align-items:center;width:100%;min-width:0;max-width:100%}
+.brand-copy{display:contents}
+.brand,.brand-blurb{min-width:0}
+.logo{width:48px;height:48px;grid-row:span 2}
+nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;min-width:0;margin:4px 0 0;align-items:stretch}
+nav button,nav button.nav-end{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;height:100%;margin:0;white-space:normal;box-sizing:border-box;padding:8px 12px;text-align:left;background:#0A2C52;border-radius:10px;border-bottom:3px solid transparent}
+nav button.on{background:#001D3D;border-bottom-color:#C80813}
+.contact-us{width:100%;margin:0;box-sizing:border-box}
+.ev-list{grid-template-columns:1fr;gap:12px}
+}
+.ev-list{align-items:stretch}
+.ev-item{display:flex;flex-direction:column;height:100%;padding:16px;box-sizing:border-box}
+.ev-when,.ev-item h4,.ev-loc,.ev-desc{font-size:18px;line-height:1.35}
+.ev-desc{display:block;-webkit-line-clamp:unset;overflow:visible}
+.ev-actions{margin-top:auto;width:100%;padding-top:12px}
+.ev-actions .btn{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;text-align:center}
+.ev-actions .btn::before{content:none;margin:0}
+#smash-glass{max-width:128px;min-height:0;padding:4px 8px 6px;bottom:8px;right:8px}
+.smash-title{font-size:12px;letter-spacing:.02em}
+.smash-sub{font-size:10px;font-weight:700}
+.talk{bottom:8px;left:8px;max-width:42%}
+.talk-open{min-height:40px;font-size:14px;padding:6px 10px}
+body{height:calc(100dvh - 72px)}
+body::after{height:72px}
+.events-card{padding-bottom:24px}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><button type="button" class="contact-us" onclick="go('ctc')">Contact us</button></header>

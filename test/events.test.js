@@ -78,6 +78,27 @@ test('upcoming events show the date, title, location and category, with a calend
   assert.equal(eventsHtml(feed()).includes('No upcoming events yet'), true);
 });
 
+test('an all-day holiday shows the date without midnight or a repeated place line', () => {
+  const boxing = {
+    id: 'box',
+    title: 'Boxing Day (additional/substitute day)',
+    start: '2026-12-28T00:00:00+11:00',
+    location: 'Australia-wide (all states & territories)',
+    category: 'Public holiday',
+    description: 'Public holiday in Australia-wide (all states & territories). Long-weekend double demerits usually apply in NSW and the ACT.',
+    url: 'https://tdaau.com/events/boxing'
+  };
+  assert.equal(formatEventWhen(boxing, 'Australia/Sydney'), 'Mon 28 Dec 2026 · All day');
+  const html = eventsHtml(feed({ upcoming: [boxing] }));
+  assert.match(html, /Mon 28 Dec 2026 · All day/);
+  assert.equal(html.includes('12:00 am'), false);
+  assert.equal(html.includes('Public holiday in Australia-wide'), false);
+  assert.match(html, /Long-weekend double demerits/);
+  assert.match(html, /<p class="ev-loc">Australia-wide \(all states &amp; territories\)<\/p>/);
+  const eve = { id: 'eve', title: "New Year's Eve", start: '2026-12-31T19:00:00+11:00', location: 'SA, NT', category: 'Public holiday' };
+  assert.match(formatEventWhen(eve, 'Australia/Sydney'), /7:00 pm/);
+});
+
 test('a date-only event keeps the calendar day and skips a missing category', () => {
   const reunion = { id: 'reunion', title: 'Reunion', start: '2026-11-14', end: '2026-11-15', location: 'Dubbo', url: 'https://tdaau.com/events/reunion' };
   assert.equal(formatEventWhen(reunion, 'Australia/Sydney'), 'Sat, 14 Nov 2026 – Sun, 15 Nov 2026');

@@ -89,6 +89,34 @@ function formatStamp(date, timeZone) {
   return day + ', ' + formatTime(date, zone);
 }
 
+function clock(date, zone) {
+  const parts = {};
+  new Intl.DateTimeFormat('en-US', {
+    timeZone: safeZone(zone), hourCycle: 'h23', hour: '2-digit', minute: '2-digit'
+  }).formatToParts(date).forEach(part => { parts[part.type] = part.value; });
+  let hour = +parts.hour;
+  if (hour === 24) hour = 0;
+  return { hour, minute: +parts.minute };
+}
+
+function isMidnight(date, zone) {
+  const time = clock(date, zone);
+  return time.hour === 0 && time.minute === 0;
+}
+
+function plainDay(date, zone) {
+  return formatDay(ymdInZone(date, zone)).replace(/,/g, '');
+}
+
+function allDayWhen(start, end, zone) {
+  if (!end) return plainDay(start, zone) + ' · All day';
+  const startYmd = ymdInZone(start, zone);
+  const last = isMidnight(end, zone) ? new Date(end.getTime() - 1000) : end;
+  const lastYmd = ymdInZone(last, zone);
+  if (lastYmd === startYmd) return plainDay(start, zone) + ' · All day';
+  return plainDay(start, zone) + ' – ' + plainDay(last, zone);
+}
+
 function isYearly(value) {
   if (value === true || value === 1) return true;
   const flag = text(value).toLowerCase();
@@ -235,9 +263,13 @@ function formatEventWhen(event, timeZone) {
   }
   const start = startDay ? zonedDate(+startRaw.slice(0, 4), +startRaw.slice(5, 7), +startRaw.slice(8, 10), 0, 0, 0, 0, zone) : new Date(startRaw);
   if (Number.isNaN(start.getTime())) return startRaw;
+  const endDate = !endRaw ? null : endDay ? zonedDate(+endRaw.slice(0, 4), +endRaw.slice(5, 7), +endRaw.slice(8, 10), 0, 0, 0, 0, zone) : new Date(endRaw);
+  if (!startDay && isMidnight(start, zone) && (!endDate || Number.isNaN(endDate.getTime()) || isMidnight(endDate, zone))) {
+    return allDayWhen(start, endDate && !Number.isNaN(endDate.getTime()) ? endDate : null, zone);
+  }
   let when = formatStamp(start, zone);
   if (!endRaw) return when;
-  const end = endDay ? zonedDate(+endRaw.slice(0, 4), +endRaw.slice(5, 7), +endRaw.slice(8, 10), 0, 0, 0, 0, zone) : new Date(endRaw);
+  const end = endDate;
   if (Number.isNaN(end.getTime()) || end.getTime() === start.getTime()) return when;
   const sameDay = ymdInZone(start, zone) === ymdInZone(end, zone);
   return when + ' – ' + (sameDay ? formatTime(end, zone) : formatStamp(end, zone));
@@ -408,6 +440,18 @@ function calendarHtml(data, opts) {
   return `<div class="ev-cal" data-cal-month="${padYmd(year, month, 1).slice(0, 7)}"><div class="ev-cal-bar"><button type="button" class="ev-cal-nav" data-cal-nav="-1" aria-label="Previous month">‹</button><h4 class="ev-cal-title">${esc(title)}</h4><button type="button" class="ev-cal-nav" data-cal-nav="1" aria-label="Next month">›</button></div><div class="ev-cal-dow" aria-hidden="true">${week}</div><div class="ev-cal-grid">${cells}</div>${key}${showAll}</div>`;
 }
 
+function eventAbout(event) {
+  let desc = text(event && event.description);
+  const loc = text(event && event.location);
+  const cat = text(event && event.category);
+  if (!desc) return '';
+  if (cat && loc) {
+    const lead = new RegExp('^' + cat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s+in\\s+' + loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\.?\\s*', 'i');
+    desc = desc.replace(lead, '').trim();
+  }
+  return desc;
+}
+
 function eventCard(event, timeZone) {
   const actions = eventActions(event);
   const when = formatEventWhen(event, timeZone);
@@ -417,7 +461,8 @@ function eventCard(event, timeZone) {
     : esc(title);
   const where = event.location ? `<p class="ev-loc">${esc(event.location)}</p>` : '';
   const badge = event.category ? `<span class="ev-cat">${esc(event.category)}</span>` : '';
-  const about = event.description ? `<p class="ev-desc">${esc(event.description)}</p>` : '';
+  const extra = eventAbout(event);
+  const about = extra ? `<p class="ev-desc">${esc(extra)}</p>` : '';
   const days = eventYmds(event, timeZone).join(' ');
   return `<article class="ev-item" data-event-id="${esc(event.id)}" data-ev-days="${esc(days)}">${when ? `<p class="ev-when">${esc(when)}</p>` : ''}<h4>${heading}</h4>${where}${badge}${about}<div class="ev-actions"><a class="btn" href="${esc(actions.calendar)}">Add to my calendar</a></div></article>`;
 }
