@@ -345,7 +345,11 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .contact-group:last-child{margin:0}
 .contact-group h3{color:#001D3D;border-left:4px solid #C80813;padding-left:8px;margin:0 0 10px;font-size:16px;line-height:1.3}
 .contact-label{display:block;margin:10px 0 4px;color:#001D3D;font-size:13px;font-weight:800;line-height:1.3}
-.contact-card a.tap-mail,.contact-card a.tap-call{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;box-sizing:border-box;min-height:48px;margin:0;padding:10px 12px;border-radius:10px;color:#fff;font-weight:800;line-height:1.25;text-decoration:none;text-align:center;overflow-wrap:anywhere}
+.contact-card a.tap-mail,.contact-card a.tap-call,.contact-card button.tap-mail{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;box-sizing:border-box;min-height:48px;margin:0 0 8px;padding:10px 12px;border:0;border-radius:10px;color:#fff;font:inherit;font-weight:800;line-height:1.25;text-decoration:none;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.contact-card a.ad-touch{min-height:56px;font-size:20px;background:#C80813}
+.ad-numbers{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.ad-numbers li{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin:0;padding:8px 0;border-bottom:1px solid #D5DEE8;color:#102033;font-size:18px;font-weight:700}
+.ad-soon{color:#C80813;font-weight:800;letter-spacing:.02em}
 .contact-card a.tap-mail{background:#001D3D}
 .contact-card a.tap-call{background:#C80813}
 .contact-card a.tap-call::before{content:"\260E\FE0E";margin-right:6px}
@@ -455,6 +459,7 @@ header{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:1
 nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;min-width:0;margin:4px 0 0;align-items:stretch}
 nav button,nav button.nav-end{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;height:100%;margin:0;white-space:normal;box-sizing:border-box;padding:8px 12px;text-align:left;background:#0A2C52;border-radius:10px;border-bottom:3px solid transparent}
 nav button.on{background:#001D3D;border-bottom-color:#C80813}
+nav button:last-child:nth-child(odd){grid-column:1/-1}
 .contact-us{width:100%;margin:0;box-sizing:border-box}
 .ev-list{grid-template-columns:1fr;gap:12px}
 }

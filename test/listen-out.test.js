@@ -172,7 +172,12 @@ test('Contact us is a small site-bar control for the in-app contact page', () =>
   assert.match(panel[0], /TODO: replace this placeholder with the real podcast phone number/);
   assert.match(panel[0], /Back to main menu/);
   const outsideTalk = index.replace(/<details class="talk">[\s\S]*?<\/details>/, '');
-  const outsideContact = app.replace(/\/\* contact-us-panel \*\/[\s\S]*?\/\* \/contact-us-panel \*\//, '');
+  const outsideContact = app.replace(/\/\* contact-us-panel \*\/[\s\S]*?\/\* \/contact-us-panel \*\//, '').replace(/\/\* advertise-panel \*\/[\s\S]*?\/\* \/advertise-panel \*\//, '');
   assert.equal(/mailto:|tel:/i.test(outsideTalk + outsideContact + listen), false);
+  const ads = app.match(/\/\* advertise-panel \*\/[\s\S]*?\/\* \/advertise-panel \*\//);
+  assert.ok(ads, 'advertise panel');
+  assert.match(ads[0], /mailto:advertising@tdaau\.com/);
+  assert.match(ads[0], /coming soon/);
+  assert.equal(/\d{2,}/.test(ads[0].replace(/23 pages and groups/, '')), false);
   assert.match(index, /Created for Driver's by Driver's/);
 });
