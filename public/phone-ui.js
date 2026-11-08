@@ -359,7 +359,17 @@ document.addEventListener('click', event => {
     else if (wiz === 'back') SMASH.step = Math.max(0, (SMASH.step || 0) - 1);
     else if (wiz === 'review') SMASH.step = Math.max(0, ids.length - 1);
     else if (wiz === 'send') { sendToDepot(); return; }
-    else if (wiz === 'close') { document.getElementById('smash-root').innerHTML = ''; SMASH = null; return; }
+    else if (wiz === 'close' || wiz === 'home') {
+      if (wiz === 'home') writeDraft(localStorage, SMASH);
+      const root = document.getElementById('smash-root');
+      if (root) root.innerHTML = '';
+      SMASH = null;
+      if (wiz === 'home') {
+        if (typeof go === 'function') go('mag');
+        scrollTo(0, 0);
+      }
+      return;
+    }
     writeDraft(localStorage, SMASH);
     paintSmash();
     return;

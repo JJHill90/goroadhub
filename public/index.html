@@ -43,7 +43,7 @@ nav button.nav-end{margin-left:auto}
 .tool-pill b{font-size:14px;font-weight:800}
 .tool-pill span{color:#D5DEE8;font-size:12px;font-weight:600}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
-.contact-us{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:2px solid #fff;border-radius:8px;background:#C80813;color:#fff;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none;flex:none}
+.contact-us{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:2px solid #fff;border-radius:8px;background:#C80813;color:#fff;font-family:inherit;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none;flex:none;cursor:pointer}
 .contact-us[hidden]{display:none}
 .contact-us:hover{background:#9d0610}
 @media(max-width:600px){header .contact-us{margin:2px 0 2px auto}}
@@ -314,9 +314,173 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .stat-link:hover{background:#166FE5;color:#fff}
 @media(max-width:339px){.ev-list{grid-template-columns:1fr}}
 @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.ev-actions{flex-direction:column}.ev-actions .btn{width:100%;text-align:center}}
+/* UI polish: Need to talk + personal compliance forms */
+.talk-card .talk-h{color:#001D3D;border-left:4px solid #C80813;padding-left:8px}
+.talk-card .help-row{background:#fff;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-radius:10px;padding:10px 12px;box-shadow:0 1px 2px rgba(0,29,61,.08)}
+.talk-card a.help-name{color:#001D3D;font-weight:800}
+.talk-card a.help-num,.talk-card a.tap-call{color:#fff;text-decoration:none;font-weight:800}
+.talk-card a.help-num{background:#C80813;min-width:112px}
+.talk-card a.help-num::before{content:"\260E\FE0E";margin-right:6px}
+.talk-card a.tap-call{background:#001D3D}
+.talk-card section:first-of-type a.tap-call{background:#C80813;font-size:17px}
+.talk-card .talk-note{color:#3d4d5c}
+.talk-back{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:48px;margin:0 0 12px;background:#001D3D;color:#fff;border:2px solid #001D3D;border-radius:10px;font:inherit;font-weight:800;cursor:pointer}
+.talk-back:focus-visible{outline:3px solid #C80813;outline-offset:2px}
+.personal-card{background:#F4F7FB;color:#102033;border-radius:12px;border-top:4px solid #C80813;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.personal-card h3{color:#001D3D;margin:0 0 8px;font-size:18px}
+.personal-card .mine-note,.personal-card p{color:#3d4d5c}
+.privacy-line{margin:0 0 12px;color:#102033;font-size:18px;font-weight:700;line-height:1.35}
+.personal-card form{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+@media(min-width:640px){.personal-card form{grid-template-columns:1fr 1fr}.personal-card form>button,.personal-card form>.wiz-next,.personal-card form>textarea,.personal-card form>label:has(textarea){grid-column:1/-1}}
+.personal-card form label{display:flex;flex-direction:column;gap:4px;margin:0;color:#001D3D;font-size:13px;font-weight:700;min-width:0}
+.personal-card input:not([type=checkbox]):not([type=radio]):not([type=file]),.personal-card select,.personal-card textarea{display:block;width:100%;min-height:44px;margin:0;padding:8px 10px;background:#fff;color:#102033;border:1px solid #B7C4D4;border-radius:8px;font:inherit;font-size:16px;box-sizing:border-box}
+.personal-card input:focus,.personal-card select:focus,.personal-card textarea:focus{outline:2px solid #C80813;outline-offset:1px;border-color:#C80813}
+.personal-card .wiz-next,.personal-card .mine-btn,.personal-card button[type=submit]{background:#001D3D;color:#fff}
+.personal-card button[type=submit]{background:#C80813}
+.personal-card .mine-card{background:#fff;color:#102033;border:1px solid #D5DEE8;border-left:4px solid #F5A524}
+.contact-card{width:min(480px,100%);margin:0 auto 150px;background:#F4F7FB;color:#102033;border-radius:12px;border-top:4px solid #C80813;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.contact-card h2{color:#001D3D;margin:0 0 6px;font-size:22px;line-height:1.2}
+.contact-lead,.contact-note{color:#3d4d5c;margin:0 0 12px;font-size:14px;line-height:1.4}
+.contact-group{background:#fff;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-radius:10px;padding:12px;margin:0 0 12px}
+.contact-group:last-child{margin:0}
+.contact-group h3{color:#001D3D;border-left:4px solid #C80813;padding-left:8px;margin:0 0 10px;font-size:16px;line-height:1.3}
+.contact-label{display:block;margin:10px 0 4px;color:#001D3D;font-size:13px;font-weight:800;line-height:1.3}
+.contact-card a.tap-mail,.contact-card a.tap-call,.contact-card button.tap-mail{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;box-sizing:border-box;min-height:48px;margin:0 0 8px;padding:10px 12px;border:0;border-radius:10px;color:#fff;font:inherit;font-weight:800;line-height:1.25;text-decoration:none;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.contact-card a.ad-touch{min-height:56px;font-size:20px;background:#C80813}
+.ad-numbers{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.ad-numbers li{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;margin:0;padding:8px 0;border-bottom:1px solid #D5DEE8;color:#102033;font-size:18px;font-weight:700}
+.ad-soon{color:#C80813;font-weight:800;letter-spacing:.02em}
+.contact-card a.tap-mail,.contact-card button.tap-mail{background:#001D3D;color:#fff}
+.contact-card a.tap-call{background:#C80813}
+.contact-card a.tap-call::before{content:"\260E\FE0E";margin-right:6px}
+.contact-card a.tap-mail:focus-visible,.contact-card a.tap-call:focus-visible,.contact-us:focus-visible{outline:3px solid #C80813;outline-offset:2px}
+.contact-card .talk-back{margin-bottom:12px}
+/* Glance: large type, solid contrast, one card pattern, dock clear of the page */
+html{height:100%;scroll-padding-bottom:24px}
+body{font-size:18px;line-height:1.45;min-height:0;height:calc(100dvh - 116px);overflow:auto;padding-bottom:0;box-sizing:border-box}
+.brand-lockup{align-items:flex-start}
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:116px;background:#001428;z-index:30;pointer-events:none}
+header{background:#001D3D}
+.brand{font-size:22px;line-height:1.2;color:#fff}
+.brand-blurb{color:#fff;font-size:18px;font-weight:700}
+nav button{color:#fff;font-size:18px;font-weight:800;min-height:48px;padding:8px 2px}
+.contact-us{min-height:48px;font-size:18px;font-weight:800}
+@media(max-width:600px){nav button{font-size:18px;padding:8px 2px}.brand{font-size:20px}.brand-blurb{font-size:18px}}
+main{padding:16px 14px 20px;gap:16px}
+.card,.stats-strip{background:#fff;color:#102033;border-radius:12px;border-top:4px solid #C80813;box-shadow:0 2px 8px rgba(0,0,0,.28);padding:16px}
+.stats-strip{margin:0 0 16px}
+.card h2,.card h3,.card h4,.stats-head{color:#001D3D;font-weight:800;line-height:1.2}
+.card h3,.stats-head{font-size:26px;margin:0 0 12px}
+.card .sub,.card .mut,.news-card .sub{color:#102033;font-size:18px}
+.page-card,.ep,.ev-item,.stat-tile,.stat-card,.ev-cal,.thanks-banner,.adv,.std-item{background:#F4F7FB;color:#102033;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-top:0}
+.page-name,.ep b,.ev-item h4,.ev-item h4 a,.ev-when,.stat-value,.stat-label,.stat-tile .stat-title,.adv b,.credit h2{color:#001D3D}
+.page-name,.ep-meta,.ep-snip,.ev-loc,.ev-desc,.stat-note,.pod-hours .stat-note,.stat-tile .stat-note,.ev-cal-key,.name-ask label,.std-item,.pod-more summary{color:#102033;font-size:18px}
+.page-name{font-size:18px;font-weight:800}
+.ep b,.ep-feature b{font-size:22px;color:#001D3D}
+.ev-item h4{font-size:20px}
+.ev-cal-day{min-height:48px;font-size:18px;color:#001D3D}
+.ev-cal-day.ev-cal-on{background:#001D3D;color:#fff}
+.ev-cal-dow span{color:#102033;font-size:16px;font-weight:800}
+.btn,.fb-open,.pod-pill,.tool-pill,.ev-dismiss,.ev-cal-nav,.ev-cal-all,.stat-link,.fb-go,.mine-btn,.tap-call,.site-open,.help-num,.talk-open,.page-back{min-height:48px;font-size:18px;font-weight:800}
+.page-card .fb-open,.events-card .btn,.ev-actions .btn,.ev-sub .btn,.ev-dismiss,.stat-link,.pod-pill,.ev-cal-nav,.ev-cal-all,.fb-go,.ev-cat{background:#001D3D;color:#fff}
+.news-card .btn,.ep .ep-play,#ep-more,.offbar{background:#C80813;color:#fff}
+.page-card .fb-open:hover,.events-card .btn:hover,.ev-actions .btn:hover,.ev-sub .btn:hover,.ev-dismiss:hover,.stat-link:hover,.pod-pill:hover,.ev-cal-nav:hover,.ev-cal-all:hover{background:#0A2C52;color:#fff}
+.news-card .btn:hover,.ep .ep-play:hover{background:#9d0610;color:#fff}
+.fb-open{height:48px;min-height:48px;font-size:18px}
+@media(max-width:600px){.page-cols{grid-template-columns:1fr;gap:12px}.page-card{padding:14px}.page-name{font-size:18px}.fb-open{height:48px;min-height:48px;font-size:18px}.ev-list{grid-template-columns:1fr}}
+.tool-pill{background:#001D3D;color:#fff;border:2px solid #fff;padding:10px 16px}
+.tool-pill span,.tool-pill b{color:#fff;font-size:18px}
+.site-foot,#photo-credits.photo-foot,.photo-foot{background:#001D3D;color:#fff;font-size:18px}
+.site-foot a,.site-foot .site-sep,.photo-foot a{color:#fff;font-size:18px}
+.talk{left:12px;right:auto;bottom:18px;width:auto;max-width:calc(50% - 18px);text-align:left;z-index:36}
+.talk-open{display:inline-flex;align-items:center;justify-content:center;background:#001D3D;color:#fff;border:2px solid #fff;border-radius:12px;padding:8px 12px;font-size:18px}
+#smash-glass{bottom:12px;right:12px;max-width:calc(50% - 18px);z-index:46}
+.smash-title{font-size:16px}
+.smash-sub{font-size:14px;font-weight:800}
+.talk[open]{left:8px;right:8px;bottom:124px;max-width:none;width:auto}
+.page-back{width:100%;margin:0 0 12px}
+.contact-card{margin:0 auto 16px;background:#fff}
+.contact-card h2,.personal-card h3{font-size:26px;color:#001D3D}
+.personal-card form label,.contact-label,.contact-lead,.contact-note,.talk-lead,.talk-note,.help-name{color:#102033;font-size:18px}
+.card input,.card select,.card textarea,.personal-card input,.personal-card select,.personal-card textarea,.name-ask input{color:#102033;background:#fff;min-height:48px;font-size:18px;border:2px solid #001D3D}
+input::placeholder,textarea::placeholder{color:#102033;opacity:1}
+.news-card .btn::before{content:"\1F4F0"}
+.out-card h3::before{content:"\1F3A7"}
+#pod-here h3::before{content:"\25B6"}
+.events-card>h3::before{content:"\1F4C5"}
+.stats-page>h3::before{content:"\1F4CA"}
+.pod-pill::before{content:"\1F3A7"}
+.ev-sub .btn::before,.ev-actions .btn::before{content:"\1F4C5"}
+.news-card .btn::before,.out-card h3::before,#pod-here h3::before,.events-card>h3::before,.stats-page>h3::before,.pod-pill::before,.ev-sub .btn::before,.ev-actions .btn::before{margin-right:8px}
+.wiz{font-size:18px;color:#1A1204;padding:12px 16px 132px}
+.wiz>.talk-back{margin:0 0 12px}
+.wiz-quiet{min-height:48px;font-size:18px;color:#102033}
+/* Phone grid: one column of equal boxes, 360–430px */
+@media(max-width:430px){
+header{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:16px}
+.brand-lockup{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px 12px;align-items:center;width:100%;max-width:100%;min-width:0}
+.brand,.brand-blurb{min-width:0}
+.brand-copy{display:contents}
+.logo{width:48px;height:48px;grid-row:span 2}
+nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:100%;min-width:0;margin:4px 0 0;overflow:visible;align-items:stretch}
+nav button,nav button.nav-end{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;height:100%;margin:0;min-height:48px;padding:8px 12px;box-sizing:border-box;text-align:left;white-space:normal;background:#0A2C52;border-radius:10px;border-bottom:3px solid transparent}
+nav button.on{background:#001D3D;border-bottom-color:#C80813}
+.contact-us{display:flex;align-items:center;justify-content:flex-start;width:100%;margin:0;box-sizing:border-box;padding:8px 12px;text-align:left}
+.contact-us::before{content:"\2709";margin-right:8px}
+main{padding:12px 16px 16px;gap:12px;width:100%}
+main>*{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-box;justify-self:stretch}
+.card,.contact-card,.personal-card,.stats-strip,.offbar,.page-back,.tool-pills,.fb-home,.news-card{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-box}
+.fb-home h3,.news-card h3,.news-card .sub,.card h2,.card h3,.contact-card h2,.contact-group h3{text-align:left}
+.tool-pills,.pod-pills,.page-cols,.ev-list,.stats-page .stat-grid,.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;align-items:stretch}
+.page-cols,.pod-pills,.ev-list{grid-template-columns:1fr}
+.tool-pill,.pod-pill,.page-card,.stat-tile,.stat-card,.ev-item{width:100%;height:100%;min-height:48px;margin:0;box-sizing:border-box;justify-content:flex-start;align-items:flex-start;text-align:left;border-radius:10px}
+.page-card{display:flex;flex-direction:column;align-items:stretch;height:auto;padding:16px}
+.page-name{align-items:center}
+.page-card .fb-open,.card .btn,.contact-card a.tap-mail,.contact-card a.tap-call,.personal-card .mine-btn,.personal-card button[type=submit],.wiz-next,.wiz-path,.stat-link,#ep-more{display:flex;align-items:center;justify-content:center;width:100%;margin-left:0;margin-right:0;box-sizing:border-box}
+.personal-card form,.name-ask,.std-filter,.wiz-nav,.contact-card{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
+.personal-card form>*,.name-ask>*,.std-filter>label,.wiz-nav>*{min-width:0;width:100%;margin:0}
+.personal-card input:not([type=checkbox]):not([type=radio]):not([type=file]),.personal-card select,.card input:not([type=checkbox]):not([type=radio]):not([type=file]),.card select,.name-ask input,.sites-page input:not([type=checkbox]):not([type=radio]):not([type=file]),.sites-page select,.contact-card input,.std-filter select{display:block;width:100%;height:48px;min-height:48px;min-width:0;margin:0;box-sizing:border-box}
+.personal-card textarea,.card textarea,.sites-page textarea{display:block;width:100%;min-height:96px;min-width:0;margin:0;box-sizing:border-box}
+.std-filter label{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 12px;box-sizing:border-box;background:#F4F7FB;border:1px solid #D5DEE8;border-radius:10px}
+.std-filter label:first-child{grid-column:1/-1;flex-direction:column;align-items:stretch}
+.std-filter{grid-template-columns:1fr 1fr}
+.ev-cal{width:100%;box-sizing:border-box}
+.ev-cal-nav{width:48px;height:48px}
+.wiz-nav{grid-template-columns:1fr}
+}
+/* Events page: solid header, even menu, even cards, compact dock */
+header{background:#001D3D;background-color:#001D3D}
+@media(max-width:600px){
+header{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:16px}
+.brand-lockup{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px 12px;align-items:center;width:100%;min-width:0;max-width:100%}
+.brand-copy{display:contents}
+.brand,.brand-blurb{min-width:0}
+.logo{width:48px;height:48px;grid-row:span 2}
+nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;min-width:0;margin:4px 0 0;align-items:stretch}
+nav button,nav button.nav-end{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;height:100%;margin:0;white-space:normal;box-sizing:border-box;padding:8px 12px;text-align:left;background:#0A2C52;border-radius:10px;border-bottom:3px solid transparent}
+nav button.on{background:#001D3D;border-bottom-color:#C80813}
+nav button:last-child:nth-child(odd){grid-column:1/-1}
+.contact-us{width:100%;margin:0;box-sizing:border-box}
+.ev-list{grid-template-columns:1fr;gap:12px}
+}
+.ev-list{align-items:stretch}
+.ev-item{display:flex;flex-direction:column;height:100%;padding:16px;box-sizing:border-box}
+.ev-when,.ev-item h4,.ev-loc,.ev-desc{font-size:18px;line-height:1.35}
+.ev-desc{display:block;-webkit-line-clamp:unset;overflow:visible}
+.ev-actions{margin-top:auto;width:100%;padding-top:12px}
+.ev-actions .btn{display:flex;align-items:center;justify-content:center;width:100%;box-sizing:border-box;text-align:center}
+.ev-actions .btn::before{content:none;margin:0}
+#smash-glass{max-width:128px;min-height:0;padding:4px 8px 6px;bottom:8px;right:8px}
+.smash-title{font-size:12px;letter-spacing:.02em}
+.smash-sub{font-size:10px;font-weight:700}
+.talk{bottom:8px;left:8px;max-width:42%}
+.talk-open{min-height:40px;font-size:14px;padding:6px 10px}
+body{height:calc(100dvh - 72px)}
+body::after{height:72px}
+.events-card{padding-bottom:24px}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></header>
+<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><button type="button" class="contact-us" onclick="go('ctc')">Contact us</button></header>
 <div id="ev-notes" hidden></div>
 <main id="m"></main>
 <footer id="photo-credits" class="photo-foot">
@@ -333,6 +497,7 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <details class="talk">
 <summary class="talk-open">Need to talk?</summary>
 <div class="talk-card">
+<button type="button" class="talk-back" onclick="var d=this.closest('details');if(d)d.open=false;if(typeof go==='function')go('mag');scrollTo(0,0)">&larr; Back to main menu</button>
 <section class="talk-sec">
 <h3 class="talk-h">Need to talk?</h3>
 <p class="talk-lead">If life is in danger, call 000.</p>
@@ -351,7 +516,7 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <div class="help-row" data-health-state="VIC"><div class="help-copy"><a class="help-name" href="https://www.health.vic.gov.au/primary-care/nurse-on-call" target="_blank" rel="noopener noreferrer">NURSE-ON-CALL</a><span class="talk-note">Victoria. Registered nurses, 24/7.</span></div><a class="help-num" href="tel:1300606024" aria-label="Call NURSE-ON-CALL 1300 60 60 24">1300 60 60 24</a></div>
 </div>
 <a class="tap-call" data-find-doctor href="https://www.healthdirect.gov.au/australian-health-services" target="_blank" rel="noopener noreferrer">Find a doctor near me</a>
-<p class="talk-note">Opens the healthdirect Service Finder for a GP, after-hours clinic, hospital or pharmacy. That page does not take a pin in the link. Choose Use current location there.</p>
+<p class="talk-note">Opens healthdirect for a GP, clinic, hospital or pharmacy. Tap Use current location there.</p>
 <a class="tap-call" data-nearest-hospital href="https://www.google.com/maps/search/?api=1&amp;query=hospital%20emergency" target="_blank" rel="noopener noreferrer">Nearest hospital</a>
 </section>
 </div>
