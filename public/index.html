@@ -314,6 +314,29 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .stat-link:hover{background:#166FE5;color:#fff}
 @media(max-width:339px){.ev-list{grid-template-columns:1fr}}
 @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}.ev-actions{flex-direction:column}.ev-actions .btn{width:100%;text-align:center}}
+/* UI polish: Need to talk + personal compliance forms */
+.talk-card .talk-h{color:#001D3D;border-left:4px solid #C80813;padding-left:8px}
+.talk-card .help-row{background:#fff;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-radius:10px;padding:10px 12px;box-shadow:0 1px 2px rgba(0,29,61,.08)}
+.talk-card a.help-name{color:#001D3D;font-weight:800}
+.talk-card a.help-num,.talk-card a.tap-call{color:#fff;text-decoration:none;font-weight:800}
+.talk-card a.help-num{background:#C80813;min-width:112px}
+.talk-card a.help-num::before{content:"\260E\FE0E";margin-right:6px}
+.talk-card a.tap-call{background:#001D3D}
+.talk-card section:first-of-type a.tap-call{background:#C80813;font-size:17px}
+.talk-card .talk-note{color:#3d4d5c}
+.talk-back{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:48px;margin:0 0 12px;background:#001D3D;color:#fff;border:2px solid #001D3D;border-radius:10px;font:inherit;font-weight:800;cursor:pointer}
+.talk-back:focus-visible{outline:3px solid #C80813;outline-offset:2px}
+.personal-card{background:#F4F7FB;color:#102033;border-radius:12px;border-top:4px solid #C80813;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.personal-card h3{color:#001D3D;margin:0 0 8px;font-size:18px}
+.personal-card .mine-note,.personal-card p{color:#3d4d5c}
+.personal-card form{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0}
+@media(min-width:640px){.personal-card form{grid-template-columns:1fr 1fr}.personal-card form>button,.personal-card form>.wiz-next,.personal-card form>textarea,.personal-card form>label:has(textarea){grid-column:1/-1}}
+.personal-card form label{display:flex;flex-direction:column;gap:4px;margin:0;color:#001D3D;font-size:13px;font-weight:700;min-width:0}
+.personal-card input:not([type=checkbox]):not([type=radio]):not([type=file]),.personal-card select,.personal-card textarea{display:block;width:100%;min-height:44px;margin:0;padding:8px 10px;background:#fff;color:#102033;border:1px solid #B7C4D4;border-radius:8px;font:inherit;font-size:16px;box-sizing:border-box}
+.personal-card input:focus,.personal-card select:focus,.personal-card textarea:focus{outline:2px solid #C80813;outline-offset:1px;border-color:#C80813}
+.personal-card .wiz-next,.personal-card .mine-btn,.personal-card button[type=submit]{background:#001D3D;color:#fff}
+.personal-card button[type=submit]{background:#C80813}
+.personal-card .mine-card{background:#fff;color:#102033;border:1px solid #D5DEE8;border-left:4px solid #F5A524}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></header>
@@ -333,6 +356,7 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 <details class="talk">
 <summary class="talk-open">Need to talk?</summary>
 <div class="talk-card">
+<button type="button" class="talk-back" onclick="var d=this.closest('details');if(d)d.open=false;if(typeof go==='function')go('mag');scrollTo(0,0)">&larr; Back to main menu</button>
 <section class="talk-sec">
 <h3 class="talk-h">Need to talk?</h3>
 <p class="talk-lead">If life is in danger, call 000.</p>
