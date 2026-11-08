@@ -143,20 +143,36 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.match(app, /class="ep-snip"/);
 });
 
-test('Contact us is a small site-bar link to the website contact page', () => {
+test('Contact us is a small site-bar control for the in-app contact page', () => {
   assert.equal(CONTACT_URL, 'https://tdaau.com/contact/');
-  const link = index.match(/<a class="contact-us"[^>]*>Contact us<\/a>/);
-  assert.ok(link, 'contact link');
-  assert.match(link[0], /href="https:\/\/tdaau\.com\/contact\/"/);
-  assert.match(link[0], /target="_blank"/);
-  assert.match(link[0], /rel="noopener noreferrer"/);
+  const link = index.match(/<button type="button" class="contact-us"[^>]*>Contact us<\/button>/);
+  assert.ok(link, 'contact control');
+  assert.match(link[0], /onclick="go\('ctc'\)"/);
+  assert.equal(/tdaau\.com\/contact/.test(link[0]), false);
+  assert.equal(index.includes('https://tdaau.com/contact/'), false);
   const header = index.slice(index.indexOf('<header>'), index.indexOf('</header>') + 9);
   assert.ok(header.includes('class="contact-us"'));
   assert.equal(index.includes('class="site-link"'), false);
   assert.match(index, /\.contact-us\{[^}]*background:#C80813[^}]*color:#fff/);
   assert.equal(index.slice(index.indexOf('<nav'), index.indexOf('</nav>')).includes('Contact us'), false);
+  const navFn = app.slice(app.indexOf('function nav('), app.indexOf('const go'));
+  assert.match(navFn, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\],\['sit','My Sites & Inductions'\]/);
+  assert.match(navFn, /onclick="go\('ctc'\)">Contact us/);
+  assert.equal(/login|Admin/.test(navFn), false);
   const listen = fs.readFileSync(path.join(root, 'public/listen-out.js'), 'utf8');
+  const panel = app.match(/\/\* contact-us-panel \*\/[\s\S]*?\/\* \/contact-us-panel \*\//);
+  assert.ok(panel, 'contact panel');
+  assert.match(panel[0], /mailto:support@tdaau\.com/);
+  assert.match(panel[0], /mailto:support@tdatt\.com/);
+  assert.match(panel[0], /mailto:shopsupport@tdaau\.com/);
+  assert.match(panel[0], /mailto:shoppartners@tdaau\.com/);
+  assert.match(panel[0], /mailto:advertising@tdaau\.com/);
+  assert.match(panel[0], /PODCAST_PHONE/);
+  assert.match(panel[0], /0435 123 123/);
+  assert.match(panel[0], /TODO: replace this placeholder with the real podcast phone number/);
+  assert.match(panel[0], /Back to main menu/);
   const outsideTalk = index.replace(/<details class="talk">[\s\S]*?<\/details>/, '');
-  assert.equal(/mailto:|tel:/i.test(outsideTalk + app + listen), false);
+  const outsideContact = app.replace(/\/\* contact-us-panel \*\/[\s\S]*?\/\* \/contact-us-panel \*\//, '');
+  assert.equal(/mailto:|tel:/i.test(outsideTalk + outsideContact + listen), false);
   assert.match(index, /Created for Driver's by Driver's/);
 });

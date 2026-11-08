@@ -43,7 +43,7 @@ nav button.nav-end{margin-left:auto}
 .tool-pill b{font-size:14px;font-weight:800}
 .tool-pill span{color:#D5DEE8;font-size:12px;font-weight:600}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
-.contact-us{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:2px solid #fff;border-radius:8px;background:#C80813;color:#fff;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none;flex:none}
+.contact-us{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:2px solid #fff;border-radius:8px;background:#C80813;color:#fff;font-family:inherit;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none;flex:none;cursor:pointer}
 .contact-us[hidden]{display:none}
 .contact-us:hover{background:#9d0610}
 @media(max-width:600px){header .contact-us{margin:2px 0 2px auto}}
@@ -337,9 +337,22 @@ body:not(.in) header,body:not(.in) #m,body:not(.in) #pl,body:not(.in) #wg{displa
 .personal-card .wiz-next,.personal-card .mine-btn,.personal-card button[type=submit]{background:#001D3D;color:#fff}
 .personal-card button[type=submit]{background:#C80813}
 .personal-card .mine-card{background:#fff;color:#102033;border:1px solid #D5DEE8;border-left:4px solid #F5A524}
+.contact-card{width:min(480px,100%);margin:0 auto 150px;background:#F4F7FB;color:#102033;border-radius:12px;border-top:4px solid #C80813;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.contact-card h2{color:#001D3D;margin:0 0 6px;font-size:22px;line-height:1.2}
+.contact-lead,.contact-note{color:#3d4d5c;margin:0 0 12px;font-size:14px;line-height:1.4}
+.contact-group{background:#fff;border:1px solid #D5DEE8;border-left:4px solid #001D3D;border-radius:10px;padding:12px;margin:0 0 12px}
+.contact-group:last-child{margin:0}
+.contact-group h3{color:#001D3D;border-left:4px solid #C80813;padding-left:8px;margin:0 0 10px;font-size:16px;line-height:1.3}
+.contact-label{display:block;margin:10px 0 4px;color:#001D3D;font-size:13px;font-weight:800;line-height:1.3}
+.contact-card a.tap-mail,.contact-card a.tap-call{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;width:100%;box-sizing:border-box;min-height:48px;margin:0;padding:10px 12px;border-radius:10px;color:#fff;font-weight:800;line-height:1.25;text-decoration:none;text-align:center;overflow-wrap:anywhere}
+.contact-card a.tap-mail{background:#001D3D}
+.contact-card a.tap-call{background:#C80813}
+.contact-card a.tap-call::before{content:"\260E\FE0E";margin-right:6px}
+.contact-card a.tap-mail:focus-visible,.contact-card a.tap-call:focus-visible,.contact-us:focus-visible{outline:3px solid #C80813;outline-offset:2px}
+.contact-card .talk-back{margin-bottom:12px}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><a class="contact-us" href="https://tdaau.com/contact/" target="_blank" rel="noopener noreferrer">Contact us</a></header>
+<header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><button type="button" class="contact-us" onclick="go('ctc')">Contact us</button></header>
 <div id="ev-notes" hidden></div>
 <main id="m"></main>
 <footer id="photo-credits" class="photo-foot">
