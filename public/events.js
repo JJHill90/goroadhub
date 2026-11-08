@@ -890,7 +890,7 @@ function driverCountHtml(groupStats) {
 
 function thankYouBlock(name, groupStats) {
   const saved = cleanFirstName(name);
-  return `<div class="thanks-banner"><p class="thanks-line">${esc(thankYouText(saved))}</p>${driverCountHtml(groupStats)}<form class="name-ask" onsubmit="return saveFirstName(event)"><label>What's your first name? <input class="f" id="first-name" name="first-name" maxlength="40" autocomplete="given-name" value="${esc(saved)}"></label><button type="submit" class="btn stat-link">${saved ? 'Change name' : 'Save name'}</button></form></div>`;
+  return `<div class="thanks-banner"><p class="thanks-line">${esc(thankYouText(saved))}</p>${driverCountHtml(groupStats)}<p class="privacy-line">All data entered into the app is held on your phone, not the app server.</p><form class="name-ask" onsubmit="return saveFirstName(event)"><label>What's your first name? <input class="f" id="first-name" name="first-name" maxlength="40" autocomplete="given-name" value="${esc(saved)}"></label><button type="submit" class="btn stat-link">${saved ? 'Change name' : 'Save name'}</button></form></div>`;
 }
 
 function podcastStatsHtml(episodes, name, summary) {
