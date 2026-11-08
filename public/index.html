@@ -410,6 +410,39 @@ input::placeholder,textarea::placeholder{color:#102033;opacity:1}
 .wiz{font-size:18px;color:#1A1204;padding:12px 16px 132px}
 .wiz>.talk-back{margin:0 0 12px}
 .wiz-quiet{min-height:48px;font-size:18px;color:#102033}
+/* Phone grid: one column of equal boxes, 360–430px */
+@media(max-width:430px){
+header{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:16px}
+.brand-lockup{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px 12px;align-items:center;width:100%;max-width:100%;min-width:0}
+.brand,.brand-blurb{min-width:0}
+.brand-copy{display:contents}
+.logo{width:48px;height:48px;grid-row:span 2}
+nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:100%;min-width:0;margin:4px 0 0;overflow:visible;align-items:stretch}
+nav button,nav button.nav-end{display:flex;align-items:center;justify-content:flex-start;width:100%;min-width:0;height:100%;margin:0;min-height:48px;padding:8px 12px;box-sizing:border-box;text-align:left;white-space:normal;background:#0A2C52;border-radius:10px;border-bottom:3px solid transparent}
+nav button.on{background:#001D3D;border-bottom-color:#C80813}
+.contact-us{display:flex;align-items:center;justify-content:flex-start;width:100%;margin:0;box-sizing:border-box;padding:8px 12px;text-align:left}
+.contact-us::before{content:"\2709";margin-right:8px}
+main{padding:12px 16px 16px;gap:12px;width:100%}
+main>*{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-box;justify-self:stretch}
+.card,.contact-card,.personal-card,.stats-strip,.offbar,.page-back,.tool-pills,.fb-home,.news-card{width:100%;max-width:none;margin-left:0;margin-right:0;box-sizing:border-box}
+.fb-home h3,.news-card h3,.news-card .sub,.card h2,.card h3,.contact-card h2,.contact-group h3{text-align:left}
+.tool-pills,.pod-pills,.page-cols,.ev-list,.stats-page .stat-grid,.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;align-items:stretch}
+.page-cols,.pod-pills,.ev-list{grid-template-columns:1fr}
+.tool-pill,.pod-pill,.page-card,.stat-tile,.stat-card,.ev-item{width:100%;height:100%;min-height:48px;margin:0;box-sizing:border-box;justify-content:flex-start;align-items:flex-start;text-align:left;border-radius:10px}
+.page-card{display:flex;flex-direction:column;align-items:stretch;height:auto;padding:16px}
+.page-name{align-items:center}
+.page-card .fb-open,.card .btn,.contact-card a.tap-mail,.contact-card a.tap-call,.personal-card .mine-btn,.personal-card button[type=submit],.wiz-next,.wiz-path,.stat-link,#ep-more{display:flex;align-items:center;justify-content:center;width:100%;margin-left:0;margin-right:0;box-sizing:border-box}
+.personal-card form,.name-ask,.std-filter,.wiz-nav,.contact-card{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
+.personal-card form>*,.name-ask>*,.std-filter>label,.wiz-nav>*{min-width:0;width:100%;margin:0}
+.personal-card input:not([type=checkbox]):not([type=radio]):not([type=file]),.personal-card select,.card input:not([type=checkbox]):not([type=radio]):not([type=file]),.card select,.name-ask input,.sites-page input:not([type=checkbox]):not([type=radio]):not([type=file]),.sites-page select,.contact-card input,.std-filter select{display:block;width:100%;height:48px;min-height:48px;min-width:0;margin:0;box-sizing:border-box}
+.personal-card textarea,.card textarea,.sites-page textarea{display:block;width:100%;min-height:96px;min-width:0;margin:0;box-sizing:border-box}
+.std-filter label{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 12px;box-sizing:border-box;background:#F4F7FB;border:1px solid #D5DEE8;border-radius:10px}
+.std-filter label:first-child{grid-column:1/-1;flex-direction:column;align-items:stretch}
+.std-filter{grid-template-columns:1fr 1fr}
+.ev-cal{width:100%;box-sizing:border-box}
+.ev-cal-nav{width:48px;height:48px}
+.wiz-nav{grid-template-columns:1fr}
+}
 </style></head><body class="in">
 <div class="bg" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
 <header><div class="brand-lockup"><img class="logo" src="/icon.svg" alt=""><div class="brand-copy"><span class="brand">The Drivers <b>Advocate</b> App</span><p class="brand-blurb">Created for Driver's by Driver's</p><nav id="nav"></nav></div></div><button type="button" class="contact-us" onclick="go('ctc')">Contact us</button></header>
