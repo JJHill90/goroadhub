@@ -74,7 +74,17 @@ test('newsletters stay on the page until the reader opens them', () => {
   assert.equal(SHOP_URL, 'https://thedriversadvocate.myshopify.com');
   assert.equal(TAX_URL, 'https://gotaxationhub.com');
   const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
-  assert.ok(mag.indexOf('toolPills()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.ok(mag.indexOf('toolPills()') < mag.indexOf('mondayWrap()') && mag.indexOf('mondayWrap()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
+  assert.match(app, /function mondayWrap\(\)/);
+  assert.match(app, /<h3>Get the Monday Wrap<\/h3>/);
+  assert.match(app, /action="https:\/\/tdaau\.us9\.list-manage\.com\/subscribe\/post\?u=ff8d9dd6d54765aa6fec0704b&amp;id=72f9b91edd"/);
+  assert.match(app, /method="post" target="_blank"/);
+  assert.match(app, /name="EMAIL" type="email" required/);
+  assert.match(app, /name="FNAME"/);
+  assert.match(app, /name="b_ff8d9dd6d54765aa6fec0704b_72f9b91edd" tabindex="-1" value=""/);
+  assert.match(app, /The Drivers Advocate newsletter\. Unsubscribe any time\./);
+  const server = fs.readFileSync(path.join(root, 'server.js'), 'utf8');
+  assert.match(server, /form-action 'self' https:\/\/\*\.list-manage\.com/);
   assert.match(app, /function toolPills\(\)/);
   assert.match(app, /<b>Tax Hub<\/b><span>Record your receipts<\/span>/);
   assert.match(app, /class="tool-pill"/);
