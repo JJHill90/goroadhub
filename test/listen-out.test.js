@@ -78,6 +78,8 @@ test('newsletters stay on the page until the reader opens them', () => {
   assert.match(app, /function toolPills\(\)/);
   assert.match(app, /<b>Tax Hub<\/b><span>Record your receipts<\/span>/);
   assert.match(app, /class="tool-pill"/);
+  assert.match(app, /<button type="button" class="tool-pill tool-soon" disabled aria-disabled="true">Coming soon<\/button>/);
+  assert.equal(/tool-soon[^>]*href=/.test(app), false);
   assert.match(app, /typeof TAX_URL==='string'\?TAX_URL:''/);
   assert.match(app, /typeof SHOP_URL==='string'\?SHOP_URL:''/);
   assert.match(app, /function sitesView\(\)/);
@@ -119,7 +121,8 @@ test('the pages keep the in-app fallback under the outside link', () => {
   assert.equal(app.includes('newsletterOpenPlan('), false);
   assert.match(app, /podcastOpenPlan\(/);
   assert.match(app, /advocatePagesBlock\(\)/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\],\['sit','My Sites & Inductions'\]/);
+  assert.match(app, /\['mag','📰 Newsletter','Newsletter'\],\['pod','🎧 Podcast','Podcast'\],\['evt','📅 Events','Events'\],\['sta','📊 Stats','Stats'\],\['sit','My Sites','My Sites & Inductions'\]/);
+  assert.match(app, /title="\$\{esc\(name\)\}" aria-label="\$\{esc\(name\)\}"/);
   const view = app.slice(app.indexOf('function pView'), app.indexOf('function drawEps'));
   assert.ok(view.indexOf('id="ep-feature"') < view.indexOf('id="eps"') && view.indexOf('id="eps"') < view.indexOf('Listen in your podcast app'));
   assert.match(view, /<h3>Listen in your podcast app<\/h3><p class="sub">Listen only when safe<\/p>/);

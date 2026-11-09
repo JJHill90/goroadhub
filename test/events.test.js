@@ -242,7 +242,7 @@ test('the month calendar marks event days and the list is a compact grid', () =>
 test('the events tab is in the public nav and the page polls on open', () => {
   assert.match(index, /src="\/events\.js"/);
   assert.match(index, /id="ev-notes"/);
-  assert.match(app, /\['mag','📰 Newsletter'\],\['pod','🎧 Podcast'\],\['evt','📅 Events'\],\['sta','📊 Stats'\],\['sit','My Sites & Inductions'\]/);
+  assert.match(app, /\['mag','📰 Newsletter','Newsletter'\],\['pod','🎧 Podcast','Podcast'\],\['evt','📅 Events','Events'\],\['sta','📊 Stats','Stats'\],\['sit','My Sites','My Sites & Inductions'\]/);
   assert.match(app, /else if\(V\.view=='evt'\)\{eventsView\(\)\}/);
   assert.match(app, /if\(v==='evt'\)refreshEvents\(\)/);
   assert.match(app, /refreshEvents\(\);refreshStats\(\)/);

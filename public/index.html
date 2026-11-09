@@ -35,13 +35,15 @@ header input{flex:1;min-width:120px;max-width:300px;border:1px solid var(--bd);b
 header input::placeholder{color:#8EA0B5}
 .brand-lockup{flex:1 1 240px}
 .brand-copy{width:100%;align-items:stretch}
-nav{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:8px 16px;width:100%;margin:2px 0 0;padding:0}
+nav{display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:8px 12px;width:100%;margin:2px 0 0;padding:0}
 nav button{border:0;background:none;color:var(--mut);padding:8px 0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;flex:none}
-nav button.nav-end{margin-left:0}
-.tool-pills{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:stretch;justify-content:start;gap:8px;width:max-content;max-width:100%;margin:0 0 12px}
-.tool-pill{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1px;min-height:48px;max-width:100%;padding:8px 16px;border:1px solid #fff;border-radius:999px;background:#001D3D;color:#fff;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none}
+.tool-pills{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;gap:8px;width:min(100%,540px);margin:0 0 12px}
+.tool-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1px;width:100%;min-width:0;min-height:48px;padding:8px 10px;border:1px solid #fff;border-radius:999px;background:#001D3D;color:#fff;font-size:14px;font-weight:700;line-height:1.2;text-decoration:none}
+button.tool-pill{font-family:inherit;cursor:default}
+.tool-soon{background:#001428;color:#8EA0B5;border-color:#3D5168}
+button.tool-soon:disabled{opacity:1}
 .tool-pill b{font-size:14px;font-weight:800}
-.tool-pill span{color:#D5DEE8;font-size:12px;font-weight:600}
+.tool-pill span{color:#D5DEE8;font-size:11px;font-weight:600}
 nav button:hover{background:var(--hov)}nav button.on{color:#fff;border-bottom-color:var(--bl);border-radius:8px 8px 0 0}
 .head-actions{margin-left:auto;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:2px;flex:0 0 auto;position:relative;z-index:5}
 .contact-us{display:inline-flex;align-items:center;justify-content:flex-end;align-self:flex-end;min-height:28px;margin:0;padding:1px 2px 0;border:0;border-radius:0;background:transparent;color:#D5DEE8;font-size:12px;font-weight:600;line-height:1.2;text-decoration:underline;text-underline-offset:2px;flex:none}

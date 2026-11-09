@@ -114,7 +114,7 @@ test('the Stats tab shows podcast facts from the feed and no group numbers', () 
   assert.equal(waiting.includes('stat-value'), false);
   assert.match(waiting, /when the feed can be reached/);
   assert.match(waiting, /Thank You for being part of a truly unique group/);
-  assert.match(app, /\['sta','📊 Stats'\]/);
+  assert.match(app, /\['sta','📊 Stats','Stats'\]/);
   assert.match(app, /function statsView\(\)/);
   assert.match(app, /podcastStatsHtml\(EPS,readFirstName\(\)\)/);
   assert.match(app, /localStorage\.setItem\('rh-first-name'/);
