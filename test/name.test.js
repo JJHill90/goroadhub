@@ -33,6 +33,13 @@ test('the page title, header, and share tags use the app name', () => {
   assert.match(index, /main\.two\{grid-template-columns:290px minmax\(0,1fr\)\}/);
   assert.equal(index.includes('Go Road Hub'), false);
   assert.equal(index.includes('GoRoadHub'), false);
+  assert.equal(index.includes('goroadhub'), false);
+  const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
+  const feeds = fs.readFileSync(path.join(root, 'feeds.js'), 'utf8');
+  assert.match(app, /a\.download='drivers-advocate-recovery\.json'/);
+  assert.equal(app.includes('goroadhub-recovery'), false);
+  assert.match(feeds, /The Drivers Advocate App\/1\.0 feed reader/);
+  assert.equal(feeds.includes('GoRoadHub'), false);
 });
 
 const FOOT_ROW = '<nav class="site-foot" aria-label="Footer"><a class="visit-site" href="https://tdaau.com/" target="_blank" rel="noopener noreferrer">Visit our website</a><span class="site-sep" aria-hidden="true">·</span><a href="/photo-credits.html">Photo credits</a></nav>';

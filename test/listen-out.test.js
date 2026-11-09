@@ -156,7 +156,10 @@ test('Contact us is a small site-bar link to the website contact page', () => {
   assert.ok(header.indexOf('talk-open') < header.indexOf('class="contact-us"'));
   assert.equal(index.slice(index.indexOf('<footer')).includes('Need to talk'), false);
   assert.equal(index.includes('class="site-link"'), false);
-  assert.match(index, /\.talk-open\{[^}]*background:#C80813[^}]*color:#fff/);
+  assert.match(index, /\.talk-open\{[^}]*background:#FF1420[^}]*color:#fff/);
+  assert.match(index, /\.talk-open\{[^}]*border:5px solid #fff/);
+  assert.match(index, /\.talk-open\{[^}]*font-weight:900/);
+  assert.match(index, /\.talk-open::before\{[^}]*mask:/);
   assert.match(index, /\.contact-us\{[^}]*background:transparent[^}]*color:#D5DEE8/);
   assert.equal(/\.contact-us\{[^}]*background:#C80813/.test(index), false);
   assert.equal(index.slice(index.indexOf('<nav'), index.indexOf('</nav>')).includes('Contact us'), false);

@@ -191,7 +191,7 @@ app.get('/manifest.webmanifest', (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 if (require.main === module) {
   pool.query('create table if not exists docs(coll text not null, id text not null, data jsonb not null, primary key(coll, id))')
-    .then(() => app.listen(PORT, () => console.log('GoRoadHub running on ' + PORT)))
+    .then(() => app.listen(PORT, () => console.log('The Drivers Advocate App running on ' + PORT)))
     .catch(e => { console.error('Database error:', e.message); process.exit(1); });
 }
 
