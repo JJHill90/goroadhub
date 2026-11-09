@@ -38,6 +38,15 @@ test('health advice numbers match the official pages and state lines come first'
   assert.equal(finder.includes('Call ahead'), false);
   for (const page of [index, credits]) {
     assert.match(page, /Need to talk\?/);
+    const support = page.slice(page.indexOf('Need to talk?'), page.indexOf('Health advice 24/7'));
+    const names = [...support.matchAll(/class="help-name"[^>]*>([^<]+)/g)].map(match => match[1]);
+    assert.deepEqual(names, ['Lifeline', 'Beyond Blue', 'TIACS', '13YARN']);
+    assert.match(support, /href="https:\/\/www\.tiacs\.org\/"/);
+    assert.match(support, /tel:0488846988/);
+    assert.match(support, /0488 846 988/);
+    assert.match(support, /Text or call\. Mon–Fri, 8am–10pm AEST\./);
+    assert.equal(support.includes('Healthy Heads'), false);
+    assert.equal(page.includes('healthyheads.org.au'), false);
     assert.match(page, /Health advice 24\/7/);
     assert.match(page, /Call 000 in an emergency/);
     assert.match(page, /tel:1800022222/);

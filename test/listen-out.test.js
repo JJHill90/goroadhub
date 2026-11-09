@@ -152,8 +152,13 @@ test('Contact us is a small site-bar link to the website contact page', () => {
   assert.match(link[0], /rel="noopener noreferrer"/);
   const header = index.slice(index.indexOf('<header>'), index.indexOf('</header>') + 9);
   assert.ok(header.includes('class="contact-us"'));
+  assert.ok(header.includes('<summary class="talk-open">Need to talk?</summary>'));
+  assert.ok(header.indexOf('talk-open') < header.indexOf('class="contact-us"'));
+  assert.equal(index.slice(index.indexOf('<footer')).includes('Need to talk'), false);
   assert.equal(index.includes('class="site-link"'), false);
-  assert.match(index, /\.contact-us\{[^}]*background:#C80813[^}]*color:#fff/);
+  assert.match(index, /\.talk-open\{[^}]*background:#C80813[^}]*color:#fff/);
+  assert.match(index, /\.contact-us\{[^}]*background:transparent[^}]*color:#D5DEE8/);
+  assert.equal(/\.contact-us\{[^}]*background:#C80813/.test(index), false);
   assert.equal(index.slice(index.indexOf('<nav'), index.indexOf('</nav>')).includes('Contact us'), false);
   const listen = fs.readFileSync(path.join(root, 'public/listen-out.js'), 'utf8');
   const outsideTalk = index.replace(/<details class="talk">[\s\S]*?<\/details>/, '');

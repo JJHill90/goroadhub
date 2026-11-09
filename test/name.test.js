@@ -95,7 +95,7 @@ test('the installed name is the app name, with Drivers Advocate on the home scre
 
 test('photo credits name the app in the title, header, and share tags', () => {
   assert.match(credits, new RegExp('<title>Photo credits — ' + NAME + '</title>'));
-  assert.match(credits, new RegExp('<header><a href="/">' + NAME + '</a></header>'));
+  assert.match(credits, new RegExp('<header><a href="/">' + NAME + '</a><div class="head-actions"><details class="talk">'));
   assert.equal(meta(credits, 'name', 'application-name'), NAME);
   assert.equal(meta(credits, 'name', 'apple-mobile-web-app-title'), 'Drivers Advocate');
   assert.equal(meta(credits, 'property', 'og:site_name'), NAME);
