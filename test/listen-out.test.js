@@ -76,7 +76,7 @@ test('newsletters stay on the page until the reader opens them', () => {
   const mag = app.slice(app.indexOf('function magView'), app.indexOf('function drawMag'));
   assert.ok(mag.indexOf('toolPills()') < mag.indexOf('mondayWrap()') && mag.indexOf('mondayWrap()') < mag.indexOf('advocatePagesBlock()') && mag.indexOf('advocatePagesBlock()') < mag.indexOf('<h3>Newsletters</h3>'));
   assert.match(app, /function mondayWrap\(\)/);
-  assert.match(app, /<h3>Get the Monday Wrap<\/h3>/);
+  assert.match(app, /<h3>The Drivers Advocate Newsletters<\/h3>/);
   assert.match(app, /action="https:\/\/tdaau\.us9\.list-manage\.com\/subscribe\/post\?u=ff8d9dd6d54765aa6fec0704b&amp;id=72f9b91edd"/);
   assert.match(app, /method="post" target="_blank"/);
   assert.match(app, /name="EMAIL" type="email" required/);
