@@ -1,11 +1,11 @@
-const express = require('express'), { Pool } = require('pg'), crypto = require('crypto'), path = require('path');
+const express = require('express'), crypto = require('crypto'), path = require('path');
+const { createStore, duplicateError } = require('./db');
 const { sessionSecret, adminPassword, adminUser, createAuth, mountAuth, mountAdminEntry, secureCookie, cleanAccountName, hashPassword, verifyPassword } = require('./auth');
 const { driverPost, driverReply, makeLimiter } = require('./community');
 const { advocatePages } = require('./advocate');
 const app = express(), PORT = process.env.PORT || 3000;
 const auth = createAuth(sessionSecret(), adminPassword(), Date.now, adminUser());
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : false });
-pool.on('error', err => console.error('Idle database client error:', err.message));
+const store = createStore(process.env.DATABASE_URL);
 app.set('trust proxy', 1);
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -32,8 +32,7 @@ app.use('/api', (req, res, next) => {
 async function lookupAccount(username, password) {
   const name = cleanAccountName(username);
   if (!name || typeof password !== 'string' || !password) return null;
-  const x = await pool.query("select data from docs where coll = 'accounts' and id = $1", [name.toLowerCase()]);
-  const row = x.rows[0] && x.rows[0].data;
+  const row = await store.get('accounts', name.toLowerCase());
   if (!row || !verifyPassword(password, row.pass)) return null;
   return { user: row.user || name };
 }
@@ -54,35 +53,35 @@ app.post('/api/register', wrap(async (q, r) => {
   if (!username) return r.status(400).json({ error: 'Use 2–40 letters or numbers, starting with a letter or number' });
   if (password.length < 8 || password.length > 72) return r.status(400).json({ error: 'Use a password of at least 8 characters' });
   const id = username.toLowerCase();
-  const existing = await pool.query("select 1 from docs where coll = 'accounts' and id = $1", [id]);
-  if (existing.rowCount) return r.status(409).json({ error: 'That username is taken' });
+  const existing = await store.get('accounts', id);
+  if (existing) return r.status(409).json({ error: 'That username is taken' });
   try {
-    await pool.query('insert into docs(coll, id, data) values($1,$2,$3)', ['accounts', id, { user: username, pass: hashPassword(password), at: Date.now() }]);
+    await store.insert('accounts', id, { user: username, pass: hashPassword(password), at: Date.now() });
   } catch (e) {
-    if (e && e.code === '23505') return r.status(409).json({ error: 'That username is taken' });
+    if (duplicateError(e)) return r.status(409).json({ error: 'That username is taken' });
     throw e;
   }
   r.setHeader('Set-Cookie', [auth.cookie('', 0, secureCookie(q)), auth.userCookie(username, 604800, secureCookie(q))]);
   r.json({ admin: false, role: 'driver', user: username });
 }));
 app.get('/api/advocate', wrap(async (q, r) => { r.json({ pages: await advocatePages() }); }));
-require('./feeds')(app, pool, need);
+require('./feeds')(app, store, need);
 require('./standard-dates').mount(app);
 app.post('/api/community/posts', wrap(async (q, r) => {
   if (!allowPost(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many posts' });
   const data = driverPost(q.body);
   const id = crypto.randomUUID();
-  await pool.query('insert into docs(coll, id, data) values($1, $2, $3)', ['posts', id, data]);
+  await store.insert('posts', id, data);
   r.json({ id });
 }));
 app.post('/api/community/replies', wrap(async (q, r) => {
   if (!allowReply(q.ip || 'unknown')) return r.status(429).json({ error: 'Too many replies' });
   const data = driverReply(q.body);
-  const post = await pool.query("select 1 from docs where coll = 'posts' and id = $1", [data.postId]);
-  if (!post.rowCount) return r.status(404).json({ error: 'Unknown post' });
+  const post = await store.get('posts', data.postId);
+  if (!post) return r.status(404).json({ error: 'Unknown post' });
   const id = crypto.randomUUID();
-  await pool.query('insert into docs(coll, id, data) values($1, $2, $3)', ['comments', id, data]);
-  await pool.query("update docs set data = jsonb_set(data, '{c}', to_jsonb(coalesce((data->>'c')::int, 0) + 1)) where coll = 'posts' and id = $1", [data.postId]);
+  await store.insert('comments', id, data);
+  await store.bumpCount('posts', data.postId, 'c', 1);
   r.json({ id });
 }));
 const COLLECTIONS = ['posts', 'ticker', 'feeds', 'episodes', 'comments', 'traffic'];
@@ -98,8 +97,8 @@ const rowData = row => {
 app.get('/api/admin/backup', need, wrap(async (q, r) => {
   const collections = {};
   for (const coll of BACKUP) {
-    const x = await pool.query('select id, data from docs where coll = $1 order by id', [coll]);
-    collections[coll] = x.rows.map(o => ({ ...o.data, id: o.id }));
+    const x = await store.all(coll);
+    collections[coll] = x.map(o => ({ ...o.data, id: o.id }));
   }
   r.json({ exportedAt: Date.now(), collections });
 }));
@@ -117,10 +116,7 @@ app.post('/api/admin/restore', need, wrap(async (q, r) => {
       if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
       const id = String(row.id || '').trim();
       if (!id || id.length > 80 || /[\u0000/\\]/.test(id)) continue;
-      await pool.query(
-        'insert into docs(coll, id, data) values($1, $2, $3::jsonb) on conflict (coll, id) do update set data = excluded.data',
-        [coll, id, JSON.stringify(rowData(row))]
-      );
+      await store.put(coll, id, rowData(row));
       n++;
     }
     restored[coll] = n;
@@ -140,41 +136,33 @@ app.get('/api/:c', wrap(async (q, r) => {
   const lim = Math.min(cap, Number.isFinite(asked) && asked > 0 ? Math.floor(asked) : fallback);
   let rows;
   if (q.params.c === 'posts' && !isAdmin(q)) {
-    const news = await pool.query(
-      "select id, data from docs where coll = 'posts' and data->>'auto' = 'true' order by (data->>'at')::double precision desc nulls last limit 24"
-    );
-    const rest = await pool.query(
-      "select id, data from docs where coll = 'posts' and coalesce(data->>'auto', '') <> 'true' order by coalesce((data->>'pin')::boolean, false) desc, (data->>'at')::double precision desc nulls last limit $1",
-      [lim]
-    );
-    rows = [...news.rows, ...rest.rows].map(o => ({ ...o.data, id: o.id }));
+    const news = await store.list('posts', 24, true);
+    const rest = await store.list('posts', lim, false);
+    rows = [...news, ...rest].map(o => ({ ...o.data, id: o.id }));
   } else {
-    const x = await pool.query(
-      "select id, data from docs where coll = $1 order by coalesce((data->>'pin')::boolean, false) desc, (data->>'at')::double precision desc nulls last limit $2",
-      [q.params.c, lim]
-    );
-    rows = x.rows.map(o => ({ ...o.data, id: o.id }));
+    const x = await store.list(q.params.c, lim);
+    rows = x.map(o => ({ ...o.data, id: o.id }));
   }
   if (q.params.c === 'feeds' && !isAdmin(q)) rows = rows.map(({ url, ...rest }) => rest);
   r.json(rows);
 }));
 app.post('/api/:c', need, wrap(async (q, r) => {
   const id = crypto.randomUUID();
-  await pool.query('insert into docs(coll, id, data) values($1, $2, $3)', [q.params.c, id, body(q)]);
+  await store.insert(q.params.c, id, body(q));
   r.json({ id });
 }));
 app.patch('/api/:c/:id', need, wrap(async (q, r) => {
-  await pool.query('update docs set data = data || $3::jsonb where coll = $1 and id = $2', [q.params.c, q.params.id, JSON.stringify(body(q))]);
+  await store.merge(q.params.c, q.params.id, body(q));
   r.json({ ok: true });
 }));
 app.delete('/api/:c/:id', need, wrap(async (q, r) => {
   let postId = '';
   if (q.params.c === 'comments') {
-    const cur = await pool.query('select data from docs where coll = $1 and id = $2', ['comments', q.params.id]);
-    postId = cur.rows[0] && cur.rows[0].data && cur.rows[0].data.postId || '';
+    const cur = await store.get('comments', q.params.id);
+    postId = cur && cur.postId || '';
   }
-  await pool.query('delete from docs where coll = $1 and id = $2', [q.params.c, q.params.id]);
-  if (postId) await pool.query("update docs set data = jsonb_set(data, '{c}', to_jsonb(greatest(coalesce((data->>'c')::int, 0) - 1, 0))) where coll = 'posts' and id = $1", [postId]);
+  await store.remove(q.params.c, q.params.id);
+  if (postId) await store.bumpCount('posts', postId, 'c', -1);
   r.json({ ok: true });
 }));
 
@@ -190,9 +178,9 @@ app.get('/manifest.webmanifest', (req, res) => {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 if (require.main === module) {
-  pool.query('create table if not exists docs(coll text not null, id text not null, data jsonb not null, primary key(coll, id))')
+  store.init()
     .then(() => app.listen(PORT, () => console.log('GoRoadHub running on ' + PORT)))
     .catch(e => { console.error('Database error:', e.message); process.exit(1); });
 }
 
-module.exports = { app, pool };
+module.exports = { app, store };
