@@ -177,7 +177,9 @@ app.get('/manifest.webmanifest', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'manifest.webmanifest'));
 });
 app.use(express.static(path.join(__dirname, 'public')));
-if (require.main === module) {
+// Phusion Passenger (cPanel "Setup Node.js App") loads server.js through its own loader,
+// so require.main is not this module there; start listening in that case too.
+if (require.main === module || typeof PhusionPassenger !== 'undefined') {
   store.init()
     .then(() => app.listen(PORT, () => console.log('GoRoadHub running on ' + PORT)))
     .catch(e => { console.error('Database error:', e.message); process.exit(1); });
