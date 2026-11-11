@@ -93,7 +93,7 @@ async function fetchFeed(urlStr, fetchImpl = fetch) {
     const r = await fetchImpl(current, {
       redirect: 'manual',
       signal: AbortSignal.timeout(15000),
-      headers: { 'User-Agent': 'GoRoadHub/1.0 feed reader', Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, */*;q=0.8' }
+      headers: { 'User-Agent': 'The Drivers Advocate App/1.0 feed reader', Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, */*;q=0.8' }
     });
     if ([301, 302, 303, 307, 308].includes(r.status)) {
       if (r.body && r.body.cancel) await r.body.cancel().catch(() => {});

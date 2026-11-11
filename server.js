@@ -15,7 +15,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self)');
   res.setHeader('Content-Security-Policy', [
-    "default-src 'self' blob:", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self'",
+    "default-src 'self' blob:", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'self'", "form-action 'self' https://*.list-manage.com",
     "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
     "img-src 'self' https: data: blob:", "media-src 'self' https: blob:",
     "frame-src https://www.facebook.com", "connect-src 'self' https://tdaau.com https://nominatim.openstreetmap.org https://api.what3words.com"
@@ -193,7 +193,7 @@ app.get('/manifest.webmanifest', (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 if (require.main === module) {
   pool.query('create table if not exists docs(coll text not null, id text not null, data jsonb not null, primary key(coll, id))')
-    .then(() => app.listen(PORT, () => console.log('GoRoadHub running on ' + PORT)))
+    .then(() => app.listen(PORT, () => console.log('The Drivers Advocate App running on ' + PORT)))
     .catch(e => { console.error('Database error:', e.message); process.exit(1); });
 }
 
