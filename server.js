@@ -7,6 +7,8 @@ const auth = createAuth(sessionSecret(), adminPassword(), Date.now, adminUser())
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : false });
 pool.on('error', err => console.error('Idle database client error:', err.message));
 app.set('trust proxy', 1);
+// The app now lives at https://app.tdaau.com. Send every request there (see moved.js).
+require('./moved').mountMoved(app, process.env.MOVED_TO);
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
