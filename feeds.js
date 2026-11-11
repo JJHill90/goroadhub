@@ -184,26 +184,18 @@ const EPISODE_KEYS = ['h', 'x', 'audio', 'img', 'at', 'dur', 'url', 'show'];
 const TRAFFIC_KEYS = ['h', 'x', 'url', 'at', 'a', 'srcName', 'logo'];
 const WEEK = 7 * 24 * 60 * 60 * 1000;
 
-async function ensureOutlets(pool) {
+async function ensureOutlets(store) {
   for (const o of OUTLETS) {
     const data = {
       url: o.feed, name: o.name, src: o.src, topic: o.topic, g: -1,
       logo: o.logo, home: o.home, builtin: true, kind: o.kind, filter: o.filter === true
     };
-    await pool.query(
-      `insert into docs(coll, id, data) values('feeds', $1, $2)
-       on conflict (coll, id) do update set data = docs.data || excluded.data`,
-      ['outlet-' + o.id, data]
-    );
+    await store.upsertMerge('feeds', 'outlet-' + o.id, data);
   }
-  await pool.query(
-    `insert into docs(coll, id, data) values('feeds', $1, $2)
-     on conflict (coll, id) do update set data = docs.data || excluded.data`,
-    ['outlet-' + PODCAST.id, {
-      url: PODCAST.url, name: PODCAST.name, src: 'podcast', topic: 'Industry News', g: -1,
-      home: PODCAST.home, builtin: true, kind: 'podcast', filter: false
-    }]
-  );
+  await store.upsertMerge('feeds', 'outlet-' + PODCAST.id, {
+    url: PODCAST.url, name: PODCAST.name, src: 'podcast', topic: 'Industry News', g: -1,
+    home: PODCAST.home, builtin: true, kind: 'podcast', filter: false
+  });
 }
 
 function changedPatch(old, data, keys) {
@@ -215,28 +207,28 @@ function changedPatch(old, data, keys) {
   return patch;
 }
 
-async function storeItem(pool, coll, id, data, keys) {
-  const found = await pool.query('select data from docs where coll = $1 and id = $2', [coll, id]);
-  if (!found.rowCount) {
-    await pool.query('insert into docs(coll, id, data) values($1, $2, $3)', [coll, id, data]);
+async function storeItem(store, coll, id, data, keys) {
+  const found = await store.get(coll, id);
+  if (!found) {
+    await store.insert(coll, id, data);
     return 'added';
   }
-  const patch = changedPatch(found.rows[0].data, data, keys);
+  const patch = changedPatch(found, data, keys);
   if (!Object.keys(patch).length) return 'same';
-  await pool.query('update docs set data = data || $3::jsonb where coll = $1 and id = $2', [coll, id, JSON.stringify(patch)]);
+  await store.merge(coll, id, patch);
   return 'updated';
 }
 
-function install(app, pool, need) {
+function install(app, store, need) {
   let busy = false;
   async function refresh() {
     if (busy) return { busy: true };
     busy = true;
     const out = { added: 0, updated: 0, errors: [] };
     try {
-      await ensureOutlets(pool);
-      const fs = await pool.query("select data from docs where coll = 'feeds'");
-      for (const { data: f } of fs.rows) {
+      await ensureOutlets(store);
+      const fs = await store.all('feeds');
+      for (const { data: f } of fs) {
         try {
           if (!http(f.url)) continue;
           const pod = f.src === 'podcast';
@@ -258,19 +250,16 @@ function install(app, pool, need) {
               : traffic
                 ? { a: f.name, h: it.h, x: it.x, url: it.link, src: 'traffic', srcName: f.name, logo: f.logo || '', at: it.at, auto: true }
                 : { g: f.g == null ? -1 : +f.g, a: f.name, t: f.topic || 'Industry News', h: cleanHeadline(it.h), x: it.x, url: it.link, img: it.img, src: f.src || 'news', srcName: f.name, logo: f.logo || '', l: 0, c: 0, pin: false, at: it.at, ord: it.at, auto: true };
-            const status = await storeItem(pool, pod ? 'episodes' : traffic ? 'traffic' : 'posts', id, data, pod ? EPISODE_KEYS : traffic ? TRAFFIC_KEYS : POST_KEYS);
+            const status = await storeItem(store, pod ? 'episodes' : traffic ? 'traffic' : 'posts', id, data, pod ? EPISODE_KEYS : traffic ? TRAFFIC_KEYS : POST_KEYS);
             if (status === 'added') out.added++;
             else if (status === 'updated') out.updated++;
           }
           if (traffic) {
-            await pool.query("delete from docs where coll = 'traffic' and not (id = any($1::text[]))", [kept.length ? kept : ['']]);
+            await store.removeExcept('traffic', kept);
           }
         } catch (e) { out.errors.push((f.name || f.url) + ': ' + e.message); }
       }
-      await pool.query(
-        "delete from docs where coll = 'posts' and data->>'auto' = 'true' and data->>'src' = 'news' and coalesce((data->>'at')::double precision, 0) < $1",
-        [Date.now() - WEEK]
-      );
+      await store.pruneAutoNews(Date.now() - WEEK);
     } finally { busy = false; }
     return out;
   }

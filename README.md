@@ -1,6 +1,6 @@
 # The Drivers Advocate App
 
-Express + Postgres app. Posts and ticker headlines are public to read. The built-in oversight account RoadHub_Admin can add, edit, delete, pin and reorder posts, correct replies, and restore a recovery file if the hub data is lost. That login is not stored in the database.
+Express app on PostgreSQL (Render) or MySQL 8 (cPanel hosting). Posts and ticker headlines are public to read. The built-in oversight account RoadHub_Admin can add, edit, delete, pin and reorder posts, correct replies, and restore a recovery file if the hub data is lost. That login is not stored in the database.
 
 ## Deploy on Render
 1. Create a new GitHub repo and upload everything in this folder (keep `public/` and `render.yaml` at the top level).
@@ -35,3 +35,18 @@ Add `PGSSL=1` when `DATABASE_URL` is an external Render connection string. Open 
 - Sign in as admin, open **Admin > Auto-fetch feeds**, and add each RSS/Atom feed (type: Drivers Advocate site, News outlet, Other website, or Podcast). The server checks them every 30 minutes; **Fetch now** runs it immediately.
 - Stories appear in the **Magazine** tab, on the ticker and in the Feed. Podcast episodes appear in the **Podcast** tab with a player that stays on screen.
 - Drivers post and reply in The Drivers Advocate App from the Post tab. Those messages are shared with everyone. Facebook groups still cannot be posted into automatically: use **Copy for Facebook**, or add a group post by hand in the Admin tab.
+
+## MySQL (cPanel / Acenet hosting)
+
+The app picks its database from `DATABASE_URL`: `mysql://user:pass@localhost:3306/dbname` uses MySQL 8, anything else uses PostgreSQL. The `docs` table is created on first start on either engine.
+
+Copy data between engines with the scripts in `scripts/`:
+
+```
+DATABASE_URL=<source> node scripts/export-docs.js > docs.jsonl
+DATABASE_URL=<target> node scripts/import-docs.js docs.jsonl
+```
+
+The import replaces rows with the same collection and id, then prints the row count per collection.
+
+On cPanel, run it as a Node.js app (Setup Node.js App), with startup file `server.js` and the same env vars. Feed refresh runs every 30 minutes while the app is awake, so add a cron job that requests `/healthz` every few minutes to stop it idling out.
